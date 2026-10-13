@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Search Agent</title>
+<style>
+:root{
+  --bg:#0b0d1a;
+  --panel:#12152a;
+  --panel-2:#181c36;
+  --card:#1d2142;
+  --border:#272c52;
+  --accent:#7c6cf5;
+  --accent-soft:rgba(124,108,245,.16);
+  --accent-2:#4cc9f0;
+  --danger:#f0564c;
+  --ok:#3ddc97;
+  --text:#e8eaf6;
+  --text-dim:#8f94b8;
+  --radius:14px;
+  font-size:15px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  height:100vh;overflow:hidden;
+}
+.app{display:grid;grid-template-columns:210px 340px 1fr 300px;height:100vh}
+
+/* ---------- top bar ---------- */
+.topbar{
+  grid-column:1/-1;display:flex;align-items:center;gap:14px;
+  padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--border);
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
+.logo .bot{
+  width:34px;height:34px;border-radius:10px;background:var(--accent);
+  display:grid;place-items:center;font-size:18px;
+}
+.logo small{display:block;font-weight:400;color:var(--text-dim);font-size:.72rem}
+.topbar .spacer{flex:1}
+.btn{
+  border:1px solid var(--border);background:var(--panel-2);color:var(--text);
+  padding:8px 14px;border-radius:10px;cursor:pointer;font-size:.85rem;
+  display:inline-flex;align-items:center;gap:7px;transition:.15s;
+}
+.btn:hover{border-color:var(--accent);background:var(--accent-soft)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--danger);display:inline-block}
+.dot.green{background:var(--ok)}
+
+/* ---------- grid rows ---------- */
+.app{grid-template-rows:56px 1fr}
+.sidebar,.chatpane,.mainpane,.resultspane{overflow-y:auto;height:calc(100vh - 56px)}
+
+/* ---------- sidebar ---------- */
+.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column}
+.nav a{
+  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
+  color:var(--text-dim);text-decoration:none;font-size:.9rem;margin-bottom:2px;
+}
+.nav a.active,.nav a:hover{background:var(--accent-soft);color:var(--text)}
+.nav a.active{color:var(--accent)}
+.sysbox{margin-top:auto;padding:12px;background:var(--panel-2);border-radius:12px;font-size:.75rem;color:var(--text-dim)}
+.sysbox .row{display:flex;justify-content:space-between;margin-bottom:6px}
+.meter{height:5px;border-radius:4px;background:#0e1124;overflow:hidden;margin-bottom:10px}
+.meter i{display:block;height:100%;background:var(--accent)}
+
+/* ---------- chat pane ---------- */
+.chatpane{background:var(--panel-2);border-right:1px solid var(--border);display:flex;flex-direction:column}
+.chathead{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
+.chathead .bot{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-size:18px}
+.chathead b{font-size:.95rem}
+.chathead small{color:var(--text-dim);font-size:.75rem;display:block}
+.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.87rem;line-height:1.45;white-space:pre-wrap}
+.msg.bot{background:var(--card);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;direction:auto}
+.msg time{display:block;font-size:.65rem;opacity:.6;margin-top:5px}
+.parsed{
+  align-self:flex-start;background:var(--card);border:1px solid var(--border);
+  border-radius:14px;padding:12px 14px;width:88%;font-size:.82rem;
+}
+.parsed h4{font-size:.78rem;color:var(--ok);margin-bottom:8px;display:flex;gap:6px;align-items:center}
+.parsed .prow{display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid var(--border)}
+.parsed .prow span:first-child{color:var(--text-dim)}
+.chips{padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  border:1px solid var(--border);background:var(--panel);color:var(--text-dim);
+  padding:6px 11px;border-radius:20px;font-size:.75rem;cursor:pointer;transition:.15s;
+}
+.chip:hover{border-color:var(--accent);color:var(--text)}
+.inputrow{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+.inputrow input{
+  flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:11px 13px;font-size:.87rem;direction:auto;
+}
+.inputrow input:focus{outline:none;border-color:var(--accent)}
+.send{
+  width:42px;height:42px;border-radius:10px;background:var(--accent);border:none;
+  color:#fff;font-size:17px;cursor:pointer;flex-shrink:0;
+}
+.send:hover{filter:brightness(1.12)}
+
+/* ---------- main pane ---------- */
+.mainpane{padding:16px;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
+.panel h3{font-size:.85rem;margin-bottom:10px;color:var(--text)}
+.panel h3 small{color:var(--text-dim);font-weight:400}
+.videohead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.videohead .meta{font-size:.75rem;color:var(--text-dim)}
+.videowrap{position:relative;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9}
+video{width:100%;height:100%;display:block}
+.dropzone{
+  position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;
+  justify-content:center;color:var(--text-dim);font-size:.9rem;background:var(--panel-2);
+  border:2px dashed var(--border);border-radius:10px;cursor:pointer;text-align:center;padding:20px;
+}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);color:var(--text)}
+.dropzone .big{font-size:38px}
+.overlay{position:absolute;inset:0;pointer-events:none}
+.bbox{
+  position:absolute;border:2px solid var(--danger);border-radius:4px;
+  box-shadow:0 0 0 2px rgba(240,86,76,.25);transition:all .35s linear;
+}
+.bbox label{
+  position:absolute;top:-22px;left:-2px;background:var(--danger);color:#fff;
+  font-size:.65rem;padding:2px 7px;border-radius:4px;white-space:nowrap;
+}
+/* timeline */
+.timeline{position:relative;height:56px;background:var(--panel-2);border-radius:10px;cursor:pointer;overflow:hidden}
+.tl-marks{position:absolute;inset:0}
+.tl-match{position:absolute;top:14px;bottom:14px;width:4px;border-radius:2px;background:var(--accent)}
+.tl-match:hover{background:var(--accent-2)}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--danger)}
+.playhead::after{
+  content:attr(data-t);position:absolute;top:2px;left:6px;font-size:.62rem;
+  color:var(--danger);white-space:nowrap;
+}
+.tl-labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-dim);margin-top:6px}
+/* detected objects */
+.objects{display:flex;gap:10px;flex-wrap:wrap}
+.objcard{
+  background:var(--panel-2);border:1px solid var(--border);border-radius:10px;
+  padding:10px 16px;min-width:92px;text-align:center;
+}
+.objcard .ico{font-size:20px}
+.objcard b{display:block;font-size:1.1rem;margin-top:2px}
+.objcard span{font-size:.7rem;color:var(--text-dim)}
+.demo-banner{
+  background:rgba(76,201,240,.1);border:1px solid rgba(76,201,240,.35);color:var(--accent-2);
+  border-radius:10px;padding:9px 13px;font-size:.78rem;
+}
+
+/* ---------- results pane ---------- */
+.resultspane{background:var(--panel);border-left:1px solid var(--border);padding:14px}
+.reshead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.reshead b{font-size:.9rem}
+.badge{background:var(--accent);color:#fff;font-size:.68rem;padding:3px 9px;border-radius:20px}
+.rescard{
+  background:var(--panel-2);border:1px solid var(--border);border-radius:12px;
+  padding:10px;margin-bottom:10px;display:flex;gap:10px;
+}
+.rescard .thumb{
+  width:74px;height:54px;border-radius:8px;background:var(--card);flex-shrink:0;
+  display:grid;place-items:center;font-size:22px;overflow:hidden;
+}
+.rescard .thumb canvas{width:100%;height:100%;object-fit:cover}
+.rescard .info{flex:1;font-size:.72rem;color:var(--text-dim);line-height:1.5}
+.rescard .info b{color:var(--text);font-size:.85rem;display:block}
+.viewclip{
+  margin-top:5px;border:none;background:var(--accent-soft);color:var(--accent);
+  border-radius:7px;padding:4px 10px;font-size:.7rem;cursor:pointer;
+}
+.viewclip:hover{background:var(--accent);color:#fff}
+.summary{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:.75rem;margin-top:6px}
+.summary .row{display:flex;justify-content:space-between;padding:4px 0;color:var(--text-dim)}
+.summary .row span:last-child{color:var(--text)}
+.empty{color:var(--text-dim);font-size:.8rem;text-align:center;padding:30px 10px;line-height:1.6}
+
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
+@media (prefers-reduced-motion:reduce){.bbox{transition:none}}
+@media (max-width:1100px){
+  .app{grid-template-columns:64px 300px 1fr 260px}
+  .nav a span,.sysbox,.logo small{display:none}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="bot">🤖</div>
+      <div>Video Search Agent<small>Ask anything. Find in your videos.</small></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn primary" id="uploadBtn">⬆ Upload Video</button>
+    <button class="btn"><span class="dot" id="liveDot"></span> Live Stream</button>
+    <button class="btn">⚙</button>
+    <input type="file" id="fileInput" accept="video/*" hidden>
+  </div>
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar">
+    <nav class="nav">
+      <a href="#">🏠 <span>Home</span></a>
+      <a href="#" class="active">💬 <span>Chat Search</span></a>
+      <a href="#">🎞 <span>Videos</span></a>
+      <a href="#">🔔 <span>Alerts</span></a>
+      <a href="#">🔖 <span>Bookmarks</span></a>
+      <a href="#">📷 <span>Cameras</span></a>
+      <a href="#">⚙ <span>Settings</span></a>
+    </nav>
+    <div class="sysbox">
+      <div class="row"><span>System Status</span><span style="color:var(--ok)">● Online</span></div>
+      <div class="row"><span>Storage</span><span>2.4 TB / 10 TB</span></div>
+      <div class="meter"><i style="width:24%"></i></div>
+      <div class="row"><span>Processing</span><span id="procPct">0%</span></div>
+      <div class="meter"><i id="procBar" style="width:0%"></i></div>
+    </div>
+  </aside>
+
+  <!-- ===== CHAT PANE ===== -->
+  <section class="chatpane">
+    <div class="chathead">
+      <div class="bot">🤖</div>
+      <div><b>AI Video Search Agent</b><small>Your intelligent video assistant</small></div>
+    </div>
+    <div class="messages" id="messages">
+      <div class="msg bot">Hello! I can help you find anything in your videos. Upload a video, then describe what you are looking for — in English or Hebrew.
+אפשר לכתוב גם בעברית, למשל: "מצא איש שרץ עם כלב"<time id="nowTime"></time></div>
+    </div>
+    <div class="chips" id="chips">
+      <button class="chip">Show me all white cars</button>
+      <button class="chip">Find a bicycle near the entrance</button>
+      <button class="chip">Find people entering the building</button>
+      <button class="chip">מצא איש שרץ עם כלב</button>
+      <button class="chip">Find a person wearing a red shirt between 14:00 and 15:00</button>
+    </div>
+    <div class="inputrow">
+      <input id="queryInput" placeholder="Ask anything about your videos… / שאלו כל דבר על הסרטון…">
+      <button class="send" id="sendBtn" aria-label="Search">➤</button>
+    </div>
+  </section>
+
+  <!-- ===== MAIN PANE ===== -->
+  <section class="mainpane">
+    <div class="demo-banner" id="demoBanner">
+      🧪 <b>Demo mode:</b> detections are simulated. Connect the Python backend (see <code>queryBackend()</code> in the code) to get real YOLO detections.
+    </div>
+
+    <div class="panel">
+      <div class="videohead">
+        <h3>Current Video <small id="videoName">— no video loaded</small></h3>
+        <div class="meta" id="videoMeta"></div>
+      </div>
+      <div class="videowrap">
+        <video id="video" controls></video>
+        <div class="overlay" id="overlay"></div>
+        <div class="dropzone" id="dropzone">
+          <div class="big">🎬</div>
+          <div><b>Drop a video file here</b> or click to browse<br>
+          גררו לכאן קובץ וידאו או לחצו לבחירה</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Timeline</h3>
+      <div class="timeline" id="timeline">
+        <div class="tl-marks" id="tlMarks"></div>
+        <div class="playhead" id="playhead" data-t="00:00" style="left:0"></div>
+      </div>
+      <div class="tl-labels" id="tlLabels"><span>00:00</span><span>—</span></div>
+    </div>
+
+    <div class="panel">
+      <h3>Detected Objects <small>(in current search)</small></h3>
+      <div class="objects" id="objects">
+        <div class="objcard"><div class="ico">🧍</div><b>0</b><span>Persons</span></div>
+        <div class="objcard"><div class="ico">🚗</div><b>0</b><span>Cars</span></div>
+        <div class="objcard"><div class="ico">🚲</div><b>0</b><span>Bicycles</span></div>
+        <div class="objcard"><div class="ico">🐕</div><b>0</b><span>Dogs</span></div>
+        <div class="objcard"><div class="ico">🏍</div><b>0</b><span>Motorcycles</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RESULTS PANE ===== -->
+  <aside class="resultspane">
+    <div class="reshead"><b>Search Results</b><span class="badge" id="matchBadge">0 matches</span></div>
+    <div id="results"><div class="empty">No search yet.<br>Upload a video and ask the agent to find something.</div></div>
+    <div class="summary" id="summary" hidden>
+      <b style="font-size:.8rem">Summary</b>
+      <div class="row"><span>Total Matches</span><span id="sumMatches">—</span></div>
+      <div class="row"><span>Time Range Searched</span><span id="sumRange">—</span></div>
+      <div class="row"><span>Searched Video</span><span id="sumVideo">—</span></div>
+      <div class="row"><span>Total Duration</span><span id="sumDur">—</span></div>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* =====================================================================
+   VIDEO SEARCH AGENT — front-end prototype
+   ---------------------------------------------------------------------
+   Architecture (matches the project proposal):
+   1. Video Input Module        -> loadVideo()
+   2. NL Query Module           -> parseQuery()
+   3. Search Engine             -> queryBackend()  (demo simulation now,
+                                   swap with real API later)
+   4. Result Visualization      -> renderResults(), timeline, bboxes
+   ===================================================================== */
+
+const $ = id => document.getElementById(id);
+const video = $('video'), overlay = $('overlay');
+let state = { matches: [], duration: 0, videoName: null, activeClip: null };
+
+document.getElementById('nowTime').textContent =
+  new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+/* ---------- 1. VIDEO INPUT MODULE ---------- */
+$('uploadBtn').onclick = () => $('fileInput').click();
+$('dropzone').onclick  = () => $('fileInput').click();
+$('fileInput').onchange = e => e.target.files[0] && loadVideo(e.target.files[0]);
+
+const dz = $('dropzone');
+dz.ondragover = e => { e.preventDefault(); dz.classList.add('drag'); };
+dz.ondragleave = () => dz.classList.remove('drag');
+dz.ondrop = e => {
+  e.preventDefault(); dz.classList.remove('drag');
+  const f = e.dataTransfer.files[0];
+  if (!f) return;
+  const byExt = /\.(mp4|webm|mov|m4v|mkv|avi|ts)$/i.test(f.name);
+  if (f.type.startsWith('video') || byExt) loadVideo(f);
+  else botSay('This does not look like a video file: ' + f.name);
+};
+
+function loadVideo(file){
+  video.src = URL.createObjectURL(file);
+  state.videoName = file.name;
+  dz.style.display = 'none';
+  $('videoName').textContent = '— ' + file.name;
+  uploadToBackend(file);   // index on the server (falls back to demo if offline)
+
+  video.onerror = () => {
+    dz.style.display = 'flex';
+    dz.innerHTML = `<div class="big">⚠️</div>
+      <div><b>The browser cannot play "${file.name}"</b><br>
+      הדפדפן לא מצליח לנגן את הקובץ — כנראה קידוד H.265 / AVI / DAV.<br>
+      המירו ל-MP4 (H.264) עם ffmpeg:<br>
+      <code style="direction:ltr;display:inline-block;margin-top:6px;background:#0e1124;padding:6px 10px;border-radius:8px">
+      ffmpeg -i "${file.name}" -c:v libx264 -preset fast output.mp4</code></div>`;
+    botSay('Could not decode the video. Convert it to MP4 (H.264) and try again.\nלא הצלחתי לנגן את הקובץ — צריך להמיר ל-MP4.');
+  };
+
+  video.onloadedmetadata = () => {
+    state.duration = video.duration;
+    $('videoMeta').textContent =
+      `${fmt(video.duration)} · ${(file.size/1048576).toFixed(1)} MB`;
+    $('tlLabels').innerHTML =
+      `<span>00:00</span><span>${fmt(video.duration/2)}</span><span>${fmt(video.duration)}</span>`;
+    botSay(`Video "${file.name}" loaded (${fmt(video.duration)}). What should I look for?\nמה לחפש בסרטון?`);
+  };
+}
+
+const fmt = s => {
+  s = Math.max(0, Math.floor(s));
+  const h = Math.floor(s/3600), m = Math.floor(s%3600/60), sec = s%60;
+  return (h ? h+':' : '') + String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+};
+
+/* ---------- 2. NATURAL LANGUAGE QUERY MODULE ---------- */
+const VOCAB = {
+  objects: {
+    person:['person','people','man','woman','someone','pedestrian','איש','אדם','אישה','אנשים','בחור','בחורה','ילד'],
+    dog:['dog','כלב','כלבה'],
+    car:['car','cars','vehicle','vehicles','רכב','מכונית','אוטו','רכבים','מכוניות'],
+    bicycle:['bicycle','bike','אופניים','אופנים'],
+    motorcycle:['motorcycle','scooter','אופנוע','קטנוע'],
+    bag:['bag','backpack','תיק'],
+    truck:['truck','משאית'],
+  },
+  colors: {
+    red:['red','אדום','אדומה'], white:['white','לבן','לבנה'], black:['black','שחור','שחורה'],
+    blue:['blue','כחול','כחולה'], green:['green','ירוק','ירוקה'], yellow:['yellow','צהוב','צהובה'],
+  },
+  actions: {
+    running:['running','runs','run','רץ','רצה','רצים'],
+    walking:['walking','walks','הולך','הולכת'],
+    entering:['entering','enter','נכנס','נכנסת','נכנסים'],
+    exiting:['exiting','leaving','יוצא','יוצאת'],
+    parked:['parked','parking','חונה','חונים'],
+  },
+  locations: {
+    entrance:['entrance','door','כניסה','דלת'],
+    street:['street','רחוב'],
+    building:['building','בניין'],
+  }
+};
+
+function parseQuery(text){
+  const t = ' ' + text.toLowerCase() + ' ';
+  const found = { objects:[], colors:[], actions:[], locations:[], timeRange:null, raw:text };
+  for (const [group, entries] of Object.entries(VOCAB))
+    for (const [key, words] of Object.entries(entries))
+      if (words.some(w => t.includes(w.toLowerCase())))
+        found[group].push(key);
+  // time range like "between 14:00 and 15:00" or "בין 14:00 ל15:00"
+  const times = [...text.matchAll(/(\d{1,2}):(\d{2})/g)].map(m => +m[1]*60 + +m[2]);
+  if (times.length >= 2) found.timeRange = [times[0], times[1]]; // in minutes-of-day or mm:ss
+  if (!found.objects.length) found.objects.push('person'); // default
+  return found;
+}
+
+/* ---------- 3. SEARCH ENGINE ----------
+   Tries the real FastAPI backend (backend/main.py) first.
+   If the server is not running, falls back to demo simulation.
+---------------------------------------------------------------------- */
+const API = 'http://localhost:8000';
+
+async function uploadToBackend(file){
+  try {
+    const fd = new FormData();
+    fd.append('file', file, file.name);
+    const r = await fetch(API + '/index', { method:'POST', body: fd });
+    if (!r.ok) throw 0;
+    setBanner('⏳ Backend connected — indexing video with YOLO…', 'wait');
+    pollStatus(file.name);
+  } catch {
+    setBanner('🧪 <b>Demo mode:</b> backend not running — detections are simulated. Start it with <code>uvicorn main:app --port 8000</code> in the backend folder.', 'demo');
+  }
+}
+
+async function pollStatus(name){
+  try {
+    const r = await fetch(`${API}/status?video=${encodeURIComponent(name)}`);
+    const { status } = await r.json();
+    if (status === 'ready'){
+      setBanner('✅ <b>Live mode:</b> backend connected — real YOLOv8 detections.', 'ok');
+    } else if (status === 'indexing'){
+      setTimeout(() => pollStatus(name), 3000);
+    } else {
+      setBanner('⚠ Backend error while indexing: ' + status, 'demo');
+    }
+  } catch { /* server died mid-index */ }
+}
+
+function setBanner(html, kind){
+  const b = $('demoBanner');
+  b.innerHTML = html;
+  b.style.borderColor = kind === 'ok' ? 'rgba(61,220,151,.4)'
+                       : kind === 'wait' ? 'rgba(124,108,245,.4)'
+                       : 'rgba(76,201,240,.35)';
+  b.style.color = kind === 'ok' ? 'var(--ok)'
+                : kind === 'wait' ? 'var(--accent)'
+                : 'var(--accent-2)';
+}
+
+async function queryBackend(parsed){
+  // 1) try the real backend
+  try {
+    const res = await fetch(API + '/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: parsed, video: state.videoName })
+    });
+    if (res.ok){
+      const data = await res.json();
+      if (Array.isArray(data)) return data;
+    }
+  } catch { /* backend offline -> demo */ }
+
+  // 2) fallback: demo simulation
+  return simulateMatches(parsed);
+}
+
+async function simulateMatches(parsed){
+  await progressAnim();                       // fake processing bar
+  const n = 3 + Math.floor(Math.random()*4);  // 3–6 matches
+  const D = state.duration;
+  const matches = [];
+  for (let i = 0; i < n; i++){
+    const t = D * (0.08 + 0.84 * (i + Math.random()*0.7) / n);
+    matches.push({
+      t,
+      dur: 4 + Math.random()*6,
+      conf: 0.62 + Math.random()*0.36,
+      label: [parsed.colors[0], parsed.objects[0]].filter(Boolean).join(' '),
+      box: { x: 10+Math.random()*60, y: 15+Math.random()*45,
+             w: 8+Math.random()*14,  h: 20+Math.random()*25 } // % of frame
+    });
+  }
+  return matches.sort((a,b)=>a.t-b.t);
+}
+
+function progressAnim(){
+  return new Promise(res => {
+    let p = 0;
+    const iv = setInterval(() => {
+      p = Math.min(100, p + 8 + Math.random()*14);
+      $('procBar').style.width = p + '%';
+      $('procPct').textContent = Math.round(p) + '%';
+      if (p >= 100){ clearInterval(iv); setTimeout(res, 250); }
+    }, 120);
+  });
+}
+
+/* ---------- CHAT ---------- */
+function addMsg(cls, text){
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls;
+  d.textContent = text;
+  const tm = document.createElement('time');
+  tm.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  d.appendChild(tm);
+  $('messages').appendChild(d);
+  $('messages').scrollTop = 1e9;
+}
+const botSay = t => addMsg('bot', t);
+
+function addParsedCard(p){
+  const rows = [
+    ['Object',   p.objects.join(', ') || '—'],
+    ['Attribute',p.colors.join(', ')  || '—'],
+    ['Action',   p.actions.join(', ') || '—'],
+    ['Location', p.locations.join(', ') || '—'],
+    ['Time Range', p.timeRange ? p.timeRange.map(m=>fmt(m*60)).join(' – ') : 'Full video'],
+  ];
+  const d = document.createElement('div');
+  d.className = 'parsed';
+  d.innerHTML = '<h4>✅ Parsed Query</h4>' +
+    rows.map(r=>`<div class="prow"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
+  $('messages').appendChild(d);
+  $('messages').scrollTop = 1e9;
+}
+
+async function runSearch(text){
+  if (!text.trim()) return;
+  addMsg('user', text);
+  if (!state.duration){
+    botSay('Please upload a video first 🙂\nקודם צריך להעלות סרטון');
+    return;
+  }
+  const parsed = parseQuery(text);
+  addParsedCard(parsed);
+  botSay('Searching the video…');
+  state.matches = await queryBackend(parsed);
+  botSay(`I found ${state.matches.length} matches for your query. Here are the results.`);
+  renderResults(parsed);
+}
+
+$('sendBtn').onclick = () => { runSearch($('queryInput').value); $('queryInput').value=''; };
+$('queryInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter'){ runSearch(e.target.value); e.target.value=''; }
+});
+$('chips').addEventListener('click', e => {
+  if (e.target.classList.contains('chip')) runSearch(e.target.textContent);
+});
+
+/* ---------- 4. RESULT VISUALIZATION ---------- */
+function renderResults(parsed){
+  const box = $('results');
+  box.innerHTML = '';
+  $('matchBadge').textContent = state.matches.length + ' matches';
+
+  state.matches.forEach((m, i) => {
+    const card = document.createElement('div');
+    card.className = 'rescard';
+    card.innerHTML = `
+      <div class="thumb"><canvas data-t="${m.t}" width="148" height="108"></canvas></div>
+      <div class="info">
+        <b>${fmt(m.t)}</b>
+        ${m.label || 'match'} · conf ${(m.conf*100).toFixed(0)}%<br>
+        Duration: ${m.dur.toFixed(0)}s
+        <br><button class="viewclip" data-i="${i}">▶ View Clip</button>
+      </div>`;
+    box.appendChild(card);
+  });
+  box.onclick = e => {
+    if (e.target.classList.contains('viewclip')) playClip(+e.target.dataset.i);
+  };
+
+  // thumbnails: seek-capture (works on most browsers with local files)
+  captureThumbs();
+
+  // timeline markers
+  const marks = $('tlMarks');
+  marks.innerHTML = '';
+  state.matches.forEach((m,i) => {
+    const el = document.createElement('div');
+    el.className = 'tl-match';
+    el.style.left = (m.t/state.duration*100) + '%';
+    el.title = fmt(m.t);
+    el.onclick = ev => { ev.stopPropagation(); playClip(i); };
+    marks.appendChild(el);
+  });
+
+  // object counters (demo counts)
+  const counts = {person:0,car:0,bicycle:0,dog:0,motorcycle:0};
+  parsed.objects.forEach(o => { if (o in counts) counts[o] = state.matches.length; });
+  const cards = $('objects').children;
+  const order = ['person','car','bicycle','dog','motorcycle'];
+  order.forEach((k,i)=> cards[i].querySelector('b').textContent = counts[k]);
+
+  // summary
+  $('summary').hidden = false;
+  $('sumMatches').textContent = state.matches.length;
+  $('sumRange').textContent = parsed.timeRange
+      ? parsed.timeRange.map(m=>fmt(m*60)).join(' – ') : 'Full video';
+  $('sumVideo').textContent = state.videoName || '—';
+  $('sumDur').textContent = fmt(state.duration);
+}
+
+async function captureThumbs(){
+  const canvases = [...document.querySelectorAll('.thumb canvas')];
+  const hidden = document.createElement('video');
+  hidden.src = video.src; hidden.muted = true;
+  await new Promise(r => hidden.onloadedmetadata = r);
+  for (const c of canvases){
+    hidden.currentTime = +c.dataset.t;
+    await new Promise(r => hidden.onseeked = r);
+    c.getContext('2d').drawImage(hidden, 0, 0, c.width, c.height);
+  }
+}
+
+function playClip(i){
+  const m = state.matches[i];
+  state.activeClip = m;
+  video.currentTime = Math.max(0, m.t - 1);
+  video.play();
+}
+
+/* playhead + bounding-box overlay while inside a clip */
+video.addEventListener('timeupdate', () => {
+  if (!state.duration) return;
+  const ph = $('playhead');
+  ph.style.left = (video.currentTime/state.duration*100) + '%';
+  ph.dataset.t = fmt(video.currentTime);
+
+  overlay.innerHTML = '';
+  const m = state.matches.find(m =>
+    video.currentTime >= m.t - 0.5 && video.currentTime <= m.t + m.dur);
+  if (m){
+    const b = document.createElement('div');
+    b.className = 'bbox';
+    // small jitter so the box feels "tracked"
+    const j = Math.sin(video.currentTime*3)*1.5;
+    b.style.cssText = `left:${m.box.x+j}%;top:${m.box.y}%;width:${m.box.w}%;height:${m.box.h}%`;
+    b.innerHTML = `<label>${m.label || 'object'} #${(m.t|0)}</label>`;
+    overlay.appendChild(b);
+  }
+});
+
+$('timeline').addEventListener('click', e => {
+  if (!state.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  video.currentTime = (e.clientX - r.left) / r.width * state.duration;
+});
+</script>
+</body>
+</html>
