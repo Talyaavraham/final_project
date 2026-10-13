@@ -125,8 +125,10 @@ video{width:100%;height:100%;display:block}
 .overlay{position:absolute;inset:0;pointer-events:none}
 .bbox{
   position:absolute;border:2px solid var(--danger);border-radius:4px;
-  box-shadow:0 0 0 2px rgba(240,86,76,.25);transition:all .35s linear;
+  box-shadow:0 0 0 2px rgba(240,86,76,.25);
 }
+.bbox.alt{border-color:var(--accent-2);box-shadow:0 0 0 2px rgba(76,201,240,.25)}
+.bbox.alt label{background:var(--accent-2);color:#06121a}
 .bbox label{
   position:absolute;top:-22px;left:-2px;background:var(--danger);color:#fff;
   font-size:.65rem;padding:2px 7px;border-radius:4px;white-space:nowrap;
@@ -134,7 +136,7 @@ video{width:100%;height:100%;display:block}
 /* timeline */
 .timeline{position:relative;height:56px;background:var(--panel-2);border-radius:10px;cursor:pointer;overflow:hidden}
 .tl-marks{position:absolute;inset:0}
-.tl-match{position:absolute;top:14px;bottom:14px;width:4px;border-radius:2px;background:var(--accent)}
+.tl-match{position:absolute;top:14px;bottom:14px;min-width:4px;border-radius:2px;background:var(--accent);opacity:.85}
 .tl-match:hover{background:var(--accent-2)}
 .playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--danger)}
 .playhead::after{
@@ -184,10 +186,22 @@ video{width:100%;height:100%;display:block}
 
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
-@media (prefers-reduced-motion:reduce){.bbox{transition:none}}
 @media (max-width:1100px){
   .app{grid-template-columns:64px 300px 1fr 260px}
   .nav a span,.sysbox,.logo small{display:none}
+}
+@media (max-width:820px){
+  body{height:auto;overflow:auto}
+  .app{display:flex;flex-direction:column;height:auto}
+  .topbar{flex-wrap:wrap;padding:10px 16px}
+  .topbar .btn:not(.primary){display:none}
+  .sidebar{display:none}
+  .sidebar,.chatpane,.mainpane,.resultspane{height:auto;overflow:visible}
+  .mainpane{order:1;padding:12px 16px}
+  .chatpane{order:2;border-right:none;border-top:1px solid var(--border)}
+  .messages{max-height:340px}
+  .resultspane{order:3;border-left:none;border-top:1px solid var(--border);padding:14px 16px}
+  .parsed,.msg{max-width:100%;width:auto}
 }
 </style>
 </head>
@@ -204,7 +218,7 @@ video{width:100%;height:100%;display:block}
     <button class="btn primary" id="uploadBtn">⬆ Upload Video</button>
     <button class="btn"><span class="dot" id="liveDot"></span> Live Stream</button>
     <button class="btn">⚙</button>
-    <input type="file" id="fileInput" accept="video/*" hidden>
+    <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
   </div>
 
   <!-- ===== SIDEBAR ===== -->
@@ -219,10 +233,9 @@ video{width:100%;height:100%;display:block}
       <a href="#">⚙ <span>Settings</span></a>
     </nav>
     <div class="sysbox">
-      <div class="row"><span>System Status</span><span style="color:var(--ok)">● Online</span></div>
-      <div class="row"><span>Storage</span><span>2.4 TB / 10 TB</span></div>
-      <div class="meter"><i style="width:24%"></i></div>
-      <div class="row"><span>Processing</span><span id="procPct">0%</span></div>
+      <div class="row"><span>Backend</span><span id="backendState">checking…</span></div>
+      <div class="row"><span>Engine</span><span id="engineName">—</span></div>
+      <div class="row"><span>Indexing</span><span id="procPct">0%</span></div>
       <div class="meter"><i id="procBar" style="width:0%"></i></div>
     </div>
   </aside>
@@ -239,10 +252,10 @@ video{width:100%;height:100%;display:block}
     </div>
     <div class="chips" id="chips">
       <button class="chip">Show me all white cars</button>
-      <button class="chip">Find a bicycle near the entrance</button>
-      <button class="chip">Find people entering the building</button>
+      <button class="chip">Find a person riding a bicycle</button>
+      <button class="chip">Find people entering the frame</button>
       <button class="chip">מצא איש שרץ עם כלב</button>
-      <button class="chip">Find a person wearing a red shirt between 14:00 and 15:00</button>
+      <button class="chip">Find a person wearing a red shirt between 0:10 and 1:30</button>
     </div>
     <div class="inputrow">
       <input id="queryInput" placeholder="Ask anything about your videos… / שאלו כל דבר על הסרטון…">
@@ -253,7 +266,7 @@ video{width:100%;height:100%;display:block}
   <!-- ===== MAIN PANE ===== -->
   <section class="mainpane">
     <div class="demo-banner" id="demoBanner">
-      🧪 <b>Demo mode:</b> detections are simulated. Connect the Python backend (see <code>queryBackend()</code> in the code) to get real YOLO detections.
+      🧠 Upload a video — objects are detected <b>right in your browser</b> (TensorFlow.js COCO-SSD). Run the Python backend locally for YOLOv8 + ByteTrack.
     </div>
 
     <div class="panel">
@@ -282,14 +295,8 @@ video{width:100%;height:100%;display:block}
     </div>
 
     <div class="panel">
-      <h3>Detected Objects <small>(in current search)</small></h3>
-      <div class="objects" id="objects">
-        <div class="objcard"><div class="ico">🧍</div><b>0</b><span>Persons</span></div>
-        <div class="objcard"><div class="ico">🚗</div><b>0</b><span>Cars</span></div>
-        <div class="objcard"><div class="ico">🚲</div><b>0</b><span>Bicycles</span></div>
-        <div class="objcard"><div class="ico">🐕</div><b>0</b><span>Dogs</span></div>
-        <div class="objcard"><div class="ico">🏍</div><b>0</b><span>Motorcycles</span></div>
-      </div>
+      <h3>Detected Objects <small id="objScope">(whole video)</small></h3>
+      <div class="objects" id="objects"></div>
     </div>
   </section>
 
@@ -309,19 +316,29 @@ video{width:100%;height:100%;display:block}
 
 <script>
 /* =====================================================================
-   VIDEO SEARCH AGENT — front-end prototype
+   VIDEO SEARCH AGENT — front end
    ---------------------------------------------------------------------
    Architecture (matches the project proposal):
    1. Video Input Module        -> loadVideo()
    2. NL Query Module           -> parseQuery()
-   3. Search Engine             -> queryBackend()  (demo simulation now,
-                                   swap with real API later)
-   4. Result Visualization      -> renderResults(), timeline, bboxes
+   3. Video Analysis + Index    -> backend (YOLOv8 + ByteTrack) when it runs,
+                                   otherwise in-browser COCO-SSD + IoU tracker
+   4. Search Engine             -> trackSegments() + filterSegments()
+   5. Result Visualization      -> renderResults(), timeline, tracked bboxes
    ===================================================================== */
 
 const $ = id => document.getElementById(id);
 const video = $('video'), overlay = $('overlay');
-let state = { matches: [], duration: 0, videoName: null, activeClip: null };
+let state = {
+  matches: [], duration: 0, videoName: null, file: null,
+  engine: null,          // 'backend' | 'browser'
+  index: null,           // browser index: {rows, W, H, duration}
+  indexing: null,        // Promise while the browser index is being built
+  loadId: 0,             // bumps on every new video, cancels stale work
+};
+
+const esc = s => String(s).replace(/[&<>"']/g,
+  c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 document.getElementById('nowTime').textContent =
   new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
@@ -344,20 +361,23 @@ dz.ondrop = e => {
 };
 
 function loadVideo(file){
+  const id = ++state.loadId;
+  if (video.src) URL.revokeObjectURL(video.src);
+  Object.assign(state, { file, videoName: file.name, duration: 0, matches: [],
+                         engine: null, index: null, indexing: null });
   video.src = URL.createObjectURL(file);
-  state.videoName = file.name;
   dz.style.display = 'none';
   $('videoName').textContent = '— ' + file.name;
-  uploadToBackend(file);   // index on the server (falls back to demo if offline)
+  clearResults();
 
   video.onerror = () => {
     dz.style.display = 'flex';
     dz.innerHTML = `<div class="big">⚠️</div>
-      <div><b>The browser cannot play "${file.name}"</b><br>
+      <div><b>The browser cannot play "${esc(file.name)}"</b><br>
       הדפדפן לא מצליח לנגן את הקובץ — כנראה קידוד H.265 / AVI / DAV.<br>
       המירו ל-MP4 (H.264) עם ffmpeg:<br>
       <code style="direction:ltr;display:inline-block;margin-top:6px;background:#0e1124;padding:6px 10px;border-radius:8px">
-      ffmpeg -i "${file.name}" -c:v libx264 -preset fast output.mp4</code></div>`;
+      ffmpeg -i "${esc(file.name)}" -c:v libx264 -preset fast output.mp4</code></div>`;
     botSay('Could not decode the video. Convert it to MP4 (H.264) and try again.\nלא הצלחתי לנגן את הקובץ — צריך להמיר ל-MP4.');
   };
 
@@ -367,7 +387,8 @@ function loadVideo(file){
       `${fmt(video.duration)} · ${(file.size/1048576).toFixed(1)} MB`;
     $('tlLabels').innerHTML =
       `<span>00:00</span><span>${fmt(video.duration/2)}</span><span>${fmt(video.duration)}</span>`;
-    botSay(`Video "${file.name}" loaded (${fmt(video.duration)}). What should I look for?\nמה לחפש בסרטון?`);
+    botSay(`Video "${file.name}" loaded (${fmt(video.duration)}). I'm scanning it for objects — you can already ask what to look for.\nאני סורק את הסרטון — אפשר כבר לשאול מה לחפש.`);
+    startIndexing(file, id);
   };
 }
 
@@ -380,77 +401,159 @@ const fmt = s => {
 /* ---------- 2. NATURAL LANGUAGE QUERY MODULE ---------- */
 const VOCAB = {
   objects: {
-    person:['person','people','man','woman','someone','pedestrian','איש','אדם','אישה','אנשים','בחור','בחורה','ילד'],
-    dog:['dog','כלב','כלבה'],
+    person:['person','persons','people','man','men','woman','women','someone','somebody','pedestrian','pedestrians','guy','girl','boy','child','kid','kids',
+            'איש','אדם','אישה','אנשים','בחור','בחורה','ילד','ילדה','ילדים','גבר','נשים','מישהו','הולך רגל','הולכי רגל'],
+    dog:['dog','dogs','puppy','כלב','כלבה','כלבים'],
+    cat:['cat','cats','kitten','חתול','חתולה','חתולים'],
     car:['car','cars','vehicle','vehicles','רכב','מכונית','אוטו','רכבים','מכוניות'],
-    bicycle:['bicycle','bike','אופניים','אופנים'],
-    motorcycle:['motorcycle','scooter','אופנוע','קטנוע'],
-    bag:['bag','backpack','תיק'],
-    truck:['truck','משאית'],
+    bus:['bus','buses','אוטובוס','אוטובוסים'],
+    truck:['truck','trucks','lorry','משאית','משאיות'],
+    bicycle:['bicycle','bicycles','bike','bikes','cyclist','אופניים','אופנים','רוכב אופניים'],
+    motorcycle:['motorcycle','motorcycles','motorbike','scooter','אופנוע','קטנוע','אופנועים'],
+    bag:['bag','bags','backpack','handbag','suitcase','תיק','תיקים','מזוודה','תרמיל'],
   },
   colors: {
-    red:['red','אדום','אדומה'], white:['white','לבן','לבנה'], black:['black','שחור','שחורה'],
-    blue:['blue','כחול','כחולה'], green:['green','ירוק','ירוקה'], yellow:['yellow','צהוב','צהובה'],
+    red:['red','אדום','אדומה','אדומים'], white:['white','לבן','לבנה','לבנים'],
+    black:['black','dark','שחור','שחורה','שחורים'], gray:['gray','grey','silver','אפור','אפורה','כסוף'],
+    blue:['blue','כחול','כחולה','כחולים'], green:['green','ירוק','ירוקה','ירוקים'],
+    yellow:['yellow','צהוב','צהובה','צהובים'], orange:['orange','כתום','כתומה'],
+    purple:['purple','violet','סגול','סגולה'], pink:['pink','ורוד','ורודה'], brown:['brown','חום','חומה'],
   },
   actions: {
-    running:['running','runs','run','רץ','רצה','רצים'],
-    walking:['walking','walks','הולך','הולכת'],
-    entering:['entering','enter','נכנס','נכנסת','נכנסים'],
-    exiting:['exiting','leaving','יוצא','יוצאת'],
-    parked:['parked','parking','חונה','חונים'],
+    running:['running','runs','run','jogging','sprinting','רץ','רצה','רצים','רצות'],
+    walking:['walking','walks','walk','הולך','הולכת','הולכים','צועד'],
+    moving:['moving','driving','riding','נוסע','נוסעת','נוסעים','רוכב','רוכבת','זז'],
+    parked:['parked','parking','standing','stopped','waiting','חונה','חונים','עומד','עומדת','עומדים','מחכה'],
+    entering:['entering','enter','enters','arriving','coming','נכנס','נכנסת','נכנסים','מגיע'],
+    exiting:['exiting','exit','leaving','leaves','יוצא','יוצאת','יוצאים','עוזב'],
   },
-  locations: {
-    entrance:['entrance','door','כניסה','דלת'],
-    street:['street','רחוב'],
-    building:['building','בניין'],
-  }
 };
+// Hebrew words often carry a one-letter prefix: הכלב, וכלב, עם-כלב, שרץ…
+const HE_PREFIX = /^[הוושבלמכ]/;
+
+function tokenize(text){
+  return text.toLowerCase().split(/[^a-z֐-׿]+/).filter(Boolean);
+}
+
+function matchesWord(tokens, word){
+  const parts = tokenize(word);
+  outer: for (let i = 0; i + parts.length <= tokens.length; i++){
+    for (let j = 0; j < parts.length; j++){
+      const tok = tokens[i+j], p = parts[j];
+      const ok = tok === p || (HE_PREFIX.test(tok) && tok.slice(1) === p)
+              || (HE_PREFIX.test(tok) && /^[הוושבלמכ]/.test(tok.slice(1)) && tok.slice(2) === p);
+      if (!ok) continue outer;
+    }
+    return true;
+  }
+  return false;
+}
+
+// "1:30" -> 90 s, "1:02:03" -> 3723 s
+const toSec = str => str.split(':').reduce((a, b) => a*60 + +b, 0);
 
 function parseQuery(text){
-  const t = ' ' + text.toLowerCase() + ' ';
-  const found = { objects:[], colors:[], actions:[], locations:[], timeRange:null, raw:text };
+  const tokens = tokenize(text);
+  const found = { objects:[], colors:[], actions:[], timeRange:null, raw:text };
   for (const [group, entries] of Object.entries(VOCAB))
     for (const [key, words] of Object.entries(entries))
-      if (words.some(w => t.includes(w.toLowerCase())))
-        found[group].push(key);
-  // time range like "between 14:00 and 15:00" or "בין 14:00 ל15:00"
-  const times = [...text.matchAll(/(\d{1,2}):(\d{2})/g)].map(m => +m[1]*60 + +m[2]);
-  if (times.length >= 2) found.timeRange = [times[0], times[1]]; // in minutes-of-day or mm:ss
-  if (!found.objects.length) found.objects.push('person'); // default
+      if (words.some(w => matchesWord(tokens, w))) found[group].push(key);
+
+  // keep the objects in the order they appear in the sentence — the first
+  // one is the subject that the colour / action describe
+  const pos = k => Math.min(...VOCAB.objects[k].map(w => {
+    const i = text.toLowerCase().indexOf(w); return i < 0 ? 1e9 : i; }));
+  found.objects.sort((a, b) => pos(a) - pos(b));
+
+  // "riding a bicycle" is a person + a bicycle
+  if (found.objects.includes('bicycle') || found.objects.includes('motorcycle'))
+    if (/\b(riding|rides|cyclist)\b|רוכב/.test(text.toLowerCase()) && !found.objects.includes('person'))
+      found.objects.unshift('person');
+
+  // time range in video time: "between 0:10 and 1:30", "after 2:00", "לפני 1:00"
+  const times = [...text.matchAll(/\b(\d{1,2}(?::\d{2}){1,2})\b/g)].map(m => toSec(m[1]));
+  const lower = text.toLowerCase();
+  if (times.length >= 2) found.timeRange = [Math.min(times[0], times[1]), Math.max(times[0], times[1])];
+  else if (times.length === 1){
+    if (/after|from|since|אחרי|מ-|החל/.test(lower)) found.timeRange = [times[0], Infinity];
+    else if (/before|until|לפני|עד/.test(lower))    found.timeRange = [0, times[0]];
+    else found.timeRange = [Math.max(0, times[0]-5), times[0]+5];   // "at 1:30"
+  }
   return found;
 }
 
-/* ---------- 3. SEARCH ENGINE ----------
-   Tries the real FastAPI backend (backend/main.py) first.
-   If the server is not running, falls back to demo simulation.
+/* ---------- 3. VIDEO ANALYSIS + INDEXING ----------
+   Tries the real FastAPI backend (backend/main.py) first. If it is not
+   running, the video is analysed right here in the browser.
 ---------------------------------------------------------------------- */
 const API = 'http://localhost:8000';
 
-async function uploadToBackend(file){
+async function backendAlive(){
   try {
-    const fd = new FormData();
-    fd.append('file', file, file.name);
-    const r = await fetch(API + '/index', { method:'POST', body: fd });
-    if (!r.ok) throw 0;
-    setBanner('⏳ Backend connected — indexing video with YOLO…', 'wait');
-    pollStatus(file.name);
-  } catch {
-    setBanner('🧪 <b>Demo mode:</b> backend not running — detections are simulated. Start it with <code>uvicorn main:app --port 8000</code> in the backend folder.', 'demo');
-  }
+    const r = await fetch(API + '/', { signal: AbortSignal.timeout(1500) });
+    return r.ok;
+  } catch { return false; }
 }
 
-async function pollStatus(name){
-  try {
-    const r = await fetch(`${API}/status?video=${encodeURIComponent(name)}`);
-    const { status } = await r.json();
-    if (status === 'ready'){
-      setBanner('✅ <b>Live mode:</b> backend connected — real YOLOv8 detections.', 'ok');
-    } else if (status === 'indexing'){
-      setTimeout(() => pollStatus(name), 3000);
-    } else {
-      setBanner('⚠ Backend error while indexing: ' + status, 'demo');
+async function startIndexing(file, id){
+  if (await backendAlive()){
+    $('backendState').innerHTML = '<span style="color:var(--ok)">● online</span>';
+    try {
+      const fd = new FormData();
+      fd.append('file', file, file.name);
+      setBanner('⏳ Backend connected — uploading video…', 'wait');
+      const r = await fetch(API + '/index', { method:'POST', body: fd });
+      if (!r.ok) throw new Error('upload failed (' + r.status + ')');
+      const { video: name } = await r.json();
+      if (id !== state.loadId) return;
+      state.videoName = name;
+      state.engine = 'backend';
+      $('engineName').textContent = 'YOLOv8';
+      state.indexing = pollStatus(name, id);
+      return;
+    } catch (e) {
+      console.warn('backend failed, using in-browser detection', e);
     }
-  } catch { /* server died mid-index */ }
+  } else {
+    $('backendState').innerHTML = '<span style="color:var(--text-dim)">● offline</span>';
+  }
+  state.engine = 'browser';
+  $('engineName').textContent = 'COCO-SSD';
+  state.indexing = browserIndex(id).catch(e => {
+    if (id !== state.loadId) return;
+    setBanner('⚠ Could not run in-browser detection: ' + esc(e.message || e), 'demo');
+    throw e;
+  });
+}
+
+function pollStatus(name, id){
+  return new Promise((resolve, reject) => {
+    const tick = async () => {
+      if (id !== state.loadId) return reject(new Error('cancelled'));
+      try {
+        const r = await fetch(`${API}/status?video=${encodeURIComponent(name)}`);
+        const { status, progress } = await r.json();
+        setProgress(progress || 0);
+        if (status === 'ready'){
+          setBanner('✅ <b>Live mode:</b> indexed with YOLOv8 + ByteTrack on the backend.', 'ok');
+          loadOverview();
+          resolve();
+        } else if (status === 'indexing'){
+          setBanner(`⏳ Backend is indexing the video with YOLOv8… ${Math.round((progress||0)*100)}%`, 'wait');
+          setTimeout(tick, 1500);
+        } else {
+          setBanner('⚠ Backend error while indexing: ' + esc(status), 'demo');
+          reject(new Error(status));
+        }
+      } catch (e) { reject(e); }
+    };
+    tick();
+  });
+}
+
+function setProgress(p){
+  $('procBar').style.width = (p*100).toFixed(0) + '%';
+  $('procPct').textContent = Math.round(p*100) + '%';
 }
 
 function setBanner(html, kind){
@@ -464,53 +567,257 @@ function setBanner(html, kind){
                 : 'var(--accent-2)';
 }
 
-async function queryBackend(parsed){
-  // 1) try the real backend
-  try {
-    const res = await fetch(API + '/search', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: parsed, video: state.videoName })
-    });
-    if (res.ok){
-      const data = await res.json();
-      if (Array.isArray(data)) return data;
-    }
-  } catch { /* backend offline -> demo */ }
+/* ----- in-browser detector: TensorFlow.js COCO-SSD ----- */
+const COCO_MAP = { person:'person', bicycle:'bicycle', car:'car', motorcycle:'motorcycle',
+  bus:'bus', truck:'truck', cat:'cat', dog:'dog',
+  backpack:'bag', handbag:'bag', suitcase:'bag' };
+const SAMPLE_FPS = 3, MAX_SAMPLES = 900, MIN_SCORE = 0.4;
+let detectorPromise = null;
 
-  // 2) fallback: demo simulation
-  return simulateMatches(parsed);
-}
-
-async function simulateMatches(parsed){
-  await progressAnim();                       // fake processing bar
-  const n = 3 + Math.floor(Math.random()*4);  // 3–6 matches
-  const D = state.duration;
-  const matches = [];
-  for (let i = 0; i < n; i++){
-    const t = D * (0.08 + 0.84 * (i + Math.random()*0.7) / n);
-    matches.push({
-      t,
-      dur: 4 + Math.random()*6,
-      conf: 0.62 + Math.random()*0.36,
-      label: [parsed.colors[0], parsed.objects[0]].filter(Boolean).join(' '),
-      box: { x: 10+Math.random()*60, y: 15+Math.random()*45,
-             w: 8+Math.random()*14,  h: 20+Math.random()*25 } // % of frame
-    });
-  }
-  return matches.sort((a,b)=>a.t-b.t);
-}
-
-function progressAnim(){
-  return new Promise(res => {
-    let p = 0;
-    const iv = setInterval(() => {
-      p = Math.min(100, p + 8 + Math.random()*14);
-      $('procBar').style.width = p + '%';
-      $('procPct').textContent = Math.round(p) + '%';
-      if (p >= 100){ clearInterval(iv); setTimeout(res, 250); }
-    }, 120);
+function loadScript(src){
+  return new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = src; s.onload = res; s.onerror = () => rej(new Error('failed to load ' + src));
+    document.head.appendChild(s);
   });
+}
+
+function getDetector(){
+  detectorPromise ??= (async () => {
+    setBanner('⏳ Loading the object-detection model (first time only, ~25 MB)…', 'wait');
+    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
+    return cocoSsd.load({ base: 'mobilenet_v2' });
+  })();
+  detectorPromise.catch(() => { detectorPromise = null; });
+  return detectorPromise;
+}
+
+const seek = (v, t) => new Promise(res => {
+  if (Math.abs(v.currentTime - t) < 1e-3 && v.readyState >= 2) return res();
+  v.onseeked = () => res(); v.currentTime = t;
+});
+
+async function browserIndex(id){
+  const model = await getDetector();
+  if (id !== state.loadId) return;
+
+  const v = document.createElement('video');
+  v.src = video.src; v.muted = true; v.playsInline = true; v.preload = 'auto';
+  await new Promise((res, rej) => { v.onloadeddata = res; v.onerror = () => rej(new Error('cannot decode video')); });
+
+  const D = v.duration;
+  const scale = Math.min(1, 640 / v.videoWidth);
+  const W = Math.round(v.videoWidth * scale), H = Math.round(v.videoHeight * scale);
+  const canvas = document.createElement('canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+  const step = Math.max(1 / SAMPLE_FPS, D / MAX_SAMPLES);
+  const tracker = new IouTracker();
+  const rows = [];
+  const t0 = performance.now();
+
+  for (let t = 0; t < D; t += step){
+    if (id !== state.loadId) return;              // a new video was loaded
+    await seek(v, t);
+    ctx.drawImage(v, 0, 0, W, H);
+    const preds = await model.detect(canvas, 30, MIN_SCORE);
+    const dets = preds.filter(p => COCO_MAP[p.class]).map(p => {
+      const [x, y, w, h] = p.bbox;
+      return { cls: COCO_MAP[p.class], conf: p.score, x, y, w, h };
+    });
+    for (const d of tracker.update(t, dets)){
+      // a person's colour = shirt = upper body (15%–55% of the box)
+      const cy = d.cls === 'person' ? d.y + d.h*.15 : d.y;
+      const ch = d.cls === 'person' ? d.h*.4 : d.h;
+      rows.push([t, d.id, d.cls, d.conf, 100*d.x/W, 100*d.y/H, 100*d.w/W, 100*d.h/H,
+                 dominantColor(ctx, d.x, cy, d.w, ch)]);
+    }
+    const p = Math.min(1, (t + step) / D);
+    setProgress(p);
+    const eta = (performance.now() - t0) / 1000 / p * (1 - p);
+    setBanner(`🧠 Detecting objects in your browser (COCO-SSD)… ${Math.round(p*100)}%` +
+              (p > .03 ? ` · ~${Math.ceil(eta)}s left` : ''), 'wait');
+  }
+  state.index = { rows, W, H, duration: D };
+  setProgress(1);
+  setBanner(`✅ <b>Ready:</b> ${new Set(rows.map(r => r[1])).size} objects tracked in your browser (COCO-SSD). ` +
+            `For higher accuracy run the YOLOv8 backend locally.`, 'ok');
+  loadOverview();
+}
+
+/* Greedy IoU tracker — gives each object a stable id across frames */
+class IouTracker {
+  constructor(){ this.tracks = []; this.next = 1; }
+  update(t, dets){
+    dets.sort((a, b) => b.conf - a.conf);
+    const used = new Set();
+    for (const d of dets){
+      let best = null, bestScore = 0;
+      for (const tr of this.tracks){
+        if (used.has(tr) || tr.cls !== d.cls || t - tr.t > MAX_GAP) continue;
+        let score = iou(tr, d);
+        if (score < 0.1){
+          // fast movers may not overlap: accept a close centre instead
+          const dist = Math.hypot(tr.x + tr.w/2 - d.x - d.w/2, tr.y + tr.h/2 - d.y - d.h/2);
+          const size = (tr.h + d.h) / 2;
+          score = dist < size * (t - tr.t) * 2.5 ? 0.05 * (1 - dist / (size * 3)) : 0;
+        }
+        if (score > bestScore){ best = tr; bestScore = score; }
+      }
+      if (best){ Object.assign(best, { x:d.x, y:d.y, w:d.w, h:d.h, t }); d.id = best.id; used.add(best); }
+      else { const tr = { ...d, t, id: this.next++ }; this.tracks.push(tr); used.add(tr); d.id = tr.id; }
+    }
+    this.tracks = this.tracks.filter(tr => t - tr.t <= MAX_GAP);
+    return dets;
+  }
+}
+function iou(a, b){
+  const ix = Math.max(0, Math.min(a.x+a.w, b.x+b.w) - Math.max(a.x, b.x));
+  const iy = Math.max(0, Math.min(a.y+a.h, b.y+b.h) - Math.max(a.y, b.y));
+  const inter = ix * iy;
+  return inter / (a.w*a.h + b.w*b.h - inter || 1);
+}
+
+/* Dominant colour: every pixel votes for a colour name (same rules as the backend) */
+const HUE_NAMES = [[7,'red'],[20,'orange'],[34,'yellow'],[85,'green'],[130,'blue'],[150,'purple'],[166,'pink'],[180,'red']];
+function dominantColor(ctx, x, y, w, h){
+  // central part of the box only — the edges are mostly background
+  x += w*.2; w *= .6; y += h*.15; h *= .7;
+  x = Math.max(0, Math.round(x)); y = Math.max(0, Math.round(y));
+  w = Math.min(ctx.canvas.width - x, Math.round(w)); h = Math.min(ctx.canvas.height - y, Math.round(h));
+  if (w < 2 || h < 2) return '';
+  const data = ctx.getImageData(x, y, w, h).data;
+  const stepPx = Math.max(1, Math.floor(Math.sqrt(w*h / 2500)));   // ~2500 samples max
+  const votes = {};
+  for (let yy = 0; yy < h; yy += stepPx) for (let xx = 0; xx < w; xx += stepPx){
+    const i = (yy*w + xx) * 4;
+    const name = colorName(data[i], data[i+1], data[i+2]);
+    votes[name] = (votes[name] || 0) + 1;
+  }
+  return Object.entries(votes).sort((a, b) => b[1] - a[1])[0][0];
+}
+function colorName(r, g, b){
+  // HSV on OpenCV's scale: H 0–180, S/V 0–255
+  const max = Math.max(r, g, b), min = Math.min(r, g, b), d = max - min;
+  const v = max, s = max ? d / max * 255 : 0;
+  if (v < 50) return 'black';
+  if (s < 50){ return v >= 170 && s < 40 ? 'white' : 'gray'; }
+  let hue = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  hue = (hue * 30 + 180) % 180;
+  const name = HUE_NAMES.find(([hi]) => hue <= hi)[1];
+  return name === 'orange' && v < 150 ? 'brown' : name;
+}
+
+/* ---------- 4. SEARCH ENGINE ----------
+   Same logic as backend/main.py: detections -> per-track segments
+   (speed, colour, entering/exiting) -> filters.
+---------------------------------------------------------------------- */
+// speeds are in "body heights per second", independent of camera distance
+const RUN_SPEED = 1.2, MOVE_SPEED = 0.15, MAX_GAP = 3.0, EDGE = 2.0;
+
+function trackSegments(rows, duration, W, H){
+  const tracks = new Map();
+  for (const [t, tid, cls, conf, x, y, w, h, color] of rows){
+    const k = tid + '|' + cls;
+    if (!tracks.has(k)) tracks.set(k, []);
+    tracks.get(k).push({ t, tid, cls, conf, x, y, w, h, color });
+  }
+  const segs = [];
+  for (const dets of tracks.values()){
+    dets.sort((a, b) => a.t - b.t);
+    let cur = [dets[0]];
+    for (const d of dets.slice(1)){
+      if (d.t - cur[cur.length-1].t > MAX_GAP){ pushSeg(segs, cur, duration, W, H); cur = []; }
+      cur.push(d);
+    }
+    pushSeg(segs, cur, duration, W, H);
+  }
+  return segs;
+}
+
+function pushSeg(segs, dets, duration, W, H){
+  if (dets.length === 1 && dets[0].conf < 0.5) return;   // lone weak box = noise
+  const t0 = dets[0].t, t1 = dets[dets.length-1].t;
+  const steps = [];
+  for (let i = 1; i < dets.length; i++){
+    const a = dets[i-1], b = dets[i], dt = b.t - a.t;
+    if (dt <= 0) continue;
+    const dx = (b.x + b.w/2 - a.x - a.w/2) * W / 100, dy = (b.y + b.h/2 - a.y - a.h/2) * H / 100;
+    steps.push(Math.hypot(dx, dy) / Math.max(1e-6, (a.h + b.h) / 2 * H / 100) / dt);
+  }
+  steps.sort((a, b) => a - b);
+  const speed = steps.length ? (steps.length % 2 ? steps[steps.length>>1]
+                : (steps[steps.length/2 - 1] + steps[steps.length/2]) / 2) : 0;
+  const edge = d => d.x < EDGE || d.y < EDGE || d.x + d.w > 100-EDGE || d.y + d.h > 100-EDGE;
+  const votes = {};
+  dets.forEach(d => { if (d.color) votes[d.color] = (votes[d.color] || 0) + 1; });
+  const color = Object.entries(votes).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+  const best = dets.reduce((a, b) => b.conf > a.conf ? b : a);
+  segs.push({
+    t: t0, dur: Math.max(1, t1 - t0),
+    conf: dets.reduce((s, d) => s + d.conf, 0) / dets.length,
+    cls: dets[0].cls, color, speed,
+    entering: edge(dets[0]) && t0 > 1 && dets.length > 1,
+    exiting: edge(dets[dets.length-1]) && dets.length > 1 && t1 < duration - 1,
+    box: { x: best.x, y: best.y, w: best.w, h: best.h },
+    path: dets.map(d => [d.t, d.x, d.y, d.w, d.h]),
+    track: dets[0].tid,
+  });
+}
+
+function actionOk(s, actions){
+  const checks = {
+    running: s.speed >= RUN_SPEED, walking: s.speed >= MOVE_SPEED && s.speed < RUN_SPEED,
+    moving: s.speed >= MOVE_SPEED, parked: s.speed < MOVE_SPEED,
+    entering: s.entering, exiting: s.exiting,
+  };
+  return actions.every(a => checks[a] ?? true);
+}
+
+function filterSegments(segs, { objects, colors, actions, timeRange }){
+  if (objects.length) segs = segs.filter(s => objects.includes(s.cls));
+  // colour / action describe the first object: "a man in red with a dog"
+  const main = objects[0];
+  segs = segs.filter(s => (main && s.cls !== main) ||
+    ((!colors.length || colors.includes(s.color)) && actionOk(s, actions)));
+  if (timeRange){
+    const [lo, hi] = timeRange;
+    segs = segs.filter(s => s.t <= hi && s.t + s.dur >= lo);
+  }
+  if (objects.length > 1){
+    const overlaps = (a, b) => a.t <= b.t + b.dur && b.t <= a.t + a.dur;
+    segs = segs.filter(s => objects.every(c => c === s.cls ||
+      segs.some(o => o.cls === c && overlaps(s, o))));
+  }
+  return segs.sort((a, b) => a.t - b.t).slice(0, 100)
+             .map(s => ({ ...s, label: [s.color, s.cls].filter(Boolean).join(' ') }));
+}
+
+async function queryBackend(parsed){
+  const query = { ...parsed,
+    timeRange: parsed.timeRange && [parsed.timeRange[0], Math.min(parsed.timeRange[1], 1e9)] };
+  if (state.engine === 'backend'){
+    try {
+      const res = await fetch(API + '/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, video: state.videoName })
+      });
+      if (res.ok){
+        const data = await res.json();
+        if (Array.isArray(data)) return data;
+      }
+    } catch { /* backend went away -> analyse in the browser instead */ }
+    botSay('The backend stopped responding — switching to in-browser detection.');
+    state.engine = 'browser';
+    $('engineName').textContent = 'COCO-SSD';
+    state.indexing = browserIndex(state.loadId);
+    await state.indexing;
+  }
+  const { rows, W, H, duration } = state.index;
+  return filterSegments(trackSegments(rows, duration, W, H), query);
 }
 
 /* ---------- CHAT ---------- */
@@ -526,24 +833,27 @@ function addMsg(cls, text){
 }
 const botSay = t => addMsg('bot', t);
 
+const rangeText = r => !r ? 'Full video'
+  : r[1] === Infinity ? 'after ' + fmt(r[0]) : r.map(fmt).join(' – ');
+
 function addParsedCard(p){
   const rows = [
-    ['Object',   p.objects.join(', ') || '—'],
+    ['Object',   p.objects.join(', ') || 'any'],
     ['Attribute',p.colors.join(', ')  || '—'],
     ['Action',   p.actions.join(', ') || '—'],
-    ['Location', p.locations.join(', ') || '—'],
-    ['Time Range', p.timeRange ? p.timeRange.map(m=>fmt(m*60)).join(' – ') : 'Full video'],
+    ['Time Range', rangeText(p.timeRange)],
   ];
   const d = document.createElement('div');
   d.className = 'parsed';
   d.innerHTML = '<h4>✅ Parsed Query</h4>' +
-    rows.map(r=>`<div class="prow"><span>${r[0]}</span><span>${r[1]}</span></div>`).join('');
+    rows.map(r=>`<div class="prow"><span>${r[0]}</span><span>${esc(r[1])}</span></div>`).join('');
   $('messages').appendChild(d);
   $('messages').scrollTop = 1e9;
 }
 
+let searching = false;
 async function runSearch(text){
-  if (!text.trim()) return;
+  if (!text.trim() || searching) return;
   addMsg('user', text);
   if (!state.duration){
     botSay('Please upload a video first 🙂\nקודם צריך להעלות סרטון');
@@ -551,10 +861,28 @@ async function runSearch(text){
   }
   const parsed = parseQuery(text);
   addParsedCard(parsed);
-  botSay('Searching the video…');
-  state.matches = await queryBackend(parsed);
-  botSay(`I found ${state.matches.length} matches for your query. Here are the results.`);
-  renderResults(parsed);
+  if (!parsed.objects.length && !parsed.colors.length && !parsed.actions.length){
+    botSay("I didn't recognise an object in your question, so I'll show everything I detected.\n" +
+           'I can find: people, cars, buses, trucks, bicycles, motorcycles, dogs, cats and bags.');
+  }
+  searching = true;
+  try {
+    const id = state.loadId;
+    if (!state.indexing) botSay('Still preparing the video…');
+    while (!state.indexing && id === state.loadId) await new Promise(r => setTimeout(r, 200));
+    if (state.engine === 'browser' && !state.index) botSay('Still scanning the video — I will answer as soon as it is done…');
+    await state.indexing;
+    if (id !== state.loadId) return;
+    state.matches = await queryBackend(parsed);
+    botSay(state.matches.length
+      ? `I found ${state.matches.length} match${state.matches.length > 1 ? 'es' : ''}. Click a result to jump to it.`
+      : 'No matches found. Try a broader query (e.g. without a colour or action).\nלא נמצאו תוצאות — נסו שאילתה כללית יותר.');
+    renderResults(parsed);
+  } catch (e) {
+    botSay('Search failed: ' + (e.message || e));
+  } finally {
+    searching = false;
+  }
 }
 
 $('sendBtn').onclick = () => { runSearch($('queryInput').value); $('queryInput').value=''; };
@@ -565,105 +893,182 @@ $('chips').addEventListener('click', e => {
   if (e.target.classList.contains('chip')) runSearch(e.target.textContent);
 });
 
-/* ---------- 4. RESULT VISUALIZATION ---------- */
+/* ---------- 5. RESULT VISUALIZATION ---------- */
+const ICONS = { person:['🧍','Persons'], car:['🚗','Cars'], bus:['🚌','Buses'], truck:['🚚','Trucks'],
+  bicycle:['🚲','Bicycles'], motorcycle:['🏍','Motorcycles'], dog:['🐕','Dogs'], cat:['🐈','Cats'], bag:['🎒','Bags'] };
+
+function renderObjectCounts(segs, scope){
+  const counts = {};
+  segs.forEach(s => counts[s.cls] = (counts[s.cls] || 0) + 1);
+  const keys = Object.keys(ICONS).filter(k => counts[k]);
+  $('objScope').textContent = scope;
+  $('objects').innerHTML = keys.length
+    ? keys.map(k => `<div class="objcard"><div class="ico">${ICONS[k][0]}</div><b>${counts[k]}</b><span>${ICONS[k][1]}</span></div>`).join('')
+    : '<div class="empty" style="padding:6px">No objects detected yet.</div>';
+}
+
+// whole-video object counts once the index is ready
+async function loadOverview(){
+  const all = await queryBackend({ objects: [], colors: [], actions: [], timeRange: null }).catch(() => []);
+  if (!state.matches.length) renderObjectCounts(all, '(whole video)');
+  renderTimeline(all, 'overview');
+}
+
+function clearResults(){
+  $('results').innerHTML = '<div class="empty">No search yet.<br>Ask the agent to find something in the video.</div>';
+  $('matchBadge').textContent = '0 matches';
+  $('summary').hidden = true;
+  $('tlMarks').innerHTML = '';
+  $('objects').innerHTML = '<div class="empty" style="padding:6px">Scanning…</div>';
+  overlay.innerHTML = '';
+  setProgress(0);
+}
+
+function renderTimeline(list, mode){
+  const marks = $('tlMarks');
+  marks.innerHTML = '';
+  list.forEach((m, i) => {
+    const el = document.createElement('div');
+    el.className = 'tl-match';
+    el.style.left = (m.t / state.duration * 100) + '%';
+    el.style.width = (m.dur / state.duration * 100) + '%';
+    if (mode === 'overview') el.style.opacity = '.25';
+    el.title = `${fmt(m.t)} · ${m.label || m.cls}`;
+    el.onclick = ev => { ev.stopPropagation(); mode === 'overview' ? seekTo(m.t) : playClip(i); };
+    marks.appendChild(el);
+  });
+}
+
 function renderResults(parsed){
   const box = $('results');
   box.innerHTML = '';
   $('matchBadge').textContent = state.matches.length + ' matches';
+  if (!state.matches.length)
+    box.innerHTML = '<div class="empty">No matches for this query.</div>';
 
   state.matches.forEach((m, i) => {
     const card = document.createElement('div');
     card.className = 'rescard';
     card.innerHTML = `
-      <div class="thumb"><canvas data-t="${m.t}" width="148" height="108"></canvas></div>
+      <div class="thumb"><canvas data-i="${i}" width="148" height="108"></canvas></div>
       <div class="info">
         <b>${fmt(m.t)}</b>
-        ${m.label || 'match'} · conf ${(m.conf*100).toFixed(0)}%<br>
+        ${esc(m.label || 'match')} · conf ${(m.conf*100).toFixed(0)}%<br>
         Duration: ${m.dur.toFixed(0)}s
         <br><button class="viewclip" data-i="${i}">▶ View Clip</button>
       </div>`;
     box.appendChild(card);
   });
   box.onclick = e => {
-    if (e.target.classList.contains('viewclip')) playClip(+e.target.dataset.i);
+    const i = e.target.closest('[data-i]')?.dataset.i;
+    if (i !== undefined) playClip(+i);
   };
 
-  // thumbnails: seek-capture (works on most browsers with local files)
   captureThumbs();
+  renderTimeline(state.matches, 'matches');
+  renderObjectCounts(state.matches, '(in current search)');
 
-  // timeline markers
-  const marks = $('tlMarks');
-  marks.innerHTML = '';
-  state.matches.forEach((m,i) => {
-    const el = document.createElement('div');
-    el.className = 'tl-match';
-    el.style.left = (m.t/state.duration*100) + '%';
-    el.title = fmt(m.t);
-    el.onclick = ev => { ev.stopPropagation(); playClip(i); };
-    marks.appendChild(el);
-  });
-
-  // object counters (demo counts)
-  const counts = {person:0,car:0,bicycle:0,dog:0,motorcycle:0};
-  parsed.objects.forEach(o => { if (o in counts) counts[o] = state.matches.length; });
-  const cards = $('objects').children;
-  const order = ['person','car','bicycle','dog','motorcycle'];
-  order.forEach((k,i)=> cards[i].querySelector('b').textContent = counts[k]);
-
-  // summary
   $('summary').hidden = false;
   $('sumMatches').textContent = state.matches.length;
-  $('sumRange').textContent = parsed.timeRange
-      ? parsed.timeRange.map(m=>fmt(m*60)).join(' – ') : 'Full video';
+  $('sumRange').textContent = rangeText(parsed.timeRange);
   $('sumVideo').textContent = state.videoName || '—';
   $('sumDur').textContent = fmt(state.duration);
 }
 
+// thumbnails: the match frame with its box drawn on top
+let thumbJob = 0;
 async function captureThumbs(){
+  const job = ++thumbJob;
   const canvases = [...document.querySelectorAll('.thumb canvas')];
+  if (!canvases.length) return;
   const hidden = document.createElement('video');
   hidden.src = video.src; hidden.muted = true;
-  await new Promise(r => hidden.onloadedmetadata = r);
+  await new Promise(r => hidden.onloadeddata = r);
   for (const c of canvases){
-    hidden.currentTime = +c.dataset.t;
-    await new Promise(r => hidden.onseeked = r);
-    c.getContext('2d').drawImage(hidden, 0, 0, c.width, c.height);
+    if (job !== thumbJob) return;
+    const m = state.matches[+c.dataset.i];
+    const b = boxAt(m, m.t) || m.box;
+    await seek(hidden, m.t);
+    const ctx = c.getContext('2d');
+    // zoom on the object, keeping some context around it
+    const vw = hidden.videoWidth, vh = hidden.videoHeight;
+    const cx = (b.x + b.w/2) / 100 * vw, cy = (b.y + b.h/2) / 100 * vh;
+    const sw = Math.min(vw, Math.max(b.w / 100 * vw * 2.2, b.h / 100 * vh * 2.2 * c.width / c.height, vw / 4));
+    const sh = sw * c.height / c.width;
+    const sx = Math.max(0, Math.min(vw - sw, cx - sw/2)), sy = Math.max(0, Math.min(vh - sh, cy - sh/2));
+    ctx.drawImage(hidden, sx, sy, sw, sh, 0, 0, c.width, c.height);
+    const k = c.width / sw;
+    ctx.strokeStyle = '#f0564c'; ctx.lineWidth = 3;
+    ctx.strokeRect((b.x/100*vw - sx)*k, (b.y/100*vh - sy)*k, b.w/100*vw*k, b.h/100*vh*k);
   }
 }
+
+function seekTo(t){ video.currentTime = Math.max(0, t); drawOverlay(); }
 
 function playClip(i){
   const m = state.matches[i];
-  state.activeClip = m;
   video.currentTime = Math.max(0, m.t - 1);
   video.play();
+  document.querySelectorAll('.rescard').forEach((c, j) => c.style.borderColor = j === i ? 'var(--accent)' : '');
 }
 
-/* playhead + bounding-box overlay while inside a clip */
-video.addEventListener('timeupdate', () => {
+// bbox at time t, interpolated along the tracked path
+function boxAt(m, t){
+  const p = m.path;
+  if (!p || !p.length){
+    return t >= m.t - 0.5 && t <= m.t + m.dur ? m.box : null;
+  }
+  if (t < p[0][0] - 0.4 || t > p[p.length-1][0] + 0.4) return null;
+  let i = p.findIndex(q => q[0] > t);
+  if (i === -1) i = p.length;
+  if (i === 0) return toBox(p[0]);
+  if (i === p.length) return toBox(p[p.length-1]);
+  const a = p[i-1], b = p[i];
+  if (b[0] - a[0] > MAX_GAP) return null;
+  const k = (t - a[0]) / (b[0] - a[0]);
+  return toBox(a.map((v, j) => v + (b[j] - v) * k));
+}
+const toBox = q => ({ x: q[1], y: q[2], w: q[3], h: q[4] });
+
+/* playhead + tracked bounding boxes of every match on screen */
+function drawOverlay(){
   if (!state.duration) return;
+  const ct = video.currentTime;
   const ph = $('playhead');
-  ph.style.left = (video.currentTime/state.duration*100) + '%';
-  ph.dataset.t = fmt(video.currentTime);
+  ph.style.left = (ct / state.duration * 100) + '%';
+  ph.dataset.t = fmt(ct);
 
   overlay.innerHTML = '';
-  const m = state.matches.find(m =>
-    video.currentTime >= m.t - 0.5 && video.currentTime <= m.t + m.dur);
-  if (m){
-    const b = document.createElement('div');
-    b.className = 'bbox';
-    // small jitter so the box feels "tracked"
-    const j = Math.sin(video.currentTime*3)*1.5;
-    b.style.cssText = `left:${m.box.x+j}%;top:${m.box.y}%;width:${m.box.w}%;height:${m.box.h}%`;
-    b.innerHTML = `<label>${m.label || 'object'} #${(m.t|0)}</label>`;
-    overlay.appendChild(b);
-  }
-});
+  // the video is letter-boxed inside the 16:9 frame — map % to the picture
+  const fw = overlay.clientWidth, fh = overlay.clientHeight;
+  const ar = (video.videoWidth / video.videoHeight) || 16/9;
+  const pw = Math.min(fw, fh * ar), phh = Math.min(fh, fw / ar);
+  const ox = (fw - pw) / 2, oy = (fh - phh) / 2;
+  state.matches.forEach((m, i) => {
+    const b = boxAt(m, ct);
+    if (!b) return;
+    const el = document.createElement('div');
+    el.className = 'bbox' + (m.cls !== state.matches[0].cls ? ' alt' : '');
+    el.style.cssText = `left:${ox + b.x/100*pw}px;top:${oy + b.y/100*phh}px;` +
+                       `width:${b.w/100*pw}px;height:${b.h/100*phh}px`;
+    el.innerHTML = `<label>${esc(m.label || m.cls || 'object')} #${m.track ?? i+1}</label>`;
+    overlay.appendChild(el);
+  });
+}
+video.addEventListener('timeupdate', drawOverlay);
+video.addEventListener('seeked', drawOverlay);
+window.addEventListener('resize', drawOverlay);
+(function loop(){ if (!video.paused) drawOverlay(); requestAnimationFrame(loop); })();
 
 $('timeline').addEventListener('click', e => {
   if (!state.duration) return;
   const r = e.currentTarget.getBoundingClientRect();
-  video.currentTime = (e.clientX - r.left) / r.width * state.duration;
+  seekTo((e.clientX - r.left) / r.width * state.duration);
 });
+
+backendAlive().then(ok => $('backendState').innerHTML = ok
+  ? '<span style="color:var(--ok)">● online</span>'
+  : '<span style="color:var(--text-dim)">● offline</span>');
 </script>
 </body>
 </html>
