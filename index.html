@@ -571,7 +571,7 @@ function setBanner(html, kind){
 const COCO_MAP = { person:'person', bicycle:'bicycle', car:'car', motorcycle:'motorcycle',
   bus:'bus', truck:'truck', cat:'cat', dog:'dog',
   backpack:'bag', handbag:'bag', suitcase:'bag' };
-const SAMPLE_FPS = 3, MAX_SAMPLES = 900, MIN_SCORE = 0.4;
+const SAMPLE_FPS = 3, MAX_SAMPLES = 900, MIN_SCORE = 0.3;
 let detectorPromise = null;
 
 function loadScript(src){
@@ -586,6 +586,16 @@ function getDetector(){
   detectorPromise ??= (async () => {
     setBanner('⏳ Loading the object-detection model (first time only, ~25 MB)…', 'wait');
     await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
+    // GPU (WebGL) is fastest; without it, WebAssembly is ~5-10x faster than plain JS
+    if (!(await tf.setBackend('webgl').catch(() => false))){
+      try {
+        const WASM = 'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@4.22.0/dist/';
+        await loadScript(WASM + 'tf-backend-wasm.min.js');
+        tf.wasm.setWasmPaths(WASM);
+        await tf.setBackend('wasm');
+      } catch { await tf.setBackend('cpu'); }
+    }
+    await tf.ready();
     await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js');
     return cocoSsd.load({ base: 'mobilenet_v2' });
   })();
@@ -613,7 +623,9 @@ async function browserIndex(id){
   canvas.width = W; canvas.height = H;
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-  const step = Math.max(1 / SAMPLE_FPS, D / MAX_SAMPLES);
+  // without a GPU, sample fewer frames so long videos stay usable
+  const fps = tf.getBackend() === 'webgl' ? SAMPLE_FPS : SAMPLE_FPS / 2;
+  const step = Math.max(1 / fps, D / MAX_SAMPLES);
   const tracker = new IouTracker();
   const rows = [];
   const t0 = performance.now();
@@ -642,7 +654,7 @@ async function browserIndex(id){
   }
   state.index = { rows, W, H, duration: D };
   setProgress(1);
-  setBanner(`✅ <b>Ready:</b> ${new Set(rows.map(r => r[1])).size} objects tracked in your browser (COCO-SSD). ` +
+  setBanner(`✅ <b>Ready:</b> ${new Set(rows.map(r => r[2] + r[1])).size} objects tracked in your browser (COCO-SSD, ${tf.getBackend()}). ` +
             `For higher accuracy run the YOLOv8 backend locally.`, 'ok');
   loadOverview();
 }
