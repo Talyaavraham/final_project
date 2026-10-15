@@ -532,7 +532,7 @@ function addParsedCard(p){
     ['Attribute',p.colors.join(', ')  || '—'],
     ['Action',   p.actions.join(', ') || '—'],
     ['Location', p.locations.join(', ') || '—'],
-    ['Time Range', p.timeRange ? p.timeRange.map(m=>fmt(m*60)).join(' – ') : 'Full video'],
+    ['Time Range', p.timeRange ? p.timeRange.map(m=>fmt(m)).join(' – ') : 'Full video'],
   ];
   const d = document.createElement('div');
   d.className = 'parsed';
@@ -614,7 +614,7 @@ function renderResults(parsed){
   $('summary').hidden = false;
   $('sumMatches').textContent = state.matches.length;
   $('sumRange').textContent = parsed.timeRange
-      ? parsed.timeRange.map(m=>fmt(m*60)).join(' – ') : 'Full video';
+      ? parsed.timeRange.map(m=>fmt(m)).join(' – ') : 'Full video';
   $('sumVideo').textContent = state.videoName || '—';
   $('sumDur').textContent = fmt(state.duration);
 }

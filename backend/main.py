@@ -18,7 +18,6 @@ Then open video-search-agent.html — it will connect automatically.
 import os
 import sqlite3
 import threading
-import colorsys
 from collections import defaultdict
 
 import cv2
@@ -50,6 +49,8 @@ COCO_MAP = {
     0: "person", 1: "bicycle", 2: "car", 3: "motorcycle",
     5: "bus", 7: "truck", 16: "dog", 24: "bag",  # 24 = backpack
 }
+MIN_CONF = 0.35     # drop weak detections (fewer false matches)
+MIN_BOX_PX = 40     # ignore boxes smaller than this (too far away to judge)
 
 INDEX_STATUS = {}  # video_name -> "indexing" / "ready" / "error: ..."
 
@@ -74,26 +75,39 @@ def db():
 # Attribute extraction: dominant color name of a crop
 # ----------------------------------------------------------------------
 COLOR_NAMES = {
-    "red":    [(0, 10), (170, 180)],   # hue ranges (OpenCV H is 0-180)
-    "yellow": [(20, 35)],
-    "green":  [(36, 85)],
+    "red":    [(0, 8), (170, 180)],    # hue ranges (OpenCV H is 0-180)
+    "orange": [(9, 19)],
+    "yellow": [(20, 34)],
+    "green":  [(35, 85)],
     "blue":   [(86, 130)],
+    "purple": [(131, 169)],
 }
 
 
 def dominant_color(crop_bgr) -> str:
-    if crop_bgr.size == 0:
+    """Name the dominant color of a crop, ignoring background-like pixels.
+
+    Only saturated, reasonably bright pixels vote for a hue, so grey walls or
+    dark shadows inside the bounding box do not decide the color.
+    Achromatic colors (black / white / gray) are decided from brightness and
+    saturation of the whole crop.
+    """
+    if crop_bgr is None or crop_bgr.size == 0:
         return "unknown"
     hsv = cv2.cvtColor(crop_bgr, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
-    mean_s, mean_v = s.mean(), v.mean()
-    if mean_v < 50:
-        return "black"
-    if mean_s < 40 and mean_v > 160:
-        return "white"
-    if mean_s < 40:
+    mean_v = float(v.mean())
+
+    chromatic = (s > 70) & (v > 60)
+    if chromatic.mean() < 0.15:          # mostly unsaturated -> achromatic
+        if mean_v < 60:
+            return "black"
+        if mean_v > 170:
+            return "white"
         return "gray"
-    hist = cv2.calcHist([h], [0], None, [180], [0, 180]).flatten()
+
+    hues = h[chromatic]
+    hist = np.bincount(hues, minlength=180)
     hue = int(hist.argmax())
     for name, ranges in COLOR_NAMES.items():
         for lo, hi in ranges:
@@ -121,19 +135,30 @@ def index_video(path: str, name: str, sample_fps: float = 2.0):
             if frame_i % step == 0:
                 t = frame_i / fps
                 H, W = frame.shape[:2]
-                # persist=True keeps track IDs consistent between calls
-                results = model.track(frame, persist=True, verbose=False)[0]
+                # persist=True keeps track IDs consistent between calls;
+                # the classes filter and confidence threshold happen inside YOLO.
+                results = model.track(
+                    frame, persist=True, verbose=False,
+                    tracker="bytetrack.yaml", conf=MIN_CONF,
+                    classes=list(COCO_MAP.keys()),
+                )[0]
                 if results.boxes is not None:
                     for box in results.boxes:
                         cls_id = int(box.cls[0])
                         if cls_id not in COCO_MAP:
                             continue
                         x1, y1, x2, y2 = map(int, box.xyxy[0])
+                        if (y2 - y1) < MIN_BOX_PX or (x2 - x1) < MIN_BOX_PX // 2:
+                            continue
                         cls = COCO_MAP[cls_id]
-                        # for a person, color of the shirt = upper half of box
-                        y_mid = y1 + (y2 - y1) // 2
-                        crop = frame[y1:y_mid, x1:x2] if cls == "person" \
-                            else frame[y1:y2, x1:x2]
+                        # for a person, use the torso (shirt), not head or legs,
+                        # and trim the sides so background does not leak in
+                        bh, bw = y2 - y1, x2 - x1
+                        if cls == "person":
+                            crop = frame[y1 + int(0.2 * bh): y1 + int(0.55 * bh),
+                                         x1 + int(0.15 * bw): x2 - int(0.15 * bw)]
+                        else:
+                            crop = frame[y1:y2, x1:x2]
                         conn.execute(
                             "INSERT INTO detections VALUES (?,?,?,?,?,?,?,?,?,?)",
                             (name, t,
@@ -237,7 +262,8 @@ async def search(payload: dict):
     if colors:
         segments = [s for s in segments if s["color"] in colors]
     if time_range:
-        lo, hi = time_range[0] * 60, time_range[1] * 60
+        # the frontend sends seconds from the start of the video
+        lo, hi = float(time_range[0]), float(time_range[1])
         segments = [s for s in segments if lo <= s["t"] <= hi]
     if "running" in actions:
         segments = [s for s in segments if s["speed"] >= RUN_SPEED]
