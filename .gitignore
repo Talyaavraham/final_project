@@ -14,3 +14,4 @@ backend/train/*.log
 runs/
 backend/train/dataset.zip
 backend/*.log
+!backend/game.pt
