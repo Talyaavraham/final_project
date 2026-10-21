@@ -179,6 +179,21 @@ video{width:100%;height:100%;display:block}
   border-radius:7px;padding:4px 10px;font-size:.7rem;cursor:pointer;
 }
 .viewclip:hover{background:var(--accent);color:#fff}
+.btn.small{padding:5px 10px;font-size:.72rem;border-radius:8px}
+.reshead .tools{display:flex;gap:6px;align-items:center}
+.rescard .actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.rescard .actions button{
+  border:none;background:var(--accent-soft);color:var(--accent);border-radius:7px;
+  padding:4px 9px;font-size:.68rem;cursor:pointer;
+}
+.rescard .actions button:hover{background:var(--accent);color:#fff}
+.rescard .actions button:disabled{opacity:.5;cursor:wait}
+.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;margin-left:4px;color:var(--text-dim)}
+.tag.sem{color:var(--accent-2);border-color:rgba(76,201,240,.35)}
+.showmore{width:100%;margin:4px 0 10px}
+.caps{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+.caps span{background:#0e1124;border-radius:6px;padding:2px 6px;font-size:.65rem}
+.caps span.on{color:var(--ok)}
 .summary{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:.75rem;margin-top:6px}
 .summary .row{display:flex;justify-content:space-between;padding:4px 0;color:var(--text-dim)}
 .summary .row span:last-child{color:var(--text)}
@@ -235,6 +250,7 @@ video{width:100%;height:100%;display:block}
     <div class="sysbox">
       <div class="row"><span>Backend</span><span id="backendState">checking…</span></div>
       <div class="row"><span>Engine</span><span id="engineName">—</span></div>
+      <div class="caps" id="caps"></div>
       <div class="row"><span>Indexing</span><span id="procPct">0%</span></div>
       <div class="meter"><i id="procBar" style="width:0%"></i></div>
     </div>
@@ -256,6 +272,7 @@ video{width:100%;height:100%;display:block}
       <button class="chip">Find people entering the frame</button>
       <button class="chip">מצא איש שרץ עם כלב</button>
       <button class="chip">Find a person wearing a red shirt between 0:10 and 1:30</button>
+      <button class="chip">a woman pushing a stroller</button>
     </div>
     <div class="inputrow">
       <input id="queryInput" placeholder="Ask anything about your videos… / שאלו כל דבר על הסרטון…">
@@ -266,7 +283,7 @@ video{width:100%;height:100%;display:block}
   <!-- ===== MAIN PANE ===== -->
   <section class="mainpane">
     <div class="demo-banner" id="demoBanner">
-      🧠 Upload a video — objects are detected <b>right in your browser</b> (TensorFlow.js COCO-SSD). Run the Python backend locally for YOLOv8 + ByteTrack.
+      🧠 Upload a video — objects are detected <b>right in your browser</b> (TensorFlow.js COCO-SSD). Run the Python backend for YOLOv8 + ByteTrack, CLIP semantic search, the Claude query parser and clip export.
     </div>
 
     <div class="panel">
@@ -302,7 +319,12 @@ video{width:100%;height:100%;display:block}
 
   <!-- ===== RESULTS PANE ===== -->
   <aside class="resultspane">
-    <div class="reshead"><b>Search Results</b><span class="badge" id="matchBadge">0 matches</span></div>
+    <div class="reshead"><b>Search Results</b>
+      <div class="tools">
+        <button class="btn small" id="exportBtn" hidden title="Download all matches: frames + clips + results.json/csv">⬇ Export ZIP</button>
+        <span class="badge" id="matchBadge">0 matches</span>
+      </div>
+    </div>
     <div id="results"><div class="empty">No search yet.<br>Upload a video and ask the agent to find something.</div></div>
     <div class="summary" id="summary" hidden>
       <b style="font-size:.8rem">Summary</b>
@@ -335,7 +357,12 @@ let state = {
   index: null,           // browser index: {rows, W, H, duration}
   indexing: null,        // Promise while the browser index is being built
   loadId: 0,             // bumps on every new video, cancels stale work
+  total: 0,              // matches on the server (we page through them)
+  parsed: null,          // last structured query
+  rawQuery: '',          // last sentence typed by the user
+  caps: null,            // backend capabilities from GET /
 };
+const PAGE = 50;
 
 const esc = s => String(s).replace(/[&<>"']/g,
   c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -482,18 +509,60 @@ function parseQuery(text){
   return found;
 }
 
+// The backend parser understands free text (Claude when an API key is set,
+// otherwise the same vocabulary rules as parseQuery). Local parsing is the
+// fallback when the backend is not running.
+async function parseAny(text){
+  const local = parseQuery(text);
+  if (state.engine !== 'backend') return { ...local, semantic: '', unknown: [], source: 'local' };
+  try {
+    const r = await fetch(API + '/parse', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, video: state.videoName }),
+      signal: AbortSignal.timeout(30000),
+    });
+    if (r.ok){
+      const p = await r.json();
+      if (p.timeRange && p.timeRange[1] === null) p.timeRange[1] = Infinity;
+      return { ...p, raw: text };
+    }
+  } catch (e) { console.warn('backend parse failed, using local parser', e); }
+  return { ...local, semantic: '', unknown: [], source: 'local' };
+}
+
 /* ---------- 3. VIDEO ANALYSIS + INDEXING ----------
    Tries the real FastAPI backend (backend/main.py) first. If it is not
    running, the video is analysed right here in the browser.
 ---------------------------------------------------------------------- */
-const API = 'http://localhost:8000';
+// When the page is served by the backend (http://localhost:8000) the API is
+// the same origin; when it is opened from disk we look for localhost:8000.
+let API = 'http://localhost:8000';
+const API_CANDIDATES = [...new Set([
+  ...(location.protocol.startsWith('http') ? [location.origin] : []), API])];
 
 async function backendAlive(){
-  try {
-    const r = await fetch(API + '/', { signal: AbortSignal.timeout(1500) });
-    return r.ok;
-  } catch { return false; }
+  for (const base of API_CANDIDATES){
+    try {
+      const r = await fetch(base + '/api', { signal: AbortSignal.timeout(1500) });
+      if (!r.ok) continue;
+      const caps = await r.json();
+      if (!caps || !caps.ok) continue;
+      API = base; state.caps = caps;
+      renderCaps();
+      return true;
+    } catch { /* try the next candidate */ }
+  }
+  state.caps = null; renderCaps(); return false;
 }
+
+function renderCaps(){
+  const c = state.caps;
+  $('caps').innerHTML = !c ? '' : [
+    ['YOLO', true], ['open-vocab', c.open_vocab], ['CLIP', c.clip],
+    ['Claude', c.llm_parser], ['ffmpeg', c.ffmpeg],
+  ].map(([n, on]) => `<span class="${on ? 'on' : ''}" title="${on ? 'enabled' : 'off'}">${n}</span>`).join('');
+}
+const engineLabel = () => state.caps ? (state.caps.model || 'YOLO').replace('.pt', '') : 'YOLOv8';
 
 async function startIndexing(file, id){
   if (await backendAlive()){
@@ -504,11 +573,12 @@ async function startIndexing(file, id){
       setBanner('⏳ Backend connected — uploading video…', 'wait');
       const r = await fetch(API + '/index', { method:'POST', body: fd });
       if (!r.ok) throw new Error('upload failed (' + r.status + ')');
-      const { video: name } = await r.json();
+      const { video: name, cached } = await r.json();
       if (id !== state.loadId) return;
       state.videoName = name;
       state.engine = 'backend';
-      $('engineName').textContent = 'YOLOv8';
+      $('engineName').textContent = engineLabel();
+      if (cached) botSay('This video was already indexed — results are ready.\nהסרטון כבר אונדקס בעבר, אפשר לחפש מיד.');
       state.indexing = pollStatus(name, id);
       return;
     } catch (e) {
@@ -532,14 +602,17 @@ function pollStatus(name, id){
       if (id !== state.loadId) return reject(new Error('cancelled'));
       try {
         const r = await fetch(`${API}/status?video=${encodeURIComponent(name)}`);
-        const { status, progress } = await r.json();
+        const { status, progress, stage } = await r.json();
         setProgress(progress || 0);
         if (status === 'ready'){
-          setBanner('✅ <b>Live mode:</b> indexed with YOLOv8 + ByteTrack on the backend.', 'ok');
+          const extras = [state.caps?.clip && 'CLIP semantic search', state.caps?.llm_parser && 'Claude query parser'].filter(Boolean);
+          setBanner(`✅ <b>Live mode:</b> indexed with ${esc(engineLabel())} + ByteTrack on the backend` +
+                    (extras.length ? ' · ' + extras.join(' · ') : '') + '.', 'ok');
           loadOverview();
           resolve();
         } else if (status === 'indexing'){
-          setBanner(`⏳ Backend is indexing the video with YOLOv8… ${Math.round((progress||0)*100)}%`, 'wait');
+          setBanner(`⏳ Backend is indexing the video with ${esc(engineLabel())}… ${Math.round((progress||0)*100)}%` +
+                    (stage ? ` <small>(${esc(stage)})</small>` : ''), 'wait');
           setTimeout(tick, 1500);
         } else {
           setBanner('⚠ Backend error while indexing: ' + esc(status), 'demo');
@@ -807,19 +880,24 @@ function filterSegments(segs, { objects, colors, actions, timeRange }){
              .map(s => ({ ...s, label: [s.color, s.cls].filter(Boolean).join(' ') }));
 }
 
-async function queryBackend(parsed){
-  const query = { ...parsed,
-    timeRange: parsed.timeRange && [parsed.timeRange[0], Math.min(parsed.timeRange[1], 1e9)] };
+// -> { total, results }   (results is one page of `limit` matches)
+async function queryBackend(parsed, offset = 0, limit = PAGE){
+  const tr = parsed.timeRange && [parsed.timeRange[0],
+                                  parsed.timeRange[1] === Infinity ? null : parsed.timeRange[1]];
   if (state.engine === 'backend'){
     try {
       const res = await fetch(API + '/search', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, video: state.videoName })
+        body: JSON.stringify({
+          video: state.videoName, offset, limit,
+          query: { objects: parsed.objects, colors: parsed.colors, actions: parsed.actions,
+                   timeRange: tr, semantic: parsed.semantic || '', text: parsed.raw || '' },
+        })
       });
       if (res.ok){
         const data = await res.json();
-        if (Array.isArray(data)) return data;
+        if (data && Array.isArray(data.results)) return data;
       }
     } catch { /* backend went away -> analyse in the browser instead */ }
     botSay('The backend stopped responding — switching to in-browser detection.');
@@ -829,7 +907,9 @@ async function queryBackend(parsed){
     await state.indexing;
   }
   const { rows, W, H, duration } = state.index;
-  return filterSegments(trackSegments(rows, duration, W, H), query);
+  const all = filterSegments(trackSegments(rows, duration, W, H),
+                             { ...parsed, timeRange: parsed.timeRange });
+  return { total: all.length, results: all.slice(offset, offset + limit) };
 }
 
 /* ---------- CHAT ---------- */
@@ -855,9 +935,12 @@ function addParsedCard(p){
     ['Action',   p.actions.join(', ') || '—'],
     ['Time Range', rangeText(p.timeRange)],
   ];
+  if (p.semantic) rows.push(['Visual (CLIP)', p.semantic]);
+  if (p.unknown && p.unknown.length) rows.push(['Not understood', p.unknown.join(', ')]);
+  const src = { llm: 'Claude', rules: 'rules (server)', local: 'rules (browser)' }[p.source] || p.source || '';
   const d = document.createElement('div');
   d.className = 'parsed';
-  d.innerHTML = '<h4>✅ Parsed Query</h4>' +
+  d.innerHTML = `<h4>✅ Parsed Query ${src ? `<span class="tag">${esc(src)}</span>` : ''}</h4>` +
     rows.map(r=>`<div class="prow"><span>${r[0]}</span><span>${esc(r[1])}</span></div>`).join('');
   $('messages').appendChild(d);
   $('messages').scrollTop = 1e9;
@@ -871,12 +954,6 @@ async function runSearch(text){
     botSay('Please upload a video first 🙂\nקודם צריך להעלות סרטון');
     return;
   }
-  const parsed = parseQuery(text);
-  addParsedCard(parsed);
-  if (!parsed.objects.length && !parsed.colors.length && !parsed.actions.length){
-    botSay("I didn't recognise an object in your question, so I'll show everything I detected.\n" +
-           'I can find: people, cars, buses, trucks, bicycles, motorcycles, dogs, cats and bags.');
-  }
   searching = true;
   try {
     const id = state.loadId;
@@ -885,9 +962,22 @@ async function runSearch(text){
     if (state.engine === 'browser' && !state.index) botSay('Still scanning the video — I will answer as soon as it is done…');
     await state.indexing;
     if (id !== state.loadId) return;
-    state.matches = await queryBackend(parsed);
-    botSay(state.matches.length
-      ? `I found ${state.matches.length} match${state.matches.length > 1 ? 'es' : ''}. Click a result to jump to it.`
+
+    const parsed = await parseAny(text);
+    addParsedCard(parsed);
+    if (!parsed.objects.length && !parsed.colors.length && !parsed.actions.length && !parsed.semantic){
+      botSay("I didn't recognise an object in your question, so I'll show everything I detected.\n" +
+             (state.engine === 'backend' && state.caps?.clip
+               ? 'Tip: describe what it looks like — with CLIP I can match free text too.'
+               : 'I can find: people, cars, buses, trucks, bicycles, motorcycles, dogs, cats and bags.'));
+    } else if (parsed.semantic && !(state.caps?.clip) && state.engine === 'backend'){
+      botSay('Part of your question needs CLIP semantic search, which is off on the server — I will match on the object classes only.');
+    }
+    const { total, results } = await queryBackend(parsed, 0);
+    if (id !== state.loadId) return;
+    state.matches = results; state.total = total; state.parsed = parsed; state.rawQuery = text;
+    botSay(total
+      ? `I found ${total} match${total > 1 ? 'es' : ''}${total > results.length ? ` (showing the first ${results.length})` : ''}. Click a result to jump to it, or download it as an image / clip.`
       : 'No matches found. Try a broader query (e.g. without a colour or action).\nלא נמצאו תוצאות — נסו שאילתה כללית יותר.');
     renderResults(parsed);
   } catch (e) {
@@ -895,6 +985,16 @@ async function runSearch(text){
   } finally {
     searching = false;
   }
+}
+
+async function loadMore(){
+  const btn = $('showMore');
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+  const id = state.loadId;
+  const { results } = await queryBackend(state.parsed, state.matches.length);
+  if (id !== state.loadId) return;
+  state.matches = state.matches.concat(results);
+  renderResults(state.parsed);
 }
 
 $('sendBtn').onclick = () => { runSearch($('queryInput').value); $('queryInput').value=''; };
@@ -909,19 +1009,22 @@ $('chips').addEventListener('click', e => {
 const ICONS = { person:['🧍','Persons'], car:['🚗','Cars'], bus:['🚌','Buses'], truck:['🚚','Trucks'],
   bicycle:['🚲','Bicycles'], motorcycle:['🏍','Motorcycles'], dog:['🐕','Dogs'], cat:['🐈','Cats'], bag:['🎒','Bags'] };
 
+const iconOf = k => ICONS[k] || ['🔹', k.charAt(0).toUpperCase() + k.slice(1)];
+
 function renderObjectCounts(segs, scope){
   const counts = {};
   segs.forEach(s => counts[s.cls] = (counts[s.cls] || 0) + 1);
-  const keys = Object.keys(ICONS).filter(k => counts[k]);
+  const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
   $('objScope').textContent = scope;
   $('objects').innerHTML = keys.length
-    ? keys.map(k => `<div class="objcard"><div class="ico">${ICONS[k][0]}</div><b>${counts[k]}</b><span>${ICONS[k][1]}</span></div>`).join('')
+    ? keys.map(k => `<div class="objcard"><div class="ico">${iconOf(k)[0]}</div><b>${counts[k]}</b><span>${esc(iconOf(k)[1])}</span></div>`).join('')
     : '<div class="empty" style="padding:6px">No objects detected yet.</div>';
 }
 
 // whole-video object counts once the index is ready
 async function loadOverview(){
-  const all = await queryBackend({ objects: [], colors: [], actions: [], timeRange: null }).catch(() => []);
+  const { results: all } = await queryBackend({ objects: [], colors: [], actions: [], timeRange: null }, 0, 1000)
+    .catch(() => ({ results: [] }));
   if (!state.matches.length) renderObjectCounts(all, '(whole video)');
   renderTimeline(all, 'overview');
 }
@@ -929,6 +1032,8 @@ async function loadOverview(){
 function clearResults(){
   $('results').innerHTML = '<div class="empty">No search yet.<br>Ask the agent to find something in the video.</div>';
   $('matchBadge').textContent = '0 matches';
+  $('exportBtn').hidden = true;
+  state.total = 0; state.parsed = null;
   $('summary').hidden = true;
   $('tlMarks').innerHTML = '';
   $('objects').innerHTML = '<div class="empty" style="padding:6px">Scanning…</div>';
@@ -954,24 +1059,42 @@ function renderTimeline(list, mode){
 function renderResults(parsed){
   const box = $('results');
   box.innerHTML = '';
-  $('matchBadge').textContent = state.matches.length + ' matches';
+  const total = state.total || state.matches.length;
+  $('matchBadge').textContent = total + ' matches';
+  $('exportBtn').hidden = !(state.engine === 'backend' && state.matches.length);
   if (!state.matches.length)
     box.innerHTML = '<div class="empty">No matches for this query.</div>';
 
+  const backend = state.engine === 'backend';
   state.matches.forEach((m, i) => {
     const card = document.createElement('div');
     card.className = 'rescard';
+    const tags = (m.score ? `<span class="tag sem" title="CLIP similarity">${(m.score*100).toFixed(0)}%</span>` : '') +
+                 (m.entity != null && m.entity !== m.track ? `<span class="tag" title="same object as track #${m.entity}">id ${m.entity}</span>` : '');
     card.innerHTML = `
       <div class="thumb"><canvas data-i="${i}" width="148" height="108"></canvas></div>
       <div class="info">
-        <b>${fmt(m.t)}</b>
+        <b>${fmt(m.t)}${tags}</b>
         ${esc(m.label || 'match')} · conf ${(m.conf*100).toFixed(0)}%<br>
         Duration: ${m.dur.toFixed(0)}s
-        <br><button class="viewclip" data-i="${i}">▶ View Clip</button>
+        <div class="actions">
+          <button class="viewclip" data-i="${i}">▶ View</button>
+          <button data-dl="image" data-i="${i}" title="Download the frame with the box">🖼 Image</button>
+          ${backend ? `<button data-dl="clip" data-i="${i}" title="Download this clip (MP4, with the tracked box)">🎬 Clip</button>` : ''}
+        </div>
       </div>`;
     box.appendChild(card);
   });
+  if (state.matches.length < total){
+    const more = document.createElement('button');
+    more.className = 'btn showmore'; more.id = 'showMore';
+    more.textContent = `Show more (${state.matches.length} / ${total})`;
+    more.onclick = loadMore;
+    box.appendChild(more);
+  }
   box.onclick = e => {
+    const dl = e.target.closest('[data-dl]');
+    if (dl){ e.stopPropagation(); downloadMatch(+dl.dataset.i, dl.dataset.dl, dl); return; }
     const i = e.target.closest('[data-i]')?.dataset.i;
     if (i !== undefined) playClip(+i);
   };
@@ -981,7 +1104,7 @@ function renderResults(parsed){
   renderObjectCounts(state.matches, '(in current search)');
 
   $('summary').hidden = false;
-  $('sumMatches').textContent = state.matches.length;
+  $('sumMatches').textContent = total;
   $('sumRange').textContent = rangeText(parsed.timeRange);
   $('sumVideo').textContent = state.videoName || '—';
   $('sumDur').textContent = fmt(state.duration);
@@ -999,8 +1122,9 @@ async function captureThumbs(){
   for (const c of canvases){
     if (job !== thumbJob) return;
     const m = state.matches[+c.dataset.i];
-    const b = boxAt(m, m.t) || m.box;
-    await seek(hidden, m.t);
+    const bt = m.best_t ?? m.t;
+    const b = boxAt(m, bt) || m.box;
+    await seek(hidden, bt);
     const ctx = c.getContext('2d');
     // zoom on the object, keeping some context around it
     const vw = hidden.videoWidth, vh = hidden.videoHeight;
@@ -1014,6 +1138,84 @@ async function captureThumbs(){
     ctx.strokeRect((b.x/100*vw - sx)*k, (b.y/100*vh - sy)*k, b.w/100*vw*k, b.h/100*vh*k);
   }
 }
+
+/* ---------- OUTPUTS: download image / clip / everything ---------- */
+function saveBlob(blob, name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+}
+const stem = () => (state.videoName || 'video').replace(/\.[^.]+$/, '');
+const tstamp = t => fmt(t).replace(/:/g, '-');
+
+async function withBusy(btn, label, fn){
+  const old = btn.textContent;
+  btn.disabled = true; btn.textContent = label;
+  try { await fn(); }
+  catch (e) { botSay('Download failed: ' + (e.message || e)); }
+  finally { btn.disabled = false; btn.textContent = old; }
+}
+
+// full-resolution frame rendered in the browser (works without the backend)
+async function frameBlobLocal(m){
+  const hidden = document.createElement('video');
+  hidden.src = video.src; hidden.muted = true;
+  await new Promise(r => hidden.onloadeddata = r);
+  const t = m.best_t ?? m.t;
+  await seek(hidden, t);
+  const c = document.createElement('canvas');
+  c.width = hidden.videoWidth; c.height = hidden.videoHeight;
+  const ctx = c.getContext('2d');
+  ctx.drawImage(hidden, 0, 0);
+  const b = boxAt(m, t) || m.box;
+  ctx.strokeStyle = '#f0564c'; ctx.lineWidth = Math.max(2, c.width / 400);
+  ctx.strokeRect(b.x/100*c.width, b.y/100*c.height, b.w/100*c.width, b.h/100*c.height);
+  ctx.font = `${Math.max(14, c.width / 60)}px sans-serif`;
+  const label = m.label || m.cls || '';
+  const tw = ctx.measureText(label).width + 10;
+  ctx.fillStyle = '#f0564c';
+  ctx.fillRect(b.x/100*c.width, Math.max(0, b.y/100*c.height - 24), tw, 24);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(label, b.x/100*c.width + 5, Math.max(18, b.y/100*c.height - 6));
+  return new Promise(r => c.toBlob(r, 'image/jpeg', 0.92));
+}
+
+async function downloadMatch(i, kind, btn){
+  const m = state.matches[i];
+  if (!m) return;
+  const t = m.best_t ?? m.t;
+  const name = `${stem()}_${tstamp(t)}_${(m.label || m.cls || 'match').replace(/\s+/g, '-')}`;
+  await withBusy(btn, '⏳', async () => {
+    if (kind === 'image'){
+      let blob = null;
+      if (state.engine === 'backend'){
+        const q = new URLSearchParams({ video: state.videoName, t, x: m.box.x, y: m.box.y,
+                                        w: m.box.w, h: m.box.h, label: m.label || m.cls || '' });
+        const r = await fetch(`${API}/frame?${q}`);
+        if (r.ok) blob = await r.blob();
+      }
+      saveBlob(blob || await frameBlobLocal(m), name + '.jpg');
+    } else {
+      const q = new URLSearchParams({ video: state.videoName, t0: Math.max(0, m.t - 1),
+                                      t1: m.t + m.dur + 1, track: m.track ?? '', annotate: true });
+      const r = await fetch(`${API}/clip?${q}`);
+      if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || 'clip failed');
+      saveBlob(await r.blob(), name + '.mp4');
+    }
+  });
+}
+
+$('exportBtn').onclick = () => withBusy($('exportBtn'), '⏳ Rendering clips…', async () => {
+  const r = await fetch(API + '/export', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ video: state.videoName, matches: state.matches,
+                           query: state.rawQuery, clips: true, annotate: true, pad: 1.0 }),
+  });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || 'export failed');
+  saveBlob(await r.blob(), `${stem()}_results.zip`);
+  botSay(`Exported ${state.matches.length} matches as a ZIP (frames, clips, results.json, results.csv).`);
+});
 
 function seekTo(t){ video.currentTime = Math.max(0, t); drawOverlay(); }
 

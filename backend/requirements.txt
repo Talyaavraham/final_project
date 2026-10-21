@@ -1,7 +1,18 @@
 fastapi
 uvicorn[standard]
 python-multipart
-ultralytics
-opencv-python
+pydantic>=2
 numpy
-lap            # required by ultralytics tracking (ByteTrack)
+opencv-python
+ultralytics          # YOLOv8 / YOLO-World detection + ByteTrack tracking
+lap                  # required by ultralytics tracking
+imageio-ffmpeg       # bundled ffmpeg binary for clip export
+pillow
+httpx                # evaluate.py
+# optional — semantic search (CLIP) and entity merging; ~600 MB download on first use
+torch
+transformers
+# optional — natural-language query parsing with Claude (needs ANTHROPIC_API_KEY)
+anthropic
+# tests
+pytest

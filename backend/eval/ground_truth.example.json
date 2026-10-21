@@ -1,0 +1,13 @@
+{
+  "_comment": "Copy to ground_truth.json, upload the videos through the UI (or POST /index), label the time windows [start, end] in seconds for each query, then run: python evaluate.py eval/ground_truth.json",
+  "videos": {
+    "street.mp4": {
+      "queries": [
+        {"text": "a person walking with a dog", "expected": [[12.0, 18.5], [40.0, 47.0]]},
+        {"text": "איש בחולצה אדומה", "expected": [[3.0, 9.0]]},
+        {"text": "parked car after 1:00", "expected": [[60.0, 95.0]]},
+        {"text": "a woman pushing a stroller", "expected": [[22.0, 30.0]]}
+      ]
+    }
+  }
+}

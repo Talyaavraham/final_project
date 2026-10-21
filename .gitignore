@@ -1,6 +1,16 @@
 videos/
+exports/
 *.db
 venv/
 __pycache__/
+.pytest_cache/
 *.pt
 *.mp4
+backend/eval/ground_truth.json
+backend/eval/report.json
+backend/train/dataset/
+backend/train/runs/
+backend/train/*.log
+runs/
+backend/train/dataset.zip
+backend/*.log

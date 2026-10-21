@@ -1,408 +1,353 @@
 """
 Video Search Agent — Backend
 ============================
-FastAPI server that:
-  1. Receives a video file            -> POST /index
-  2. Runs YOLOv8 detection + tracking  (samples ~3 frames/sec)
-  3. Extracts attributes (color) and stores everything in SQLite
-  4. Answers structured queries        -> POST /search
-     (the frontend sends the parsed query: objects, colors, actions, timeRange)
+FastAPI server:
+  POST /index              upload a video -> index in the background
+  GET  /                   the web interface (index.html)
+  GET  /api                server capabilities (model, CLIP, Claude, ffmpeg)
+  GET  /status?video=      indexing progress
+  GET  /videos             indexed videos
+  GET  /classes?video=     which classes were found (for the UI / parser)
+  POST /parse              natural language -> structured query (Claude / rules)
+  POST /search             structured (+ free text) query -> matches
+  GET  /frame              one frame as JPEG, with the match box drawn
+  GET  /clip               a clip as MP4 (optionally with tracked boxes)
+  POST /export             ZIP with frames + clips + results.json/csv
+  DELETE /videos/{name}    remove a video and its index
 
 Run:
     pip install -r requirements.txt
     uvicorn main:app --reload --port 8000
 
-Then open index.html — it will connect automatically.
-Set the env var YOLO_MODEL (e.g. yolov8s.pt / yolov8m.pt) for better accuracy.
+Env:
+    YOLO_MODEL=yolov8s.pt | yolov8m.pt | yolov8s-worldv2.pt (open vocabulary)
+    CLIP_RERANK=0          disable CLIP (semantic search + entity merge)
+    ANTHROPIC_API_KEY=...  enable the Claude query parser
 """
 
+import hashlib
 import os
 import shutil
-import sqlite3
 import threading
-from collections import Counter, defaultdict
+import time
+from typing import Optional
 
-import cv2
-import numpy as np
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse, Response
+from pydantic import BaseModel, Field
 
-# ----------------------------------------------------------------------
-# Setup
-# ----------------------------------------------------------------------
-app = FastAPI(title="Video Search Agent API")
+import db as database
+import embeddings
+import export
+import indexer
+import query_parser
+from search import filter_segments, semantic_rank
+
+app = FastAPI(title="Video Search Agent API", version="2.0")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # dev only — restrict in production
+    allow_origins=os.environ.get("CORS_ORIGINS", "*").split(","),
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-VIDEO_DIR = "videos"
-DB_PATH = "index.db"
+VIDEO_DIR = os.environ.get("VIDEO_DIR", "videos")
+EXPORT_DIR = os.environ.get("EXPORT_DIR", "exports")
 os.makedirs(VIDEO_DIR, exist_ok=True)
+os.makedirs(EXPORT_DIR, exist_ok=True)
 
-# yolov8n = nano (fast). Use yolov8s/m/l for better accuracy if you have a GPU.
-MODEL_NAME = os.environ.get("YOLO_MODEL", "yolov8n.pt")
-CONF_THRESHOLD = 0.3
-SAMPLE_FPS = 3.0
-
-# COCO class-id -> our vocabulary (must match the frontend VOCAB keys)
-COCO_MAP = {
-    0: "person", 1: "bicycle", 2: "car", 3: "motorcycle", 5: "bus",
-    7: "truck", 15: "cat", 16: "dog",
-    24: "bag", 26: "bag", 28: "bag",  # backpack, handbag, suitcase
-}
-
-INDEX_STATUS = {}  # video_name -> {"status": ..., "progress": 0..1}
-INDEX_LOCK = threading.Lock()  # one indexing job at a time (CPU/GPU bound)
+INDEX_STATUS: dict[str, dict] = {}
+INDEX_LOCK = threading.Lock()          # one indexing job at a time
 
 
-def db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS detections (
-            video     TEXT,
-            t         REAL,     -- seconds from start
-            track_id  INTEGER,
-            cls       TEXT,
-            conf      REAL,
-            x REAL, y REAL, w REAL, h REAL,   -- bbox in % of frame
-            color     TEXT
-        )""")
-    conn.execute("""
-        CREATE TABLE IF NOT EXISTS videos (
-            video     TEXT PRIMARY KEY,
-            duration  REAL,
-            width     INTEGER,
-            height    INTEGER
-        )""")
-    conn.execute("CREATE INDEX IF NOT EXISTS idx_q ON detections(video, cls, t)")
-    return conn
+# ------------------------------------------------------------------ models
+class QueryModel(BaseModel):
+    objects: list[str] = []
+    colors: list[str] = []
+    actions: list[str] = []
+    timeRange: Optional[list[Optional[float]]] = None
+    semantic: str = ""                 # free text for CLIP re-ranking
+    text: str = ""                     # the original sentence (for logs/export)
 
 
-# ----------------------------------------------------------------------
-# Attribute extraction: dominant color name of a crop
-# ----------------------------------------------------------------------
-# Every pixel votes for a color name; the most common name wins.
-# This is much more robust than the mean hue / mean saturation of the crop.
-HUE_NAMES = [  # (upper bound of OpenCV hue 0-180, name)
-    (7, "red"), (20, "orange"), (34, "yellow"), (85, "green"),
-    (130, "blue"), (150, "purple"), (166, "pink"), (180, "red"),
-]
+class SearchRequest(BaseModel):
+    video: str
+    query: QueryModel = Field(default_factory=QueryModel)
+    limit: int = Field(100, ge=1, le=1000)
+    offset: int = Field(0, ge=0)
+    near: bool = True                  # multi-object: require spatial proximity
 
 
-def dominant_color(crop_bgr) -> str:
-    if crop_bgr is None or crop_bgr.size == 0:
-        return "unknown"
-    # keep the central part of the box — the edges are mostly background
-    h0, w0 = crop_bgr.shape[:2]
-    crop = crop_bgr[int(h0 * .15):int(h0 * .85), int(w0 * .2):int(w0 * .8)]
-    if crop.size == 0:
-        crop = crop_bgr
-    scale = 48 / max(crop.shape[:2])
-    if scale < 1:
-        crop = cv2.resize(crop, None, fx=scale, fy=scale,
-                          interpolation=cv2.INTER_AREA)
-    hsv = cv2.cvtColor(crop, cv2.COLOR_BGR2HSV).reshape(-1, 3).astype(int)
-    h, s, v = hsv[:, 0], hsv[:, 1], hsv[:, 2]
-
-    names = np.empty(len(h), dtype=object)
-    chroma = (s >= 50) & (v >= 50)
-    for hi, name in reversed(HUE_NAMES):
-        names[chroma & (h <= hi)] = name
-    # dark orange is what people call brown
-    names[chroma & (names == "orange") & (v < 150)] = "brown"
-    names[v < 50] = "black"
-    gray = ~chroma & (v >= 50)
-    names[gray & (v >= 170) & (s < 40)] = "white"
-    names[gray & ~((v >= 170) & (s < 40))] = "gray"
-    return Counter(names.tolist()).most_common(1)[0][0]
+class ParseRequest(BaseModel):
+    text: str
+    video: Optional[str] = None
 
 
-# ----------------------------------------------------------------------
-# 1-2. Video Analysis + Indexing Modules
-# ----------------------------------------------------------------------
-def index_video(path: str, name: str, sample_fps: float = SAMPLE_FPS):
-    from ultralytics import YOLO  # heavy import — only when indexing
-
-    with INDEX_LOCK:
-        try:
-            # a fresh model per video, so tracker state never leaks
-            # between videos (track ids restart from 1)
-            model = YOLO(MODEL_NAME)
-            cap = cv2.VideoCapture(path)
-            if not cap.isOpened():
-                raise RuntimeError("cannot open video (unsupported codec?)")
-            fps = cap.get(cv2.CAP_PROP_FPS) or 25
-            total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
-            step = max(1, int(round(fps / sample_fps)))
-
-            rows, W, H = [], 0, 0
-            untracked_id = -1
-            frame_i = 0
-            while True:
-                # grab() skips decoding of frames we do not analyse
-                if not cap.grab():
-                    break
-                if frame_i % step == 0:
-                    ok, frame = cap.retrieve()
-                    if not ok:
-                        break
-                    H, W = frame.shape[:2]
-                    t = frame_i / fps
-                    res = model.track(frame, persist=True, verbose=False,
-                                      conf=CONF_THRESHOLD,
-                                      classes=list(COCO_MAP))[0]
-                    for box in res.boxes or []:
-                        cls = COCO_MAP.get(int(box.cls[0]))
-                        if cls is None:
-                            continue
-                        x1, y1, x2, y2 = (int(round(c)) for c in box.xyxy[0])
-                        x1, y1 = max(0, x1), max(0, y1)
-                        x2, y2 = min(W, x2), min(H, y2)
-                        if x2 <= x1 or y2 <= y1:
-                            continue
-                        # for a person, the shirt = upper body (15%–55% of box)
-                        if cls == "person":
-                            bh = y2 - y1
-                            crop = frame[y1 + int(bh * .15):y1 + int(bh * .55),
-                                         x1:x2]
-                        else:
-                            crop = frame[y1:y2, x1:x2]
-                        if box.id is not None:
-                            tid = int(box.id[0])
-                        else:  # untracked box -> its own one-off track
-                            tid = untracked_id
-                            untracked_id -= 1
-                        rows.append((name, t, tid, cls, float(box.conf[0]),
-                                     100 * x1 / W, 100 * y1 / H,
-                                     100 * (x2 - x1) / W, 100 * (y2 - y1) / H,
-                                     dominant_color(crop)))
-                    if total:
-                        INDEX_STATUS[name]["progress"] = min(1.0, frame_i / total)
-                frame_i += 1
-            cap.release()
-
-            conn = db()
-            conn.execute("DELETE FROM detections WHERE video=?", (name,))
-            conn.executemany(
-                "INSERT INTO detections VALUES (?,?,?,?,?,?,?,?,?,?)", rows)
-            conn.execute("INSERT OR REPLACE INTO videos VALUES (?,?,?,?)",
-                         (name, frame_i / fps, W, H))
-            conn.commit()
-            conn.close()
-            INDEX_STATUS[name] = {"status": "ready", "progress": 1.0}
-        except Exception as e:  # noqa: BLE001
-            INDEX_STATUS[name] = {"status": f"error: {e}", "progress": 0}
+class ExportRequest(BaseModel):
+    video: str
+    matches: list[dict]
+    query: str = ""
+    clips: bool = True
+    annotate: bool = True
+    pad: float = Field(1.0, ge=0, le=10)
 
 
+# ----------------------------------------------------------------- helpers
 def safe_name(filename: str) -> str:
-    name = os.path.basename(filename or "").strip()
-    if not name or name.startswith("."):
+    name = os.path.basename(filename or "").strip().replace("\\", "_")
+    if not name or name.startswith(".") or "/" in name:
         raise HTTPException(400, "invalid file name")
     return name
 
 
+def video_path(name: str) -> str:
+    path = os.path.join(VIDEO_DIR, safe_name(name))
+    if not os.path.isfile(path):
+        raise HTTPException(404, "video file not found")
+    return path
+
+
+def require_indexed(conn, name: str) -> dict:
+    meta = database.get_video(conn, name)
+    if meta is None:
+        raise HTTPException(404, "video not indexed")
+    return meta
+
+
+def _run_index(path, name, sha1):
+    with INDEX_LOCK:
+        indexer.index_video(path, name, sha1, status=INDEX_STATUS[name])
+
+
+# --------------------------------------------------------------- endpoints
+INDEX_HTML = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "index.html")
+
+
+@app.get("/")
+def root():
+    """The web interface — one URL for everything: http://localhost:8000"""
+    if os.path.isfile(INDEX_HTML):
+        return FileResponse(INDEX_HTML, media_type="text/html")
+    return capabilities()
+
+
+@app.get("/api")
+def capabilities():
+    return {
+        "ok": True, "service": "video-search-agent", "version": "2.0",
+        "model": indexer.MODEL_NAME,
+        "open_vocab": "world" in indexer.MODEL_NAME.lower(),
+        "clip": embeddings.available(),
+        "clip_error": embeddings.error(),
+        "llm_parser": query_parser.llm_available(),
+        "ffmpeg": export.ffmpeg_exe() is not None,
+    }
+
+
 @app.post("/index")
-def index_endpoint(file: UploadFile = File(...)):
+def index_endpoint(file: UploadFile = File(...), force: bool = False):
     name = safe_name(file.filename)
+    if name in INDEX_STATUS and INDEX_STATUS[name].get("status") == "indexing":
+        raise HTTPException(409, "this video is being indexed right now")
+
+    # stream to disk and hash on the way
     path = os.path.join(VIDEO_DIR, name)
-    with open(path, "wb") as f:  # stream to disk, not into memory
-        shutil.copyfileobj(file.file, f)
-    INDEX_STATUS[name] = {"status": "indexing", "progress": 0.0}
-    threading.Thread(target=index_video, args=(path, name),
-                     daemon=True).start()
+    tmp = path + ".part"
+    sha = hashlib.sha1()
+    with open(tmp, "wb") as f:
+        while chunk := file.file.read(1 << 20):
+            sha.update(chunk)
+            f.write(chunk)
+    sha1 = sha.hexdigest()
+    os.replace(tmp, path)
+
+    conn = database.connect()
+    try:
+        same = database.find_by_hash(conn, sha1)
+        meta = database.get_video(conn, name)
+        if not force and meta and meta["sha1"] == sha1:
+            INDEX_STATUS[name] = {"status": "ready", "progress": 1.0, "stage": "cached"}
+            return {"status": "ready", "video": name, "cached": True}
+        if not force and same and same != name and os.path.isfile(os.path.join(VIDEO_DIR, same)):
+            # identical content under another name -> reuse that index
+            INDEX_STATUS[same] = {"status": "ready", "progress": 1.0, "stage": "cached"}
+            os.remove(path)
+            return {"status": "ready", "video": same, "cached": True}
+    finally:
+        conn.close()
+
+    INDEX_STATUS[name] = {"status": "indexing", "progress": 0.0, "stage": "queued"}
+    threading.Thread(target=_run_index, args=(path, name, sha1), daemon=True).start()
     return {"status": "indexing", "video": name}
 
 
 @app.get("/status")
 def status(video: str):
     st = INDEX_STATUS.get(video)
-    if st is None:  # indexed in a previous server run?
-        conn = db()
-        known = conn.execute("SELECT 1 FROM videos WHERE video=?",
-                             (video,)).fetchone()
+    if st is None:                      # indexed in a previous server run?
+        conn = database.connect()
+        known = database.get_video(conn, video)
         conn.close()
-        st = {"status": "ready", "progress": 1.0} if known \
-            else {"status": "unknown", "progress": 0}
+        st = ({"status": "ready", "progress": 1.0, "stage": "done"} if known
+              else {"status": "unknown", "progress": 0, "stage": ""})
     return {"video": video, **st}
 
 
-# ----------------------------------------------------------------------
-# 3. Search Engine
-# ----------------------------------------------------------------------
-# Speeds are measured in "body heights per second" (box-center movement
-# divided by the box height), so they do not depend on how far the
-# object is from the camera. A walking person is ~0.5-1, running ~1.5+.
-RUN_SPEED = 1.2
-MOVE_SPEED = 0.15   # below this => standing / parked
-MAX_GAP = 3.0       # seconds without a detection that split a track
-EDGE = 2.0          # % of the frame — a box this close touches the border
+@app.get("/videos")
+def videos():
+    conn = database.connect()
+    rows = conn.execute("SELECT video, duration, width, height, model, indexed_at "
+                        "FROM videos ORDER BY indexed_at DESC").fetchall()
+    conn.close()
+    return [dict(zip(("video", "duration", "width", "height", "model", "indexed_at"), r))
+            for r in rows]
 
 
-def track_segments(rows, duration=None, W=16, H=9):
-    """Group raw detections into per-track segments with speed etc."""
-    tracks = defaultdict(list)
-    for t, tid, cls, conf, x, y, w, h, color in rows:
-        tracks[(tid, cls)].append((t, conf, x, y, w, h, color))
-
-    segments = []
-    for (tid, cls), dets in tracks.items():
-        dets.sort()
-        # split a track where it disappears for a while
-        parts, cur = [], [dets[0]]
-        for d in dets[1:]:
-            if d[0] - cur[-1][0] > MAX_GAP:
-                parts.append(cur)
-                cur = []
-            cur.append(d)
-        parts.append(cur)
-
-        for part in parts:
-            seg = make_segment(tid, cls, part, duration, W, H)
-            if seg:
-                segments.append(seg)
-    return segments
+@app.delete("/videos/{name}")
+def delete_video(name: str):
+    name = safe_name(name)
+    conn = database.connect()
+    database.delete_video(conn, name)
+    conn.commit()
+    conn.close()
+    INDEX_STATUS.pop(name, None)
+    p = os.path.join(VIDEO_DIR, name)
+    if os.path.isfile(p):
+        os.remove(p)
+    return {"deleted": name}
 
 
-def make_segment(tid, cls, dets, duration, W, H):
-    confs = [d[1] for d in dets]
-    # a single weak detection is usually noise
-    if len(dets) == 1 and confs[0] < 0.5:
-        return None
-    t0, t1 = dets[0][0], dets[-1][0]
-
-    # median per-step speed of the box center, in box-heights / second
-    steps = []
-    for a, b in zip(dets, dets[1:]):
-        dt = b[0] - a[0]
-        if dt <= 0:
-            continue
-        dx = (b[2] + b[4] / 2 - a[2] - a[4] / 2) * W / 100
-        dy = (b[3] + b[5] / 2 - a[3] - a[5] / 2) * H / 100
-        size = max(1e-6, (a[5] + b[5]) / 2 * H / 100)
-        steps.append(np.hypot(dx, dy) / size / dt)
-    speed = float(np.median(steps)) if steps else 0.0
-
-    def touches_edge(d):
-        x, y, w, h = d[2:6]
-        return x < EDGE or y < EDGE or x + w > 100 - EDGE or y + h > 100 - EDGE
-
-    entering = touches_edge(dets[0]) and t0 > 1.0 and len(dets) > 1
-    exiting = (touches_edge(dets[-1]) and len(dets) > 1 and
-               (duration is None or t1 < duration - 1.0))
-
-    colors = Counter(d[6] for d in dets if d[6] != "unknown")
-    best = max(dets, key=lambda d: d[1])
-    return {
-        "t": t0,
-        "dur": max(1.0, t1 - t0),
-        "conf": float(np.mean(confs)),
-        "cls": cls,
-        "color": colors.most_common(1)[0][0] if colors else "",
-        "speed": speed,
-        "entering": entering,
-        "exiting": exiting,
-        "box": {"x": best[2], "y": best[3], "w": best[4], "h": best[5]},
-        "path": [[round(d[0], 2), round(d[2], 2), round(d[3], 2),
-                  round(d[4], 2), round(d[5], 2)] for d in dets],
-        "track_id": tid,
-    }
+@app.get("/classes")
+def classes(video: str):
+    conn = database.connect()
+    require_indexed(conn, video)
+    counts = database.list_classes(conn, video)
+    conn.close()
+    return {"video": video, "classes": counts}
 
 
-def action_ok(s, actions):
-    checks = {
-        "running": s["speed"] >= RUN_SPEED,
-        "walking": MOVE_SPEED <= s["speed"] < RUN_SPEED,
-        "moving": s["speed"] >= MOVE_SPEED,
-        "parked": s["speed"] < MOVE_SPEED,
-        "entering": s["entering"],
-        "exiting": s["exiting"],
-    }
-    return all(checks.get(a, True) for a in actions)
-
-
-def filter_segments(segments, objects, colors, actions, time_range):
-    # attributes (color / action) describe the first requested object:
-    # "a man in red running with a dog" -> red + running apply to the man
-    main = objects[0] if objects else None
-
-    def attrs_ok(s):
-        if main and s["cls"] != main:
-            return True
-        if colors and s["color"] not in colors:
-            return False
-        return action_ok(s, actions)
-
-    segments = [s for s in segments if attrs_ok(s)]
-    if time_range:
-        lo, hi = time_range
-        segments = [s for s in segments
-                    if s["t"] <= hi and s["t"] + s["dur"] >= lo]
-
-    # multi-object query ("person with a dog"): keep segments that overlap
-    # in time with at least one segment of every other requested class
-    if len(objects) > 1:
-        by_cls = defaultdict(list)
-        for s in segments:
-            by_cls[s["cls"]].append(s)
-
-        def overlaps(a, b):
-            return a["t"] <= b["t"] + b["dur"] and b["t"] <= a["t"] + a["dur"]
-
-        segments = [s for s in segments
-                    if all(any(overlaps(s, o) for o in by_cls[c])
-                           for c in objects if c != s["cls"])]
-    return segments
+@app.post("/parse")
+def parse(req: ParseRequest):
+    # the classes the detector actually found in this video, so the parser can
+    # map "man" to "character" when the video was indexed by the game model
+    classes = None
+    if req.video:
+        conn = database.connect()
+        found = database.list_classes(conn, req.video)
+        conn.close()
+        classes = sorted(found) or None
+    return query_parser.parse(req.text, classes)
 
 
 @app.post("/search")
-def search(payload: dict):
-    """
-    payload = { "video": "name.mp4",
-                "query": { "objects": [...], "colors": [...],
-                           "actions": [...],
-                           "timeRange": [startSec, endSec] | null } }
-    """
-    q = payload.get("query") or {}
-    video = payload.get("video")
-    objects = q.get("objects") or []
-    colors = q.get("colors") or []
-    actions = q.get("actions") or []
-    time_range = q.get("timeRange")
-
-    conn = db()
-    meta = conn.execute("SELECT duration, width, height FROM videos "
-                        "WHERE video=?", (video,)).fetchone()
-    if meta is None:
-        conn.close()
-        raise HTTPException(404, "video not indexed")
-    sql = ("SELECT t, track_id, cls, conf, x, y, w, h, color "
-           "FROM detections WHERE video=?")
-    args = [video]
-    if objects:
-        sql += f" AND cls IN ({','.join('?' * len(objects))})"
-        args += objects
-    rows = conn.execute(sql, args).fetchall()
+def search(req: SearchRequest):
+    q = req.query
+    conn = database.connect()
+    meta = require_indexed(conn, req.video)
+    segments = database.load_segments(conn, req.video, q.objects or None)
     conn.close()
 
-    duration, W, H = meta
-    segments = track_segments(rows, duration, W or 16, H or 9)
-    segments = filter_segments(segments, objects, colors, actions, time_range)
-    segments.sort(key=lambda s: s["t"])
-    return [{
-        "t": s["t"],
-        "dur": s["dur"],
-        "conf": s["conf"],
-        "cls": s["cls"],
-        "label": f'{s["color"]} {s["cls"]}'.strip(),
-        "box": s["box"],
-        "path": s["path"],
-        "track": s["track_id"],
-    } for s in segments[:100]]
+    W, H = meta["width"] or 16, meta["height"] or 9
+    for s in segments:
+        s["embedding_vec"] = embeddings.from_blob(s.pop("embedding"))
+
+    tr = None
+    if q.timeRange:
+        lo = q.timeRange[0] or 0
+        hi = q.timeRange[1] if len(q.timeRange) > 1 else None
+        tr = [lo, hi]
+    segments = filter_segments(segments, q.objects, q.colors, q.actions, tr,
+                               require_near=req.near, W=W, H=H)
+
+    semantic_used = False
+    if q.semantic and embeddings.available():
+        vec = embeddings.embed_text(q.semantic)
+        if vec is not None:
+            segments = semantic_rank(segments, vec)
+            semantic_used = True
+    if not semantic_used:
+        segments.sort(key=lambda s: s["t"])
+
+    total = len(segments)
+    page = segments[req.offset:req.offset + req.limit]
+    return {
+        "total": total, "offset": req.offset, "semantic": semantic_used,
+        "results": [{
+            "t": s["t"], "dur": s["dur"], "conf": s["conf"], "cls": s["cls"],
+            "label": f'{s["color"]} {s["cls"]}'.strip(),
+            "box": s["box"], "path": s["path"], "best_t": s.get("best_t", s["t"]),
+            "track": s["track_id"], "entity": s["entity_id"],
+            "speed": round(s["speed"], 3),
+            "score": round(s.get("score", 0.0), 3),
+        } for s in page],
+    }
 
 
-@app.get("/")
-def root():
-    return {"ok": True, "service": "video-search-agent", "model": MODEL_NAME}
+# ------------------------------------------------------------------ outputs
+@app.get("/frame")
+def frame(video: str, t: float = Query(..., ge=0),
+          x: Optional[float] = None, y: Optional[float] = None,
+          w: Optional[float] = None, h: Optional[float] = None,
+          label: str = ""):
+    path = video_path(video)
+    box = [x, y, w, h] if None not in (x, y, w, h) else None
+    try:
+        data = export.frame_jpeg(path, t, box, label)
+    except RuntimeError as e:
+        raise HTTPException(400, str(e))
+    return Response(data, media_type="image/jpeg", headers={
+        "Content-Disposition": f'inline; filename="{os.path.splitext(video)[0]}_{t:.1f}s.jpg"'})
+
+
+@app.get("/clip")
+def clip(video: str, t0: float = Query(..., ge=0), t1: float = Query(..., gt=0),
+         track: Optional[int] = None, annotate: bool = True):
+    """Cut [t0, t1]. With `track`, the tracked box of that segment is drawn."""
+    path = video_path(video)
+    if t1 - t0 > 600:
+        raise HTTPException(400, "clip longer than 10 minutes")
+    matches = []
+    if annotate and track is not None:
+        conn = database.connect()
+        require_indexed(conn, video)
+        for s in database.load_segments(conn, video):
+            if s["track_id"] == track and s["t"] <= t1 and s["t"] + s["dur"] >= t0:
+                matches.append({"path": s["path"], "label": f'{s["color"]} {s["cls"]}'.strip()})
+        conn.close()
+    key = hashlib.sha1(f"{video}|{t0:.2f}|{t1:.2f}|{track}|{annotate}".encode()).hexdigest()[:16]
+    out = os.path.join(EXPORT_DIR, f"{key}.mp4")
+    if not os.path.isfile(out):
+        try:
+            export.cut_clip(path, t0, t1, out, matches)
+        except Exception as e:  # noqa: BLE001
+            raise HTTPException(500, f"clip failed: {e}")
+    fname = f"{os.path.splitext(video)[0]}_{t0:.0f}-{t1:.0f}s.mp4"
+    return FileResponse(out, media_type="video/mp4", filename=fname)
+
+
+@app.post("/export")
+def export_zip(req: ExportRequest):
+    path = video_path(req.video)
+    if not req.matches:
+        raise HTTPException(400, "nothing to export")
+    if len(req.matches) > 200:
+        raise HTTPException(400, "export at most 200 matches at a time")
+    try:
+        data = export.build_zip(path, req.video, req.matches, req.query,
+                                clips=req.clips, annotate=req.annotate, pad=req.pad)
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(500, f"export failed: {e}")
+    fname = f"{os.path.splitext(req.video)[0]}_results_{int(time.time())}.zip"
+    return Response(data, media_type="application/zip",
+                    headers={"Content-Disposition": f'attachment; filename="{fname}"'})
+
+
+# cleanup of old rendered clips (older than a day) at start-up
+for _f in os.listdir(EXPORT_DIR):
+    _p = os.path.join(EXPORT_DIR, _f)
+    if os.path.isfile(_p) and time.time() - os.path.getmtime(_p) > 86400:
+        try:
+            os.remove(_p)
+        except OSError:
+            pass
