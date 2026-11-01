@@ -21,6 +21,7 @@ Run:
 
 Env:
     YOLO_MODEL=yolov8s.pt | yolov8m.pt | yolov8s-worldv2.pt (open vocabulary)
+    YOLO_MODEL=yolov8n.pt,game.pt   several: the best one per video is chosen
     CLIP_RERANK=0          disable CLIP (semantic search + entity merge)
     ANTHROPIC_API_KEY=...  enable the Claude query parser
 """
@@ -137,6 +138,7 @@ def capabilities():
     return {
         "ok": True, "service": "video-search-agent", "version": "2.0",
         "model": indexer.MODEL_NAME,
+        "models": indexer.MODEL_NAMES,
         "open_vocab": "world" in indexer.MODEL_NAME.lower(),
         "clip": embeddings.available(),
         "clip_error": embeddings.error(),

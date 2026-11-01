@@ -71,6 +71,19 @@ class FakeModel:
         self.calls += 1
         return [_Result(boxes)]
 
+    predict = track            # the model probe uses predict()
+
+
+class BlindModel(FakeModel):
+    """Sees nothing — the wrong model for the synthetic video."""
+    names = {0: "character"}
+
+    def track(self, frame, **kw):
+        self.calls += 1
+        return [_Result([])]
+
+    predict = track
+
 
 @pytest.fixture
 def fake_model():

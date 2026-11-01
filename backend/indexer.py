@@ -9,7 +9,8 @@ Video analysis + indexing.
              -> optional CLIP embedding of each track's best crop
              -> tracks that look alike are merged into one entity
 
-Models (env YOLO_MODEL):
+Models (env YOLO_MODEL, one name or a comma-separated list — with a list the
+model that finds the most in 20 probe frames indexes the video):
   yolov8n.pt / yolov8s.pt / yolov8m.pt   closed set — the 80 COCO classes
   yolov8s-worldv2.pt / yolov8m-worldv2.pt  open vocabulary — any text label,
                                           we index the OPEN_VOCAB list below
@@ -29,7 +30,11 @@ import db as database
 import embeddings
 from search import merge_entities, track_segments
 
+# one model, or a comma-separated list: each video is indexed by the model
+# that finds the most in a quick probe (e.g. "yolov8n.pt,game.pt")
 MODEL_NAME = os.environ.get("YOLO_MODEL", "yolov8n.pt")
+MODEL_NAMES = [m.strip() for m in MODEL_NAME.split(",") if m.strip()]
+PROBE_FRAMES = 20           # frames sampled per model when choosing a model
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.3"))
 SAMPLE_FPS = float(os.environ.get("SAMPLE_FPS", "3"))
 IMGSZ = int(os.environ.get("IMGSZ", "640"))   # detector input size; 800+ for small objects
@@ -39,8 +44,15 @@ FLUSH_EVERY = 2000          # detections per DB write
 TRACKER = os.environ.get("TRACKER", "bytetrack.yaml")
 MAX_CROP = 224              # px, crops kept for CLIP
 
-# COCO names that we rename (the rest keep their COCO name)
-RENAME = {"backpack": "bag", "handbag": "bag", "suitcase": "bag"}
+# class names that we rename (the rest keep the model's name, lower-cased).
+# COCO: the three bag classes. Open Images (yolov8s-oiv7.pt): people classes.
+RENAME = {"backpack": "bag", "handbag": "bag", "suitcase": "bag",
+          "man": "person", "woman": "person", "boy": "person", "girl": "person",
+          "human": "person", "land vehicle": "car", "taxi": "car", "van": "car"}
+# body parts (Open Images) would add a second box on every person
+SKIP = {"human face", "human body", "human head", "human hair", "human arm",
+        "human hand", "human leg", "human foot", "human eye", "human mouth",
+        "human nose", "human ear", "human beard", "clothing", "footwear"}
 
 # classes indexed by a YOLO-World model — COCO plus things people ask about
 # in street / security footage. Override with env OPEN_VOCAB="tree,apple,..."
@@ -90,17 +102,69 @@ def dominant_color(crop_bgr) -> str:
 
 
 # --------------------------------------------------------------- detector
-def load_model(name: str = MODEL_NAME):
-    from ultralytics import YOLO
-    model = YOLO(name)
-    if "world" in name.lower():
-        model.set_classes(OPEN_VOCAB)
-    return model
+_models: dict = {}
+
+
+def load_model(name: str = None):
+    """YOLO model by file name, loaded once per process."""
+    name = name or MODEL_NAMES[0]
+    if name not in _models:
+        from ultralytics import YOLO
+        model = YOLO(name)
+        if "world" in name.lower():
+            model.set_classes(OPEN_VOCAB)
+        _models[name] = model
+    return _models[name]
 
 
 def class_name(model, cls_id: int) -> str:
-    raw = model.names[cls_id]
+    raw = str(model.names[cls_id]).lower()
     return RENAME.get(raw, raw)
+
+
+def probe_score(model, frames, conf: float = 0.5) -> float:
+    """Sum of confidences of what the model finds in the frames (>= conf)."""
+    score = 0.0
+    for frame in frames:
+        res = model.predict(frame, verbose=False, conf=conf, imgsz=IMGSZ)[0]
+        for box in res.boxes or []:
+            if class_name(model, int(box.cls[0])) not in SKIP:
+                score += float(box.conf[0])
+    return score
+
+
+def sample_frames(path: str, n: int = PROBE_FRAMES):
+    cap = cv2.VideoCapture(path)
+    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
+    frames = []
+    for i in range(n):
+        cap.set(cv2.CAP_PROP_POS_FRAMES, int(total * (i + 0.5) / n))
+        ok, frame = cap.read()
+        if ok:
+            frames.append(frame)
+    cap.release()
+    return frames
+
+
+def choose_model(path: str, names=None, status: dict = None):
+    """
+    The model that finds the most in PROBE_FRAMES frames of the video.
+    One model configured -> no probe. Ties go to the first name in the list.
+    Returns (name, model).
+    """
+    names = names or MODEL_NAMES
+    if len(names) == 1:
+        return names[0], load_model(names[0])
+    frames = sample_frames(path)
+    best = None
+    for name in names:
+        if status is not None:
+            status["stage"] = f"trying {name}"
+        model = load_model(name)
+        score = probe_score(model, frames)
+        if best is None or score > best[0]:
+            best = (score, name, model)
+    return best[1], best[2]
 
 
 def _shrink(img, max_side=MAX_CROP):
@@ -122,7 +186,11 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
     status.update(status="indexing", progress=0.0, stage="loading model")
     conn = database.connect(db_path)
     try:
-        model = model or load_model()
+        model_name = MODEL_NAME
+        if model is None:
+            model_name, model = choose_model(path, status=status)
+            status["stage"] = "detecting"
+        status["model"] = model_name
         cap = cv2.VideoCapture(path)
         if not cap.isOpened():
             raise RuntimeError("cannot open video (unsupported codec?)")
@@ -152,6 +220,8 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                                   imgsz=IMGSZ)[0]
                 for box in res.boxes or []:
                     cls = class_name(model, int(box.cls[0]))
+                    if cls in SKIP:
+                        continue
                     x1, y1, x2, y2 = (int(round(float(c))) for c in box.xyxy[0])
                     x1, y1 = max(0, x1), max(0, y1)
                     x2, y2 = min(W, x2), min(H, y2)
@@ -212,7 +282,7 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                 merge_entities(segments)
 
         database.replace_segments(conn, name, segments)
-        database.put_video(conn, name, duration, W, H, sha1, MODEL_NAME, time.time())
+        database.put_video(conn, name, duration, W, H, sha1, model_name, time.time())
         conn.commit()
         status.update(status="ready", progress=1.0, stage="done",
                       segments=len(segments))

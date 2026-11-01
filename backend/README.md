@@ -20,6 +20,8 @@ uvicorn main:app --reload --port 8000
 | `YOLO_MODEL` | `yolov8n.pt` | `yolov8s.pt` / `yolov8m.pt` לדיוק גבוה יותר (GPU מומלץ). `yolov8s-worldv2.pt` = **YOLO-World**, זיהוי open-vocabulary של רשימת המחלקות ב-`indexer.OPEN_VOCAB` (עגלת תינוק, קורקינט, כובע, קסדה, טלפון…) |
 | `OPEN_VOCAB` | — | רשימה מופרדת בפסיקים שמחליפה את `indexer.OPEN_VOCAB` עבור YOLO-World, למשל `tree,apple,character` |
 | `YOLO_MODEL=game.pt` | — | מודל שאומן על המחלקות שלכן (דמות, עץ, פרי, שמש במשחק של ex4_demo; mAP50 0.97). איך מאמנים: [train/README.md](train/README.md). להריץ עם `IMGSZ=800` |
+| `YOLO_MODEL=yolov8n.pt,game.pt` | — | **כמה מודלים**: לכל סרטון נבחר המודל שמוצא הכי הרבה ב-20 פריימים מפוזרים (סכום הביטחון של הזיהויים). סרטון מהמציאות מקבל את מודל COCO, המשחק מקבל את `game.pt`. המודל שנבחר נשמר ב-`/videos` |
+| `YOLO_MODEL=yolov8s-oiv7.pt` | — | Open Images V7, 601 מחלקות (Tree, Window, Footwear…). פחות אמין מ-COCO על אנשים ורכבים, אז לא ברירת מחדל. Man/Woman/Boy/Girl ממופים ל-`person`, חלקי גוף (Human face וכו') מדולגים |
 | `CLIP_RERANK` | `1` | `0` מכבה את CLIP (חיפוש סמנטי בטקסט חופשי + מיזוג זהויות) |
 | `ANTHROPIC_API_KEY` | — | כשמוגדר, השאילתות מפוענחות ע"י Claude (`claude-opus-5-5`) במקום חוקי מילון |
 | `SAMPLE_FPS` | `3` | כמה פריימים לשנייה מנותחים |

@@ -1,0 +1,45 @@
+"""Model selection per video and class-name normalisation (no real YOLO)."""
+
+import indexer
+from conftest import BlindModel, FakeModel
+
+
+def test_class_names_are_lowercased_renamed_and_body_parts_skipped():
+    class M:
+        names = {0: "Man", 1: "Human face", 2: "Tree", 3: "backpack"}
+    assert indexer.class_name(M, 0) == "person"
+    assert indexer.class_name(M, 1) in indexer.SKIP
+    assert indexer.class_name(M, 2) == "tree"
+    assert indexer.class_name(M, 3) == "bag"
+
+
+def test_choose_model_picks_the_one_that_sees_the_video(video_file, monkeypatch):
+    sharp, blind = FakeModel(), BlindModel()
+    monkeypatch.setattr(indexer, "load_model",
+                        lambda name=None: {"sharp.pt": sharp, "blind.pt": blind}[name])
+    status = {}
+    name, model = indexer.choose_model(video_file, ["blind.pt", "sharp.pt"], status)
+    assert name == "sharp.pt" and model is sharp
+    assert blind.calls == indexer.PROBE_FRAMES      # every model sees the same frames
+    assert status["stage"] == "trying sharp.pt"
+
+
+def test_single_model_is_not_probed(video_file, monkeypatch):
+    only = FakeModel()
+    monkeypatch.setattr(indexer, "load_model", lambda name=None: only)
+    assert indexer.choose_model(video_file, ["only.pt"])[0] == "only.pt"
+    assert only.calls == 0
+
+
+def test_index_records_the_chosen_model(video_file, tmp_path, monkeypatch, no_clip):
+    import db as database
+    sharp, blind = FakeModel(), BlindModel()
+    monkeypatch.setattr(indexer, "MODEL_NAMES", ["blind.pt", "sharp.pt"])
+    monkeypatch.setattr(indexer, "load_model",
+                        lambda name=None: {"sharp.pt": sharp, "blind.pt": blind}[name])
+    dbp = str(tmp_path / "i.db")
+    status = indexer.index_video(video_file, "street.mp4", db_path=dbp)
+    assert status["status"] == "ready" and status["model"] == "sharp.pt"
+    conn = database.connect(dbp)
+    assert database.get_video(conn, "street.mp4")["model"] == "sharp.pt"
+    assert set(database.list_classes(conn, "street.mp4")) == {"person", "dog", "car"}
