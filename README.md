@@ -46,6 +46,7 @@ set ANTHROPIC_API_KEY=sk-ant-...        # Claude query parser (otherwise: rules)
 set YOLO_MODEL=yolov8s-worldv2.pt       # open-vocabulary detection
 set YOLO_MODEL=game.pt                  # a model fine-tuned on your own classes (backend/train/README.md)
 set YOLO_MODEL=yolov8n.pt,game.pt       # several models: the best one is picked per video
+set YOLO_MODEL=yolov8n.pt,night.pt      # night.pt: fine-tuned on low-light footage (backend/train/night_dataset.py)
 set CLIP_RERANK=0                       # disable CLIP on a weak machine
 ```
 

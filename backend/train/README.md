@@ -94,6 +94,41 @@ Validation של 36 פריימים, 589 תיבות:
 - התיוג האוטומטי מצייר תיבה לכל גזע, אז צמרות חופפות של עצים צמודים מקבלות
   תיבות חופפות.
 
+## גלאי לילה (`night.pt`) — `night_dataset.py`
+
+בסרטון מצלמת אבטחה חשוך (640×352, אינפרא, פנס מסנוור) YOLOv8n לא מצא אף אדם,
+גם עם סף 0.15 ו-yolov8s: המודל מוציא "person" בביטחון 0.15–0.3 פעם בכמה שניות,
+בלי מזהה מעקב, ו-`search.make_segment` זורק גילוי בודד חלש כרעש (נכון, אחרת
+הסרטון מתמלא ב-vase ו-train). הפתרון: fine-tuning על תמונות לילה.
+
+1. **ExDark** (Exclusively Dark Image Dataset): 7,363 תמונות בתאורה נמוכה עם תיבות
+   ל-12 מחלקות (People, Car, Bus, Bicycle, Motorbike, Dog, Cat, Boat, Bottle, Chair,
+   Cup, Table). יורד אוטומטית מ-Hugging Face (`dronefreak/ExDark`, פורמט YOLO, 640×640,
+   ~280 MB). שמות המחלקות ממופים לשמות COCO (People→person, Motorbike→motorcycle…),
+   אז המפענח, הטבלאות ב-`indexer` וה-UI לא משתנים.
+2. **פריימים משלכן** (אופציונלי אבל מומלץ, ExDark צולם מקרוב ובאיכות טובה):
+   ```bash
+   python train/night_dataset.py frames videos/dark.mp4 --every 1.5
+   ```
+   מייצר `train/night/frames/dark_000042.0.jpg …`. מעלים ל-Roboflow (או CVAT), מתייגים
+   person / car, מייצאים בפורמט "YOLOv8" ומכווצים ל-zip. הסקריפט מכפיל כל פריים כזה ×4
+   כדי שלא ייבלע ב-6,000 התמונות של ExDark.
+3. **אימון ב-Colab**: [colab_train_night.ipynb](colab_train_night.ipynb) — מוריד את ExDark,
+   מקבל את ה-zip (אפשר לדלג), בונה את הדאטהסט, מאמן `yolov8s` ב-imgsz 800, 25 epochs
+   (כשעה על T4; `epochs=12` או `yolov8n.pt` למהיר יותר) ומוריד `best.pt`.
+   כדאי טוקן חינמי של Hugging Face ב-Secrets של קולאב (`HF_TOKEN`), אחרת ההורדה
+   נחסמת זמנית (429) והסקריפט ממתין ומנסה שוב.
+4. **חיבור**: `copy best.pt backend\night.pt` ואז
+   `YOLO_MODEL=yolov8n.pt,game.pt,night.pt` + `IMGSZ=800`. סרטון חשוך יבחר ב-`night.pt`
+   לבד (בדיקת 20 הפריימים).
+
+בנייה מקומית (לבדיקה, בלי Colab): `python train/night_dataset.py build --own DIR`
+(`--no-exdark` לפריימים שלכן בלבד, `--classes person,car --limit 200` לניסוי מהיר).
+הבדיקות ב-`tests/test_night_dataset.py` מכסות את המיפוי והמיזוג בלי הורדה.
+
+ציפייה: אנשים בלילה בגודל סביר יזוהו הרבה יותר טוב; אנשים של ~20 פיקסלים בסרטון
+מסונוור יישארו קשים. לדמו עדיף גם סרטון לילה ב-720p ומעלה.
+
 ## אותו רעיון לסרטון אחר
 
 אם המשחק שלכן, הכי מדויק לייצר את התיבות מהקוד של המשחק (הוא יודע איפה כל

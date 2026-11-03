@@ -15,3 +15,7 @@ runs/
 backend/train/dataset.zip
 backend/*.log
 !backend/game.pt
+
+# night detector training (train/night_dataset.py)
+backend/train/night/
+!backend/night.pt
