@@ -85,6 +85,18 @@ def test_frames_extraction(tmp_path):
     assert names[0] == "v_000000.0.jpg" and names[-1] == "v_000004.0.jpg"
 
 
+def test_exdark_missing_reports_short_folders(tmp_path, monkeypatch):
+    monkeypatch.setattr(nd, "EXDARK_EXPECTED", {"train/images": 2, "train/labels": 2})
+    d = tmp_path / "data" / "train" / "images"
+    d.mkdir(parents=True)
+    (d / "a.jpg").write_bytes(b"x"), (d / "b.jpg").write_bytes(b"x")
+    assert nd.exdark_missing(str(tmp_path)) == ["train/labels 0/2"]
+    (tmp_path / "data" / "train" / "labels").mkdir()
+    for n in ("a.txt", "b.txt"):
+        (tmp_path / "data" / "train" / "labels" / n).write_text("0 0.5 0.5 0.1 0.1\n")
+    assert nd.exdark_missing(str(tmp_path)) == []
+
+
 def test_build_refuses_export_without_yaml(tmp_path):
     with pytest.raises(SystemExit):
         nd.build(str(tmp_path / "out"), [("x", str(tmp_path))])

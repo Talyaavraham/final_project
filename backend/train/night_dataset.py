@@ -187,17 +187,19 @@ def download_exdark(cache_dir, attempts=6):
     import time
     from huggingface_hub import snapshot_download
     from huggingface_hub.errors import HfHubHTTPError
+    if not exdark_missing(cache_dir):                 # complete copy: no network
+        return os.path.join(cache_dir, "data")
     wait = 60
     for i in range(attempts):
         try:
-            path = snapshot_download(HF_REPO, repo_type="dataset", local_dir=cache_dir,
-                                     max_workers=4)
+            snapshot_download(HF_REPO, repo_type="dataset", local_dir=cache_dir,
+                              max_workers=4)
             # when the API itself is rate-limited the call returns the partial
             # local copy without raising -> check it is really complete
-            n = exdark_train_images(path)
-            if n >= EXDARK_MIN_TRAIN:
-                return os.path.join(path, "data")
-            msg = f"only {n} of ~5874 training images so far"
+            missing = exdark_missing(cache_dir)
+            if not missing:
+                return os.path.join(cache_dir, "data")
+            msg = "incomplete so far: " + ", ".join(missing)
         except HfHubHTTPError as e:
             if "429" not in str(e):
                 raise
@@ -213,12 +215,20 @@ def download_exdark(cache_dir, attempts=6):
         wait = min(wait * 2, 600)
 
 
-EXDARK_MIN_TRAIN = 5800
+# files expected in the Hugging Face copy (a little below the real counts)
+EXDARK_EXPECTED = {"train/images": 5800, "train/labels": 5800,
+                   "valid/images": 700, "valid/labels": 700}
 
 
-def exdark_train_images(path):
-    d = os.path.join(path, "data", "train", "images")
-    return sum(1 for f in os.listdir(d) if f.lower().endswith(IMG_EXT)) if os.path.isdir(d) else 0
+def exdark_missing(cache_dir):
+    """['train/labels 4262/5800', ...] for every split folder still short."""
+    out = []
+    for rel, need in EXDARK_EXPECTED.items():
+        d = os.path.join(cache_dir, "data", rel)
+        n = len([f for f in os.listdir(d) if not f.startswith(".")]) if os.path.isdir(d) else 0
+        if n < need:
+            out.append(f"{rel} {n}/{need}")
+    return out
 
 
 # --------------------------------------------------------------- build
