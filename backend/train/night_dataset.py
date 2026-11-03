@@ -200,12 +200,11 @@ def download_exdark(cache_dir, attempts=6):
             if not missing:
                 return os.path.join(cache_dir, "data")
             msg = "incomplete so far: " + ", ".join(missing)
-        except HfHubHTTPError as e:
-            if "429" not in str(e):
-                raise
-            msg = "rate-limited by Hugging Face"
-        except (ConnectionError, OSError) as e:       # dropped connection mid-way
-            msg = f"connection error ({type(e).__name__})"
+        except (HfHubHTTPError, ConnectionError, OSError) as e:
+            # 429 rate limit, dropped connection, or a HEAD call that failed
+            # under the rate limit (LocalEntryNotFoundError) — all retryable
+            msg = ("rate-limited by Hugging Face" if "429" in str(e)
+                   else f"network error ({type(e).__name__})")
         if i == attempts - 1:
             raise SystemExit(f"ExDark download incomplete ({msg}). Set HF_TOKEN "
                              "(free account) and run again — it resumes where it stopped.")
