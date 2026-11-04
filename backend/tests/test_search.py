@@ -94,3 +94,31 @@ def test_semantic_rank_orders_and_filters():
     out = semantic_rank([bad, none, good], q)
     assert [s["track_id"] for s in out] == [1, 3]
     assert out[0]["score"] > 0.8
+
+
+def test_scene_windows_groups_standout_frames():
+    from search import scene_windows
+    q = np.array([1.0, 0, 0], np.float32)
+    far = np.array([0, 1.0, 0], np.float32)
+    near = np.array([0.95, 0.31, 0], np.float32)
+    # 30 s of nothing, a 3 s burst at 10-12, a lone hit at 25
+    frames = [(float(t), near if t in (10, 11, 12, 25) else far) for t in range(30)]
+    out = scene_windows(frames, q)
+    assert [round(s["t"]) for s in sorted(out, key=lambda s: s["t"])] == [10, 25]
+    burst = next(s for s in out if round(s["t"]) == 10)
+    assert burst["dur"] == 3.0 and burst["cls"] == "scene" and burst["score"] > 0.9
+    assert burst["box"] == {"x": 0.0, "y": 0.0, "w": 100.0, "h": 100.0}
+    assert scene_windows([], q) == []
+
+
+def test_frames_roundtrip(tmp_path):
+    import db as database
+    import embeddings
+    conn = database.connect(str(tmp_path / "x.db"))
+    v = np.array([0.6, 0.8, 0.0], np.float32)
+    database.insert_frames(conn, "v.mp4", [(0.0, embeddings.to_blob(v)), (1.0, embeddings.to_blob(v))])
+    rows = database.load_frames(conn, "v.mp4")
+    assert [r[0] for r in rows] == [0.0, 1.0]
+    assert np.allclose(embeddings.from_blob(rows[0][1]), v)
+    database.delete_video(conn, "v.mp4")
+    assert database.load_frames(conn, "v.mp4") == []

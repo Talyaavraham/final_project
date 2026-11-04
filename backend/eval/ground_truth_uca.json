@@ -1,0 +1,2299 @@
+{
+ "videos": {
+  "Arrest035_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       4.6,
+       14.3
+      ],
+      [
+       18.5,
+       31.1
+      ],
+      [
+       34.6,
+       44.8
+      ],
+      [
+       47.5,
+       72.9
+      ],
+      [
+       114.4,
+       131.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery001_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       15.6,
+       18.2
+      ],
+      [
+       19.8,
+       23.1
+      ],
+      [
+       24.2,
+       29.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery088_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       52.4,
+       60.4
+      ],
+      [
+       75.1,
+       84.2
+      ],
+      [
+       95.5,
+       107.5
+      ],
+      [
+       113.6,
+       119.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery084_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       14.7,
+       31.7
+      ],
+      [
+       55.0,
+       65.2
+      ]
+     ]
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       20.7,
+       31.7
+      ],
+      [
+       67.1,
+       71.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Assault004_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       25.6,
+       26.2
+      ],
+      [
+       29.5,
+       88.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest038_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       1.3,
+       3.1
+      ]
+     ]
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       1.3,
+       3.4
+      ],
+      [
+       12.0,
+       15.4
+      ],
+      [
+       44.5,
+       50.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery102_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       49.1,
+       56.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery038_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       12.8,
+       24.5
+      ],
+      [
+       29.1,
+       51.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery129_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       1.1,
+       9.4
+      ],
+      [
+       11.0,
+       18.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery018_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       21.2,
+       50.6
+      ],
+      [
+       55.4,
+       84.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery017_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       42.9,
+       49.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Fighting024_x264.mp4": {
+   "category": "Fighting",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       6.1,
+       6.9
+      ],
+      [
+       37.8,
+       42.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Fighting008_x264.mp4": {
+   "category": "Fighting",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       59.3,
+       67.3
+      ],
+      [
+       150.1,
+       160.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery068_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       9.8,
+       11.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery122_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       7.7,
+       13.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery132_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       11.6,
+       21.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery143_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       7.3,
+       13.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery087_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       0.0,
+       2.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery031_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       12.3,
+       27.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery127_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       0.5,
+       6.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery011_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       21.2,
+       22.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery108_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       30.5,
+       40.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Assault015_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       33.1,
+       36.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery016_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       27.0,
+       28.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Assault007_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       56.3,
+       58.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery022_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       5.4,
+       14.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting011_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       101.6,
+       111.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting014_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       1.5,
+       10.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery021_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       7.9,
+       10.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting008_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       280.1,
+       289.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Fighting015_x264.mp4": {
+   "category": "Fighting",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": [
+      [
+       73.1,
+       81.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery019_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       3.0,
+       12.1
+      ],
+      [
+       18.8,
+       24.4
+      ],
+      [
+       27.4,
+       46.6
+      ],
+      [
+       87.8,
+       88.1
+      ],
+      [
+       100.4,
+       104.2
+      ],
+      [
+       136.4,
+       155.9
+      ],
+      [
+       172.8,
+       190.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting031_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       20.0,
+       29.3
+      ],
+      [
+       38.1,
+       57.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery078_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       9.9,
+       23.2
+      ],
+      [
+       25.7,
+       56.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery006_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       15.8,
+       18.3
+      ],
+      [
+       25.4,
+       28.6
+      ],
+      [
+       31.0,
+       61.8
+      ],
+      [
+       66.6,
+       82.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery024_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       2.8,
+       55.9
+      ],
+      [
+       60.1,
+       66.2
+      ],
+      [
+       68.9,
+       77.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery065_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       2.8,
+       55.9
+      ],
+      [
+       60.1,
+       66.2
+      ],
+      [
+       68.9,
+       77.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting020_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       13.7,
+       50.0
+      ],
+      [
+       69.6,
+       82.1
+      ],
+      [
+       84.1,
+       112.1
+      ],
+      [
+       122.1,
+       133.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery014_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       136.5,
+       152.5
+      ],
+      [
+       156.8,
+       170.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery124_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       41.5,
+       46.7
+      ],
+      [
+       48.0,
+       61.8
+      ],
+      [
+       63.6,
+       73.4
+      ],
+      [
+       74.5,
+       84.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery033_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       0.7,
+       5.4
+      ],
+      [
+       16.1,
+       18.2
+      ],
+      [
+       21.1,
+       24.2
+      ],
+      [
+       28.1,
+       31.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery099_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       5.8,
+       32.3
+      ],
+      [
+       39.5,
+       43.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery051_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       46.0,
+       51.6
+      ]
+     ]
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       1.0,
+       25.1
+      ],
+      [
+       27.7,
+       38.7
+      ],
+      [
+       41.4,
+       46.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery100_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       32.1,
+       42.5
+      ],
+      [
+       52.5,
+       60.5
+      ],
+      [
+       83.1,
+       138.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery036_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       28.7,
+       32.6
+      ],
+      [
+       107.9,
+       110.4
+      ],
+      [
+       116.9,
+       118.1
+      ],
+      [
+       123.3,
+       126.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery073_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       159.7,
+       192.7
+      ]
+     ]
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       128.8,
+       140.5
+      ],
+      [
+       146.8,
+       192.7
+      ],
+      [
+       201.6,
+       220.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting001_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       1.1,
+       8.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting030_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       20.0,
+       39.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting038_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       12.1,
+       21.2
+      ],
+      [
+       29.3,
+       34.6
+      ],
+      [
+       38.2,
+       43.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery004_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       7.6,
+       12.2
+      ],
+      [
+       13.5,
+       32.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting026_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       6.5,
+       24.2
+      ],
+      [
+       33.3,
+       37.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shooting004_x264.mp4": {
+   "category": "Shooting",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       11.4,
+       22.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery118_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       3.8,
+       8.1
+      ],
+      [
+       23.7,
+       29.2
+      ],
+      [
+       30.5,
+       37.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery025_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       1.8,
+       4.4
+      ],
+      [
+       8.4,
+       15.5
+      ],
+      [
+       32.0,
+       37.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson019_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       412.7,
+       422.4
+      ],
+      [
+       478.7,
+       482.1
+      ],
+      [
+       507.9,
+       521.5
+      ],
+      [
+       950.4,
+       955.9
+      ],
+      [
+       982.3,
+       990.4
+      ],
+      [
+       1047.1,
+       1110.6
+      ],
+      [
+       1113.4,
+       1130.8
+      ],
+      [
+       1150.3,
+       1156.5
+      ],
+      [
+       1236.5,
+       1242.8
+      ],
+      [
+       1245.5,
+       1269.1
+      ],
+      [
+       1652.8,
+       1659.7
+      ],
+      [
+       2192.9,
+       2259.6
+      ],
+      [
+       2296.3,
+       2319.2
+      ],
+      [
+       2527.4,
+       2530.1
+      ],
+      [
+       2802.5,
+       2807.8
+      ],
+      [
+       3135.4,
+       3150.8
+      ],
+      [
+       3316.4,
+       3333.5
+      ],
+      [
+       3448.7,
+       3503.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson025_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       25.1,
+       45.9
+      ],
+      [
+       70.2,
+       80.3
+      ],
+      [
+       90.1,
+       100.7
+      ],
+      [
+       130.6,
+       152.0
+      ],
+      [
+       160.0,
+       176.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson053_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       2.0,
+       140.3
+      ],
+      [
+       148.7,
+       176.3
+      ],
+      [
+       188.2,
+       194.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson008_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       0.4,
+       6.4
+      ],
+      [
+       12.3,
+       17.0
+      ],
+      [
+       20.1,
+       23.7
+      ],
+      [
+       30.3,
+       34.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson036_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       2.1,
+       26.5
+      ],
+      [
+       28.6,
+       40.7
+      ],
+      [
+       48.1,
+       54.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson040_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       1.6,
+       10.1
+      ],
+      [
+       11.7,
+       15.1
+      ],
+      [
+       25.1,
+       32.6
+      ],
+      [
+       43.3,
+       93.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson032_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       2.3,
+       37.1
+      ],
+      [
+       55.2,
+       60.5
+      ],
+      [
+       70.1,
+       80.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson003_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       0.1,
+       17.5
+      ],
+      [
+       30.3,
+       90.6
+      ],
+      [
+       94.9,
+       106.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson013_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       19.9,
+       41.2
+      ],
+      [
+       105.0,
+       113.0
+      ],
+      [
+       128.0,
+       134.0
+      ],
+      [
+       175.8,
+       184.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson022_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       37.5,
+       49.9
+      ],
+      [
+       139.3,
+       287.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson015_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       224.5,
+       232.1
+      ],
+      [
+       234.8,
+       240.5
+      ],
+      [
+       275.1,
+       290.4
+      ],
+      [
+       323.4,
+       330.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson049_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       0.8,
+       6.9
+      ],
+      [
+       10.1,
+       12.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson012_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       1.9,
+       5.2
+      ],
+      [
+       10.7,
+       12.6
+      ],
+      [
+       19.7,
+       20.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson030_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       20.8,
+       26.0
+      ],
+      [
+       50.0,
+       52.5
+      ],
+      [
+       166.4,
+       167.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson051_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       4.3,
+       23.5
+      ],
+      [
+       28.0,
+       32.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson005_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       0.0,
+       8.2
+      ],
+      [
+       22.9,
+       38.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson031_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       1.5,
+       35.2
+      ],
+      [
+       45.1,
+       50.5
+      ],
+      [
+       58.3,
+       81.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson035_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       10.9,
+       24.4
+      ],
+      [
+       26.5,
+       42.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson027_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       1.3,
+       40.6
+      ],
+      [
+       55.4,
+       61.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson001_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       46.9,
+       52.3
+      ],
+      [
+       60.5,
+       62.2
+      ],
+      [
+       64.1,
+       69.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery062_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       31.8,
+       53.9
+      ],
+      [
+       91.0,
+       103.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery032_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       33.2,
+       47.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery089_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       1.6,
+       4.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery138_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       13.6,
+       20.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery072_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       9.3,
+       32.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery093_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       20.0,
+       28.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery060_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       27.9,
+       58.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery075_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       80.4,
+       90.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery080_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       38.0,
+       50.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery029_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       45.8,
+       57.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Burglary049_x264.mp4": {
+   "category": "Burglary",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       103.9,
+       110.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery020_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       75.0,
+       79.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery090_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       70.2,
+       73.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Robbery081_x264.mp4": {
+   "category": "Robbery",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       11.9,
+       18.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting020_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": [
+      [
+       80.3,
+       84.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos084_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       448.2,
+       455.2
+      ],
+      [
+       531.2,
+       541.2
+      ],
+      [
+       850.2,
+       865.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos473_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       1127.1,
+       1190.0
+      ],
+      [
+       1276.0,
+       1286.0
+      ],
+      [
+       1889.1,
+       1910.0
+      ],
+      [
+       1980.0,
+       1995.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos225_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       464.0,
+       492.2
+      ],
+      [
+       539.0,
+       561.2
+      ],
+      [
+       647.2,
+       660.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos737_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       14.2,
+       26.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos736_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       13.1,
+       23.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos254_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       6.1,
+       41.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos361_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       2.6,
+       21.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos073_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": [
+      [
+       27.3,
+       31.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Normal_Videos705_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos_881_x264.mp4": {
+   "category": "Normal_Videos_",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos_345_x264.mp4": {
+   "category": "Normal_Videos_",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos_889_x264.mp4": {
+   "category": "Normal_Videos_",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos344_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos916_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos157_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos297_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos_745_x264.mp4": {
+   "category": "Normal_Videos_",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  },
+  "Normal_Videos170_x264.mp4": {
+   "category": "Normal_Videos",
+   "queries": [
+    {
+     "text": "a person holding a knife",
+     "scenario": "knife",
+     "expected": []
+    },
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    },
+    {
+     "text": "someone grabbing a bag",
+     "scenario": "snatch",
+     "expected": []
+    },
+    {
+     "text": "a person carrying a package",
+     "scenario": "package",
+     "expected": []
+    }
+   ]
+  }
+ }
+}

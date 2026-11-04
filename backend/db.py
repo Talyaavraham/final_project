@@ -50,6 +50,12 @@ CREATE TABLE IF NOT EXISTS segments (
     best_t    REAL       -- time of the most confident detection (= box)
 );
 CREATE INDEX IF NOT EXISTS idx_seg ON segments(video, cls, t);
+CREATE TABLE IF NOT EXISTS frames (
+    video     TEXT,
+    t         REAL,
+    embedding BLOB        -- float32 CLIP vector of the whole frame (scene search)
+);
+CREATE INDEX IF NOT EXISTS idx_frames ON frames(video, t);
 """
 
 
@@ -85,8 +91,21 @@ def put_video(conn, video, duration, width, height, sha1, model, indexed_at):
 
 
 def delete_video(conn, video: str):
-    for table in ("detections", "segments", "videos"):
+    for table in ("detections", "segments", "frames", "videos"):
         conn.execute(f"DELETE FROM {table} WHERE video=?", (video,))
+
+
+# ---------------------------------------------------------------- frames
+def insert_frames(conn, video: str, rows: Iterable[tuple]):
+    """rows: (t, embedding blob) — whole-frame CLIP vectors, one per ~second"""
+    conn.executemany("INSERT INTO frames VALUES (?,?,?)",
+                     [(video, t, blob) for t, blob in rows])
+
+
+def load_frames(conn, video: str):
+    """-> [(t, embedding blob), ...] in time order"""
+    return conn.execute("SELECT t, embedding FROM frames WHERE video=? ORDER BY t",
+                        (video,)).fetchall()
 
 
 # ------------------------------------------------------------ detections

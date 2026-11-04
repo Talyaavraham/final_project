@@ -88,7 +88,7 @@ def main():
     args = ap.parse_args()
 
     gt = json.load(open(args.ground_truth, encoding="utf-8"))
-    info = httpx.get(f"{args.api}/").json()
+    info = httpx.get(f"{args.api}/api").json()
     print(f"server: model={info['model']} clip={info['clip']} llm_parser={info['llm_parser']}")
 
     rows, TP, FP, FN = [], 0, 0, 0
@@ -103,19 +103,34 @@ def main():
             tp, fp, fn = score(res["results"], q["expected"], args.iou)
             p, r, f = prf(tp, fp, fn)
             TP, FP, FN = TP + tp, FP + fp, FN + fn
-            rows.append({"video": video, "query": q["text"], "parsed": parsed,
+            rows.append({"video": video, "query": q["text"], "scenario": q.get("scenario"),
+                         "parsed": parsed,
                          "returned": len(res["results"]), "expected": len(q["expected"]),
                          "tp": tp, "fp": fp, "fn": fn,
                          "precision": round(p, 3), "recall": round(r, 3), "f1": round(f, 3)})
             print(f"{video:24s} {q['text'][:38]:40s} P={p:.2f} R={r:.2f} F1={f:.2f} "
                   f"(got {len(res['results'])}, want {len(q['expected'])}, via {parsed['source']})")
 
+    # per scenario (ground truths that tag their queries, e.g. the UCA benchmark)
+    by_scenario = {}
+    for row in rows:
+        if row["scenario"]:
+            s = by_scenario.setdefault(row["scenario"], {"tp": 0, "fp": 0, "fn": 0, "queries": 0})
+            s["tp"] += row["tp"]; s["fp"] += row["fp"]; s["fn"] += row["fn"]; s["queries"] += 1
+    if by_scenario:
+        print("\nBY SCENARIO")
+        for name, s in sorted(by_scenario.items()):
+            p, r, f = prf(s["tp"], s["fp"], s["fn"])
+            s.update(precision=round(p, 3), recall=round(r, 3), f1=round(f, 3))
+            print(f"  {name:10s} P={p:.2f} R={r:.2f} F1={f:.2f}  (tp={s['tp']} fp={s['fp']} fn={s['fn']}, {s['queries']} queries)")
+
     P, R, F = prf(TP, FP, FN)
     print(f"\nOVERALL  precision={P:.3f}  recall={R:.3f}  f1={F:.3f}  "
           f"(tp={TP} fp={FP} fn={FN}, {len(rows)} queries)")
-    out = os.path.join(os.path.dirname(args.ground_truth) or ".", "report.json")
+    out = os.path.splitext(args.ground_truth)[0] + "_report.json"
     json.dump({"server": info, "iou": args.iou, "overall": {"precision": P, "recall": R, "f1": F},
-               "queries": rows}, open(out, "w", encoding="utf-8"), indent=2, ensure_ascii=False)
+               "by_scenario": by_scenario, "queries": rows}, open(out, "w", encoding="utf-8"),
+              indent=2, ensure_ascii=False)
     print("report:", out)
 
 

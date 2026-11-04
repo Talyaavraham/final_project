@@ -1269,6 +1269,7 @@ function drawOverlay(){
   const pw = Math.min(fw, fh * ar), phh = Math.min(fh, fw / ar);
   const ox = (fw - pw) / 2, oy = (fh - phh) / 2;
   state.matches.forEach((m, i) => {
+    if (m.cls === 'scene') return;            // whole-frame match: no box to draw
     const b = boxAt(m, ct);
     if (!b) return;
     const el = document.createElement('div');

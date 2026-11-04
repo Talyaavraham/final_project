@@ -220,6 +220,47 @@ def filter_segments(segments, objects, colors, actions, time_range,
     return segments
 
 
+MIN_SCENE = 0.26    # whole-frame CLIP similarity floor
+SCENE_Z = 1.5       # ... and at least this many std devs above the video's own mean
+SCENE_GAP = 1.5     # s between hits that still belong to one window
+
+
+def scene_windows(frames, text_vec, min_score=MIN_SCENE, z=SCENE_Z, gap=SCENE_GAP):
+    """
+    frames: [(t, vec), ...] whole-frame CLIP vectors in time order.
+    Frames whose similarity to the query stands out (above min_score AND
+    above the video's mean + z*std, so a video that is all fire still ranks
+    its strongest seconds) are grouped into time windows. Returned as
+    segment-like dicts (cls "scene") so the rest of the pipeline can use them.
+    """
+    if not frames:
+        return []
+    ts = np.array([t for t, _ in frames], dtype=np.float32)
+    sims = np.array([float(np.dot(v, text_vec)) for _, v in frames], dtype=np.float32)
+    thr = max(min_score, float(sims.mean() + z * sims.std())) if len(sims) > 3 else min_score
+    hit = sims >= thr
+    out = []
+    i = 0
+    while i < len(ts):
+        if not hit[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < len(ts) and hit[j + 1] and ts[j + 1] - ts[j] <= gap:
+            j += 1
+        k = i + int(np.argmax(sims[i:j + 1]))
+        out.append({
+            "t": float(ts[i]), "dur": max(1.0, float(ts[j] - ts[i]) + 1.0),
+            "conf": float(sims[k]), "score": float(sims[k]), "cls": "scene", "color": "",
+            "speed": 0.0, "entering": False, "exiting": False,
+            "box": {"x": 0.0, "y": 0.0, "w": 100.0, "h": 100.0}, "best_t": float(ts[k]),
+            "path": [], "track_id": -1, "entity_id": -1,
+        })
+        i = j + 1
+    out.sort(key=lambda s: -s["score"])
+    return out
+
+
 def semantic_rank(segments, text_vec, min_score=MIN_SEMANTIC):
     """
     Score segments by cosine similarity between their CLIP crop embedding

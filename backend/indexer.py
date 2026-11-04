@@ -18,7 +18,6 @@ model that finds the most in 20 probe frames indexes the video):
                                           (see train/README.md); class names
                                           come from the weights file
 """
-
 import os
 import time
 from collections import Counter
@@ -35,6 +34,10 @@ from search import merge_entities, track_segments
 MODEL_NAME = os.environ.get("YOLO_MODEL", "yolov8n.pt")
 MODEL_NAMES = [m.strip() for m in MODEL_NAME.split(",") if m.strip()]
 PROBE_FRAMES = 20           # frames sampled per model when choosing a model
+# models that run on every frame IN ADDITION to the chosen one, e.g.
+# "security.pt" (gun / knife / fire / smoke) next to the COCO model
+EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", "").split(",") if m.strip()]
+EXTRA_ID_BASE = 100000      # track ids of extra models are offset so they never collide
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.3"))
 SAMPLE_FPS = float(os.environ.get("SAMPLE_FPS", "3"))
 IMGSZ = int(os.environ.get("IMGSZ", "640"))   # detector input size; 800+ for small objects
@@ -43,6 +46,8 @@ FLUSH_EVERY = 2000          # detections per DB write
 # default BoT-SORT and does not need texture to work on
 TRACKER = os.environ.get("TRACKER", "bytetrack.yaml")
 MAX_CROP = 224              # px, crops kept for CLIP
+SCENE_EVERY = float(os.environ.get("SCENE_EVERY", "1.0"))   # s between whole-frame CLIP vectors (0 = off)
+SCENE_BATCH = 128           # frames embedded per CLIP call
 
 # class names that we rename (the rest keep the model's name, lower-cased).
 # COCO: the three bag classes. Open Images (yolov8s-oiv7.pt): people classes.
@@ -190,6 +195,10 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         if model is None:
             model_name, model = choose_model(path, status=status)
             status["stage"] = "detecting"
+        extras = [n for n in EXTRA_MODELS if n != model_name]
+        runs = [(model, 0)] + [(load_model(n), EXTRA_ID_BASE * (k + 1)) for k, n in enumerate(extras)]
+        if extras:
+            model_name = "+".join([model_name] + extras)
         status["model"] = model_name
         cap = cv2.VideoCapture(path)
         if not cap.isOpened():
@@ -206,6 +215,21 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         untracked_id = -1
         frame_i = 0
         status["stage"] = "detecting"
+
+        # whole-frame CLIP vectors every SCENE_EVERY seconds: "fire", "someone
+        # grabbing a bag" are scenes, not objects the detector knows
+        scene_on = SCENE_EVERY > 0 and embeddings.available()
+        scene_buf, next_scene_t = [], 0.0
+
+        def flush_scene():
+            if not scene_buf:
+                return
+            vecs = embeddings.embed_images([f for _, f in scene_buf])
+            if vecs is not None:
+                database.insert_frames(conn, name, [(t, embeddings.to_blob(v))
+                                                    for (t, _), v in zip(scene_buf, vecs)])
+                conn.commit()
+            scene_buf.clear()
         while True:
             if not cap.grab():          # grab() skips decoding unused frames
                 break
@@ -215,11 +239,14 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                     break
                 H, W = frame.shape[:2]
                 t = frame_i / fps
-                res = model.track(frame, persist=True, verbose=False,
+                boxes = []
+                for m, id_base in runs:
+                    res = m.track(frame, persist=True, verbose=False,
                                   conf=CONF_THRESHOLD, tracker=TRACKER,
                                   imgsz=IMGSZ)[0]
-                for box in res.boxes or []:
-                    cls = class_name(model, int(box.cls[0]))
+                    boxes += [(m, id_base, box) for box in (res.boxes or [])]
+                for m, id_base, box in boxes:
+                    cls = class_name(m, int(box.cls[0]))
                     if cls in SKIP:
                         continue
                     x1, y1, x2, y2 = (int(round(float(c))) for c in box.xyxy[0])
@@ -233,7 +260,7 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                     else:
                         color_crop = frame[y1:y2, x1:x2]
                     if box.id is not None:
-                        tid = int(box.id[0])
+                        tid = int(box.id[0]) + id_base
                     else:
                         tid = untracked_id
                         untracked_id -= 1
@@ -249,6 +276,11 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                             [cv2.IMWRITE_JPEG_QUALITY, 85])
                         if ok_enc:
                             best_crop[key] = (conf, buf.tobytes())
+                if scene_on and t >= next_scene_t:
+                    scene_buf.append((t, _shrink(frame, 320)))
+                    next_scene_t = t + SCENE_EVERY
+                    if len(scene_buf) >= SCENE_BATCH:
+                        flush_scene()
                 if len(rows) >= FLUSH_EVERY:
                     database.insert_detections(conn, rows)
                     conn.commit()
@@ -262,7 +294,10 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         duration = frame_i / fps
 
         # ---- segments --------------------------------------------------
-        status.update(stage="building segments", progress=0.9)
+        if scene_on:
+            status.update(stage="embedding scenes", progress=0.9)
+            flush_scene()
+        status.update(stage="building segments", progress=0.92)
         dets = database.load_detections(conn, name)
         segments = track_segments(dets, duration, W or 16, H or 9)
 

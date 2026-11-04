@@ -43,3 +43,31 @@ def test_index_records_the_chosen_model(video_file, tmp_path, monkeypatch, no_cl
     conn = database.connect(dbp)
     assert database.get_video(conn, "street.mp4")["model"] == "sharp.pt"
     assert set(database.list_classes(conn, "street.mp4")) == {"person", "dog", "car"}
+
+
+def test_extra_models_run_next_to_the_chosen_one(video_file, tmp_path, monkeypatch, no_clip):
+    import db as database
+
+    class GunModel(FakeModel):
+        """a 'security' detector: sees one gun wherever the fake person is"""
+        names = {0: "gun"}
+
+        def track(self, frame, **kw):
+            res = FakeModel.track(self, frame, **kw)[0]
+            res.boxes = [b for b in res.boxes if b.cls[0] == 0]  # the person's box -> "gun" here
+            return [res]
+
+    main_model, gun = FakeModel(), GunModel()
+    monkeypatch.setattr(indexer, "MODEL_NAMES", ["main.pt"])
+    monkeypatch.setattr(indexer, "EXTRA_MODELS", ["security.pt"])
+    monkeypatch.setattr(indexer, "load_model",
+                        lambda name=None: {"main.pt": main_model, "security.pt": gun}[name])
+    dbp = str(tmp_path / "x.db")
+    status = indexer.index_video(video_file, "street.mp4", db_path=dbp)
+    assert status["status"] == "ready" and status["model"] == "main.pt+security.pt"
+    conn = database.connect(dbp)
+    classes = database.list_classes(conn, "street.mp4")
+    assert {"person", "dog", "car", "gun"} <= set(classes)
+    # the gun's track ids live in their own range, so they never merge with a person's
+    gun_ids = {r[1] for r in database.load_detections(conn, "street.mp4") if r[2] == "gun"}
+    assert gun_ids and min(gun_ids) >= indexer.EXTRA_ID_BASE

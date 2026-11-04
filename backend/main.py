@@ -43,7 +43,9 @@ import embeddings
 import export
 import indexer
 import query_parser
-from search import filter_segments, semantic_rank
+from search import filter_segments, scene_windows, semantic_rank
+
+MIN_CROP_NO_OBJECT = 0.25   # crop similarity needed when the question names no object class
 
 app = FastAPI(title="Video Search Agent API", version="2.0")
 app.add_middleware(
@@ -138,7 +140,7 @@ def capabilities():
     return {
         "ok": True, "service": "video-search-agent", "version": "2.0",
         "model": indexer.MODEL_NAME,
-        "models": indexer.MODEL_NAMES,
+        "models": indexer.MODEL_NAMES, "extra_models": indexer.EXTRA_MODELS,
         "open_vocab": "world" in indexer.MODEL_NAME.lower(),
         "clip": embeddings.available(),
         "clip_error": embeddings.error(),
@@ -268,6 +270,21 @@ def search(req: SearchRequest):
         if vec is not None:
             segments = semantic_rank(segments, vec)
             semantic_used = True
+            # whole-frame search: the moments of the video that look like the text
+            conn = database.connect()
+            frames = [(t, embeddings.from_blob(b)) for t, b in database.load_frames(conn, req.video)]
+            conn.close()
+            scenes = scene_windows([f for f in frames if f[1] is not None], vec)
+            if tr:
+                lo, hi = tr[0], float("inf") if tr[1] is None else tr[1]
+                scenes = [s for s in scenes if s["t"] <= hi and s["t"] + s["dur"] >= lo]
+            # no object named ("fire", "someone grabbing a bag") -> scenes lead and
+            # object crops must match clearly; an object named but nothing
+            # matched -> scenes are the fallback
+            if not q.objects:
+                segments = scenes + [s for s in segments if s.get("score", 0) >= MIN_CROP_NO_OBJECT]
+            elif not segments:
+                segments = scenes
     if not semantic_used:
         segments.sort(key=lambda s: s["t"])
 
@@ -277,7 +294,8 @@ def search(req: SearchRequest):
         "total": total, "offset": req.offset, "semantic": semantic_used,
         "results": [{
             "t": s["t"], "dur": s["dur"], "conf": s["conf"], "cls": s["cls"],
-            "label": f'{s["color"]} {s["cls"]}'.strip(),
+            "label": (f'scene: {q.semantic[:40]}' if s["cls"] == "scene"
+                      else f'{s["color"]} {s["cls"]}'.strip()),
             "box": s["box"], "path": s["path"], "best_t": s.get("best_t", s["t"]),
             "track": s["track_id"], "entity": s["entity_id"],
             "speed": round(s["speed"], 3),
