@@ -34,6 +34,10 @@ from search import merge_entities, track_segments
 MODEL_NAME = os.environ.get("YOLO_MODEL", "yolov8n.pt")
 MODEL_NAMES = [m.strip() for m in MODEL_NAME.split(",") if m.strip()]
 PROBE_FRAMES = 20           # frames sampled per model when choosing a model
+PROBE_CONF = 0.7            # only detections the model is sure of count in the probe
+PROBE_MARGIN = 2.0          # a specialised model replaces the default (first) one only if it finds
+PROBE_MIN = 0.25 * PROBE_FRAMES   # twice as much, at least this much in total...
+PROBE_FOCUS = 0.3           # ...and 30% of what it finds at conf 0.3 survives PROBE_CONF ("at home")
 # models that run on every frame IN ADDITION to the chosen one, e.g.
 # "security.pt" (gun / knife / fire / smoke) next to the COCO model
 EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", "").split(",") if m.strip()]
@@ -127,15 +131,25 @@ def class_name(model, cls_id: int) -> str:
     return RENAME.get(raw, raw)
 
 
-def probe_score(model, frames, conf: float = 0.5) -> float:
-    """Sum of confidences of what the model finds in the frames (>= conf)."""
-    score = 0.0
+def probe_score(model, frames, conf: float = PROBE_CONF, low: float = 0.3):
+    """
+    (sure, loose): sum of confidences of what the model finds in the frames,
+    counting detections >= conf and >= low respectively. A model out of its
+    domain finds plenty at low confidence and little it is sure of (game.pt
+    "sees" fruit and suns in CCTV footage at 0.3-0.6), so sure/loose says
+    whether the model is at home in this video.
+    """
+    sure = loose = 0.0
     for frame in frames:
-        res = model.predict(frame, verbose=False, conf=conf, imgsz=IMGSZ)[0]
+        res = model.predict(frame, verbose=False, conf=low, imgsz=IMGSZ)[0]
         for box in res.boxes or []:
-            if class_name(model, int(box.cls[0])) not in SKIP:
-                score += float(box.conf[0])
-    return score
+            if class_name(model, int(box.cls[0])) in SKIP:
+                continue
+            c = float(box.conf[0])
+            loose += c
+            if c >= conf:
+                sure += c
+    return sure, loose
 
 
 def sample_frames(path: str, n: int = PROBE_FRAMES):
@@ -153,23 +167,28 @@ def sample_frames(path: str, n: int = PROBE_FRAMES):
 
 def choose_model(path: str, names=None, status: dict = None):
     """
-    The model that finds the most in PROBE_FRAMES frames of the video.
-    One model configured -> no probe. Ties go to the first name in the list.
-    Returns (name, model).
+    The first name is the default. Another model takes over only when it finds
+    clearly more (PROBE_MARGIN x) that it is sure of in PROBE_FRAMES frames,
+    enough of it (PROBE_MIN), and is at home in the footage (PROBE_FOCUS) —
+    see probe_score. One model configured -> no probe. Returns (name, model).
     """
     names = names or MODEL_NAMES
     if len(names) == 1:
         return names[0], load_model(names[0])
     frames = sample_frames(path)
-    best = None
+    models, scores = {}, {}
     for name in names:
         if status is not None:
             status["stage"] = f"trying {name}"
-        model = load_model(name)
-        score = probe_score(model, frames)
-        if best is None or score > best[0]:
-            best = (score, name, model)
-    return best[1], best[2]
+        models[name] = load_model(name)
+        scores[name] = probe_score(models[name], frames)
+    best = names[0]
+    for name in names[1:]:
+        sure, loose = scores[name]
+        if (sure >= PROBE_MIN and sure > PROBE_MARGIN * scores[names[0]][0]
+                and sure >= PROBE_FOCUS * loose and sure > scores[best][0]):
+            best = name
+    return best, models[best]
 
 
 def _shrink(img, max_side=MAX_CROP):

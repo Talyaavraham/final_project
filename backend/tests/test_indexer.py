@@ -1,7 +1,7 @@
 """Model selection per video and class-name normalisation (no real YOLO)."""
 
 import indexer
-from conftest import BlindModel, FakeModel
+from conftest import BlindModel, FakeModel, _Box, _Result
 
 
 def test_class_names_are_lowercased_renamed_and_body_parts_skipped():
@@ -71,3 +71,23 @@ def test_extra_models_run_next_to_the_chosen_one(video_file, tmp_path, monkeypat
     # the gun's track ids live in their own range, so they never merge with a person's
     gun_ids = {r[1] for r in database.load_detections(conn, "street.mp4") if r[2] == "gun"}
     assert gun_ids and min(gun_ids) >= indexer.EXTRA_ID_BASE
+
+
+class LoudModel(FakeModel):
+    """Finds plenty it is not sure of — a specialised model out of its domain."""
+    names = {0: "fruit"}
+
+    def track(self, frame, **kw):
+        self.calls += 1
+        return [_Result([_Box(0, [0, 0, 10, 10], None, 0.5) for _ in range(6)])]
+
+    predict = track
+
+
+def test_default_model_keeps_the_video_from_a_loud_specialist(video_file, monkeypatch):
+    default, loud = FakeModel(), LoudModel()
+    monkeypatch.setattr(indexer, "load_model",
+                        lambda name=None: {"coco.pt": default, "loud.pt": loud}[name])
+    # loud.pt sums more confidence than coco.pt (6 x 0.5 vs ~2.5 per frame)
+    # but nothing above PROBE_CONF, so the default stays
+    assert indexer.choose_model(video_file, ["coco.pt", "loud.pt"])[0] == "coco.pt"

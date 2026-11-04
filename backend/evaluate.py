@@ -38,7 +38,31 @@ def interval_iou(a, b):
     return inter / union if union > 0 else 0.0
 
 
-def score(matches, expected, iou_thr):
+def score_hits(matches, expected, inside=0.5):
+    """
+    Alert-style scoring: a returned segment is right when at least `inside`
+    of it lies in some expected window; an expected window is found when at
+    least one returned segment hits it. Returns (tp, fp, fn) where tp counts
+    windows found, fp wrong segments, fn windows missed — so precision is per
+    segment and recall per window, and a 2 s alert inside a 30 s event counts.
+    """
+    def frac_inside(g, e):
+        lo, hi = max(g[0], e[0]), min(g[1], e[1])
+        return max(0.0, hi - lo) / max(g[1] - g[0], 1e-6)
+    got = [(m["t"], m["t"] + m["dur"]) for m in matches]
+    found = set()
+    right = 0
+    for g in got:
+        hits = [i for i, e in enumerate(expected) if frac_inside(g, e) >= inside]
+        if hits:
+            right += 1
+            found.update(hits)
+    return len(found), len(got) - right, len(expected) - len(found)
+
+
+def score(matches, expected, iou_thr, match="iou"):
+    if match == "hit":
+        return score_hits(matches, expected)
     got = [(m["t"], m["t"] + m["dur"]) for m in matches]
     used = set()
     tp = 0
@@ -70,12 +94,15 @@ def wait_ready(api, video, timeout=3600):
     while time.time() - t0 < timeout:
         st = httpx.get(f"{api}/status", params={"video": video}).json()
         if st["status"] == "ready":
-            return
+            return True
         if st["status"].startswith("error"):
-            raise SystemExit(f"{video}: {st['status']}")
+            print(f"{video}: {st['status']} — skipped")
+            return False
         if st["status"] == "unknown":
-            raise SystemExit(f"{video}: not indexed — upload it first (POST /index)")
+            print(f"{video}: not indexed — skipped (upload it first, POST /index)")
+            return False
         time.sleep(2)
+    return False
 
 
 def main():
@@ -83,6 +110,8 @@ def main():
     ap.add_argument("ground_truth")
     ap.add_argument("--api", default="http://localhost:8000")
     ap.add_argument("--iou", type=float, default=0.3)
+    ap.add_argument("--match", choices=["iou", "hit"], default="iou",
+                    help="iou: IoU >= --iou (localisation); hit: a segment inside a window counts (alerts)")
     ap.add_argument("--near", action="store_true", default=True)
     ap.add_argument("--no-near", dest="near", action="store_false")
     args = ap.parse_args()
@@ -92,15 +121,18 @@ def main():
     print(f"server: model={info['model']} clip={info['clip']} llm_parser={info['llm_parser']}")
 
     rows, TP, FP, FN = [], 0, 0, 0
+    skipped = 0
     for video, spec in gt["videos"].items():
-        wait_ready(args.api, video)
+        if not wait_ready(args.api, video):
+            skipped += 1
+            continue
         for q in spec["queries"]:
             parsed = httpx.post(f"{args.api}/parse",
                                 json={"text": q["text"], "video": video}, timeout=60).json()
             res = httpx.post(f"{args.api}/search", json={
                 "video": video, "near": args.near, "limit": 1000,
                 "query": {**parsed, "text": q["text"]}}, timeout=120).json()
-            tp, fp, fn = score(res["results"], q["expected"], args.iou)
+            tp, fp, fn = score(res["results"], q["expected"], args.iou, args.match)
             p, r, f = prf(tp, fp, fn)
             TP, FP, FN = TP + tp, FP + fp, FN + fn
             rows.append({"video": video, "query": q["text"], "scenario": q.get("scenario"),
@@ -126,7 +158,8 @@ def main():
 
     P, R, F = prf(TP, FP, FN)
     print(f"\nOVERALL  precision={P:.3f}  recall={R:.3f}  f1={F:.3f}  "
-          f"(tp={TP} fp={FP} fn={FN}, {len(rows)} queries)")
+          f"(tp={TP} fp={FP} fn={FN}, {len(rows)} queries"
+          + (f", {skipped} videos skipped" if skipped else "") + ")")
     out = os.path.splitext(args.ground_truth)[0] + "_report.json"
     json.dump({"server": info, "iou": args.iou, "overall": {"precision": P, "recall": R, "f1": F},
                "by_scenario": by_scenario, "queries": rows}, open(out, "w", encoding="utf-8"),

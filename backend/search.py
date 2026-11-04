@@ -6,6 +6,7 @@ Everything here is pure Python + numpy, so it is unit-testable without a
 model or a video.
 """
 
+import os
 from collections import Counter, defaultdict
 
 import numpy as np
@@ -220,8 +221,8 @@ def filter_segments(segments, objects, colors, actions, time_range,
     return segments
 
 
-MIN_SCENE = 0.26    # whole-frame CLIP similarity floor
-SCENE_Z = 1.5       # ... and at least this many std devs above the video's own mean
+MIN_SCENE = float(os.environ.get("MIN_SCENE", "0.26"))  # whole-frame CLIP similarity below this => no scene
+SCENE_Z = float(os.environ.get("SCENE_Z", "1.5"))      # ...and it must stand out: mean + z*std of the video
 SCENE_GAP = 1.5     # s between hits that still belong to one window
 
 

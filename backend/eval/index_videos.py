@@ -59,7 +59,7 @@ def main():
     print(f"indexing done in {(time.time()-t_all)/60:.1f} min", flush=True)
     if args.gt:
         here = os.path.dirname(os.path.abspath(__file__))
-        subprocess.call([sys.executable, os.path.join(here, "..", "evaluate.py"), args.gt, "--api", args.api])
+        subprocess.call([sys.executable, os.path.join(here, "..", "evaluate.py"), args.gt, "--api", args.api, "--match", "hit"])
 
 
 if __name__ == "__main__":

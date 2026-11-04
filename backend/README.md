@@ -28,6 +28,7 @@ uvicorn main:app --reload --port 8000
 | `ANTHROPIC_API_KEY` | — | כשמוגדר, השאילתות מפוענחות ע"י Claude (`claude-opus-5-5`) במקום חוקי מילון |
 | `SAMPLE_FPS` | `3` | כמה פריימים לשנייה מנותחים |
 | `CONF_THRESHOLD` | `0.3` | סף ביטחון לזיהוי |
+| `MIN_SCENE` / `SCENE_Z` | `0.26` / `1.5` | חיפוש סצנה (CLIP על הפריים השלם, כל שנייה): סף דמיון מינימלי, וכמה סטיות תקן מעל הממוצע של הסרטון. לסרטוני 320×240 (UCF-Crime) `0.24` / `1.0`; כיול: `eval/sweep_scene.py` |
 | `IMGSZ` | `640` | גודל הקלט לגלאי. `800` לאובייקטים קטנים (הפירות במשחק הם ~24 פיקסלים ב-1080p) |
 | `VIDEO_DIR` / `DB_PATH` / `EXPORT_DIR` | `videos` / `index.db` / `exports` | מיקומי קבצים |
 | `CORS_ORIGINS` | `*` | להגביל בפרודקשן |
@@ -74,9 +75,9 @@ query_parser.py  Claude (structured output) + מפענח חוקים EN/HE כגי
 embeddings.py    CLIP (transformers), אופציונלי
 export.py        פריימים, קליפים (ffmpeg מובנה דרך imageio-ffmpeg), ZIP
 db.py            סכמת SQLite: videos / detections / segments
-evaluate.py      precision / recall / F1 מול ground truth מתויג
+evaluate.py      precision / recall / F1 מול ground truth מתויג (eval/: benchmark UCF-Crime, כיול ספים)
 train/           תיוג אוטומטי לפי צבע + אימון YOLOv8 על מחלקות חדשות (train/README.md)
-tests/           pytest — 23 בדיקות, כולל end-to-end עם גלאי מדומה
+tests/           pytest — 40 בדיקות, כולל end-to-end עם גלאי מדומה
 ```
 
 - **זיהוי**: כל 80 מחלקות COCO (לא רק 9), או רשימה פתוחה עם YOLO-World
@@ -94,7 +95,13 @@ tests/           pytest — 23 בדיקות, כולל end-to-end עם גלאי �
 ```bash
 pytest tests -q                       # בדיקות יחידה + end-to-end (ללא משקולות)
 python evaluate.py eval/ground_truth.json --api http://localhost:8000
+python evaluate.py eval/ground_truth_uca.json --match hit   # התרעות: קטע בתוך חלון = פגיעה
 ```
 
 `eval/ground_truth.example.json` מראה את הפורמט: לכל סרטון רשימת שאילתות וחלונות הזמן
-הנכונים. הסקריפט מדפיס precision / recall / F1 לכל שאילתה ובסך הכול, וכותב `eval/report.json`.
+הנכונים. הסקריפט מדפיס precision / recall / F1 לכל שאילתה, לכל תרחיש ובסך הכול, וכותב `<ground_truth>_report.json`.
+`--match iou` (ברירת מחדל) דורש חפיפה של 30% בין הקטע לחלון; `--match hit` סופר קטע שנמצא בתוך חלון (התרעה נכונה).
+
+**Benchmark אבטחה (UCF-Crime + UCA):** `eval/uca_ground_truth.py` בונה ground truth מהמשפטים המתוייגים
+של UCA (סכין, אקדח, אש, חטיפת תיק, חבילה) ל-107 סרטונים; `evalun_benchmark.ps1` מאנדקס אותם
+ומריץ את ההערכה; `eval/sweep_scene.py` מכייל את ספי חיפוש הסצנה על ה-DB בלי לאנדקס מחדש.

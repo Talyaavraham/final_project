@@ -15,12 +15,12 @@ Project by Maya Lax & Talya Avraham — course 67546.
 | Detection + tracking | YOLOv8 (all 80 COCO classes) or **YOLO-World** (open vocabulary) + ByteTrack, ~3 frames/s |
 | Attributes | colour of the shirt / object, speed → running / walking / parked, entering / exiting the frame |
 | Query understanding | **Claude** (structured output, Hebrew + English, negation, free text) with a rule-based fallback |
-| Semantic search | **CLIP** embedding of every track; free text like "holding a phone" is ranked by similarity |
+| Semantic search | **CLIP** embedding of every track; free text like "holding a phone" is ranked by similarity. Whole-frame CLIP every second finds scenes with no object class ("fire") |
 | Multi-object | "person with a dog" = overlap in time **and** proximity in space |
 | Identity | tracks that break (occlusion) are merged back into one entity by appearance |
 | Outputs | per match: image / clip download; all matches: ZIP with frames, clips, JSON, CSV |
 | Long videos | detections are written to SQLite in batches; segments computed once at index time; paginated search |
-| Quality | 23 pytest tests (unit + end-to-end), `evaluate.py` reports precision / recall / F1 on labelled ground truth |
+| Quality | 40 pytest tests (unit + end-to-end), `evaluate.py` reports precision / recall / F1 per scenario; `backend/eval/` benchmarks the security scenarios on UCF-Crime (UCA annotations) |
 
 ## Structure
 

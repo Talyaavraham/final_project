@@ -10,6 +10,8 @@ Set-Location (Split-Path $PSScriptRoot -Parent)          # backend/
 $env:YOLO_MODEL = "yolov8n.pt,game.pt,night.pt"
 $env:IMGSZ = "800"
 $env:CLIP_RERANK = "1"
+$env:MIN_SCENE = "0.24"                                  # 320x240 frames score lower than HD; tune with eval\sweep_scene.py
+$env:SCENE_Z = "1.0"
 $env:DB_PATH = "eval\benchmark.db"                        # separate index, keeps index.db clean
 $env:VIDEO_DIR = "eval\benchmark_videos"
 New-Item -ItemType Directory -Force $env:VIDEO_DIR | Out-Null
@@ -23,9 +25,9 @@ try {
     }
     if (-not $up) { throw "backend did not start on port $Port (see eval\server_benchmark.err.log)" }
     "backend up: models=$($r.models -join ',') clip=$($r.clip)" | Tee-Object -FilePath eval\benchmark.log
-    $args = @("eval\index_videos.py", "eval\data\ucf", "--api", "http://127.0.0.1:$Port", "--gt", "eval\ground_truth_uca.json")
-    if ($Limit -gt 0) { $args += @("--limit", "$Limit") }
-    & .\venv\Scripts\python.exe @args 2>&1 | Tee-Object -FilePath eval\benchmark.log -Append
+    $idxArgs = @("eval\index_videos.py", "eval\data\ucf", "--api", "http://127.0.0.1:$Port", "--gt", "eval\ground_truth_uca.json")
+    if ($Limit -gt 0) { $idxArgs += @("--limit", "$Limit") }
+    & .\venv\Scripts\python.exe @idxArgs 2>&1 | Tee-Object -FilePath eval\benchmark.log -Append
 } finally {
     Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue
     Get-Process python -ErrorAction SilentlyContinue | Where-Object { $_.Parent.Id -eq $server.Id } | Stop-Process -Force -ErrorAction SilentlyContinue
