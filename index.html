@@ -65,6 +65,16 @@ body{
 }
 .nav a.active,.nav a:hover{background:var(--accent-soft);color:var(--text)}
 .nav a.active{color:var(--accent)}
+/* sections that are not built yet */
+.nav a.soon{cursor:default;opacity:.7}
+.nav a.soon:hover{background:transparent;color:var(--text-dim)}
+.nav a.soon i,.btn.soon i{
+  margin-left:auto;font-style:normal;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-dim);border:1px solid var(--border);border-radius:4px;padding:1px 5px;line-height:1.4;
+}
+.btn.soon{opacity:.6;cursor:default}
+.btn.soon:hover{border-color:var(--border);background:var(--panel-2)}
+.btn.soon i{margin-left:2px}
 .sysbox{margin-top:auto;padding:12px;background:var(--panel-2);border-radius:12px;font-size:.75rem;color:var(--text-dim)}
 .sysbox .row{display:flex;justify-content:space-between;margin-bottom:6px}
 .meter{height:5px;border-radius:4px;background:#0e1124;overflow:hidden;margin-bottom:10px}
@@ -203,7 +213,7 @@ video{width:100%;height:100%;display:block}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
 @media (max-width:1100px){
   .app{grid-template-columns:64px 300px 1fr 260px}
-  .nav a span,.sysbox,.logo small{display:none}
+  .nav a span,.nav a i,.sysbox,.logo small{display:none}
 }
 @media (max-width:820px){
   body{height:auto;overflow:auto}
@@ -231,21 +241,21 @@ video{width:100%;height:100%;display:block}
     </div>
     <div class="spacer"></div>
     <button class="btn primary" id="uploadBtn">⬆ Upload Video</button>
-    <button class="btn"><span class="dot" id="liveDot"></span> Live Stream</button>
-    <button class="btn">⚙</button>
+    <button class="btn soon" disabled title="Coming soon · בקרוב"><span class="dot" id="liveDot"></span> Live Stream <i>soon</i></button>
+    <button class="btn soon" disabled title="Coming soon · בקרוב" aria-label="Settings, coming soon">⚙</button>
     <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
   </div>
 
   <!-- ===== SIDEBAR ===== -->
   <aside class="sidebar">
     <nav class="nav">
-      <a href="#">🏠 <span>Home</span></a>
+      <a href="#" class="soon" title="Coming soon · בקרוב">🏠 <span>Home</span><i>soon</i></a>
       <a href="#" class="active">💬 <span>Chat Search</span></a>
-      <a href="#">🎞 <span>Videos</span></a>
-      <a href="#">🔔 <span>Alerts</span></a>
-      <a href="#">🔖 <span>Bookmarks</span></a>
-      <a href="#">📷 <span>Cameras</span></a>
-      <a href="#">⚙ <span>Settings</span></a>
+      <a href="#" class="soon" title="Coming soon · בקרוב">🎞 <span>Videos</span><i>soon</i></a>
+      <a href="#" class="soon" title="Coming soon · בקרוב">🔔 <span>Alerts</span><i>soon</i></a>
+      <a href="#" class="soon" title="Coming soon · בקרוב">🔖 <span>Bookmarks</span><i>soon</i></a>
+      <a href="#" class="soon" title="Coming soon · בקרוב">📷 <span>Cameras</span><i>soon</i></a>
+      <a href="#" class="soon" title="Coming soon · בקרוב">⚙ <span>Settings</span><i>soon</i></a>
     </nav>
     <div class="sysbox">
       <div class="row"><span>Backend</span><span id="backendState">checking…</span></div>
@@ -1279,6 +1289,9 @@ $('timeline').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();
   seekTo((e.clientX - r.left) / r.width * state.duration);
 });
+
+// the side menu has no pages yet: keep "#" links from jumping to the top
+document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
 
 backendAlive().then(ok => $('backendState').innerHTML = ok
   ? '<span style="color:var(--ok)">● online</span>'
