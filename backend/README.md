@@ -28,7 +28,8 @@ uvicorn main:app --reload --port 8000
 | `ANTHROPIC_API_KEY` | — | כשמוגדר, השאילתות מפוענחות ע"י Claude (`claude-opus-5-5`) במקום חוקי מילון |
 | `SAMPLE_FPS` | `3` | כמה פריימים לשנייה מנותחים |
 | `CONF_THRESHOLD` | `0.3` | סף ביטחון לזיהוי |
-| `MIN_SCENE` / `SCENE_Z` | `0.26` / `1.5` | חיפוש סצנה (CLIP על הפריים השלם, כל שנייה): סף דמיון מינימלי, וכמה סטיות תקן מעל הממוצע של הסרטון. לסרטוני 320×240 (UCF-Crime) `0.24` / `1.0`; כיול: `eval/sweep_scene.py` |
+| `MIN_SCENE` / `SCENE_Z` | `0.24` / `1.5` | חיפוש סצנה (CLIP על הפריים השלם, כל שנייה): סף דמיון מינימלי, וכמה סטיות תקן מעל הממוצע של הסרטון. כויל על UCF-Crime עם `eval/sweep_scene.py` |
+| `MIN_SEMANTIC` / `MIN_SEMANTIC_UNKNOWN` | `0.20` / `0.26` | סף הדמיון של CLIP לחיתוך של track. הסף הגבוה חל כשהשאילתה מכילה מילים שאין להן מחלקה בגלאי ("knife", "gun", "package"): אז CLIP הוא הראיה היחידה. כויל עם `eval/sweep_crops.py` |
 | `IMGSZ` | `640` | גודל הקלט לגלאי. `800` לאובייקטים קטנים (הפירות במשחק הם ~24 פיקסלים ב-1080p) |
 | `VIDEO_DIR` / `DB_PATH` / `EXPORT_DIR` | `videos` / `index.db` / `exports` | מיקומי קבצים |
 | `CORS_ORIGINS` | `*` | להגביל בפרודקשן |
@@ -103,5 +104,6 @@ python evaluate.py eval/ground_truth_uca.json --match hit   # התרעות: קט
 `--match iou` (ברירת מחדל) דורש חפיפה של 30% בין הקטע לחלון; `--match hit` סופר קטע שנמצא בתוך חלון (התרעה נכונה).
 
 **Benchmark אבטחה (UCF-Crime + UCA):** `eval/uca_ground_truth.py` בונה ground truth מהמשפטים המתוייגים
-של UCA (סכין, אקדח, אש, חטיפת תיק, חבילה) ל-107 סרטונים; `evalun_benchmark.ps1` מאנדקס אותם
-ומריץ את ההערכה; `eval/sweep_scene.py` מכייל את ספי חיפוש הסצנה על ה-DB בלי לאנדקס מחדש.
+של UCA (סכין, אקדח, אש, חטיפת תיק, חבילה) ל-107 סרטונים; `eval
+un_benchmark.ps1` מאנדקס אותם
+ומריץ את ההערכה; `eval/sweep_scene.py` ו-`eval/sweep_crops.py` מכיילים את הספים על ה-DB בלי לאנדקס מחדש.

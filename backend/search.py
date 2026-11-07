@@ -19,7 +19,10 @@ MOVE_SPEED = 0.15   # below this => standing / parked
 MAX_GAP = 3.0       # seconds without a detection that split a track
 EDGE = 2.0          # % of the frame — a box this close touches the border
 NEAR_DIST = 25.0    # % of frame width — "with" / "next to" means closer than this
-MIN_SEMANTIC = 0.20 # CLIP cosine similarity below this => not a match
+MIN_SEMANTIC = float(os.environ.get("MIN_SEMANTIC", "0.20"))  # CLIP crop similarity below this => not a match
+# words the detector has no class for ("knife", "gun", "package") leave CLIP as the
+# only evidence, so the crop must match clearly; measured on UCF-Crime (eval/sweep_crops.py)
+MIN_SEMANTIC_UNKNOWN = float(os.environ.get("MIN_SEMANTIC_UNKNOWN", "0.26"))
 
 
 # ---------------------------------------------------------------- segments
@@ -221,7 +224,7 @@ def filter_segments(segments, objects, colors, actions, time_range,
     return segments
 
 
-MIN_SCENE = float(os.environ.get("MIN_SCENE", "0.26"))  # whole-frame CLIP similarity below this => no scene
+MIN_SCENE = float(os.environ.get("MIN_SCENE", "0.24"))  # whole-frame CLIP similarity below this => no scene
 SCENE_Z = float(os.environ.get("SCENE_Z", "1.5"))      # ...and it must stand out: mean + z*std of the video
 SCENE_GAP = 1.5     # s between hits that still belong to one window
 
@@ -260,6 +263,11 @@ def scene_windows(frames, text_vec, min_score=MIN_SCENE, z=SCENE_Z, gap=SCENE_GA
         i = j + 1
     out.sort(key=lambda s: -s["score"])
     return out
+
+
+def semantic_floor(unknown_words) -> float:
+    """The crop-similarity floor for a query: stricter when it names things no detector class covers."""
+    return MIN_SEMANTIC_UNKNOWN if unknown_words else MIN_SEMANTIC
 
 
 def semantic_rank(segments, text_vec, min_score=MIN_SEMANTIC):

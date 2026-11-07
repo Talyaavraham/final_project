@@ -43,7 +43,7 @@ import embeddings
 import export
 import indexer
 import query_parser
-from search import filter_segments, scene_windows, semantic_rank
+from search import filter_segments, scene_windows, semantic_floor, semantic_rank
 
 MIN_CROP_NO_OBJECT = 0.25   # crop similarity needed when the question names no object class
 
@@ -71,6 +71,7 @@ class QueryModel(BaseModel):
     actions: list[str] = []
     timeRange: Optional[list[Optional[float]]] = None
     semantic: str = ""                 # free text for CLIP re-ranking
+    unknown: list[str] = []            # words no detector class covers -> stricter CLIP floor
     text: str = ""                     # the original sentence (for logs/export)
 
 
@@ -268,7 +269,7 @@ def search(req: SearchRequest):
     if q.semantic and embeddings.available():
         vec = embeddings.embed_text(q.semantic)
         if vec is not None:
-            segments = semantic_rank(segments, vec)
+            segments = semantic_rank(segments, vec, min_score=semantic_floor(q.unknown))
             semantic_used = True
             # whole-frame search: the moments of the video that look like the text
             conn = database.connect()

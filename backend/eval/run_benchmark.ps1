@@ -2,16 +2,16 @@
 #   cd backend
 #   .\eval\run_benchmark.ps1                 # all 107 videos (1-2 h on CPU)
 #   .\eval\run_benchmark.ps1 -Limit 5        # smoke test
+#   .\eval\run_benchmark.ps1 -Videos "Arson030_x264.mp4,Arson019_x264.mp4" -Force -NoEval   # redo some
 # Output: eval\ground_truth_uca_report.json + eval\benchmark.log
-param([int]$Limit = 0, [int]$Port = 8011)
+param([int]$Limit = 0, [int]$Port = 8011, [string]$Videos = "", [switch]$Force, [switch]$NoEval)
 
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)          # backend/
-$env:YOLO_MODEL = "yolov8n.pt,game.pt,night.pt"
+$env:YOLO_MODEL = "yolov8n.pt,night.pt"                 # not game.pt: it is confidently wrong on CCTV and the probe cannot tell
 $env:IMGSZ = "800"
 $env:CLIP_RERANK = "1"
-$env:MIN_SCENE = "0.24"                                  # 320x240 frames score lower than HD; tune with eval\sweep_scene.py
-$env:SCENE_Z = "1.0"
+# MIN_SCENE / SCENE_Z / MIN_SEMANTIC_UNKNOWN: defaults, tuned on this benchmark (eval\sweep_scene.py, eval\sweep_crops.py)
 $env:DB_PATH = "eval\benchmark.db"                        # separate index, keeps index.db clean
 $env:VIDEO_DIR = "eval\benchmark_videos"
 New-Item -ItemType Directory -Force $env:VIDEO_DIR | Out-Null
@@ -25,8 +25,11 @@ try {
     }
     if (-not $up) { throw "backend did not start on port $Port (see eval\server_benchmark.err.log)" }
     "backend up: models=$($r.models -join ',') clip=$($r.clip)" | Tee-Object -FilePath eval\benchmark.log
-    $idxArgs = @("eval\index_videos.py", "eval\data\ucf", "--api", "http://127.0.0.1:$Port", "--gt", "eval\ground_truth_uca.json")
+    $idxArgs = @("eval\index_videos.py", "eval\data\ucf", "--api", "http://127.0.0.1:$Port")
+    if (-not $NoEval) { $idxArgs += @("--gt", "eval\ground_truth_uca.json") }
     if ($Limit -gt 0) { $idxArgs += @("--limit", "$Limit") }
+    if ($Videos) { $idxArgs += @("--videos", $Videos) }
+    if ($Force) { $idxArgs += "--force" }
     & .\venv\Scripts\python.exe @idxArgs 2>&1 | Tee-Object -FilePath eval\benchmark.log -Append
 } finally {
     Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue

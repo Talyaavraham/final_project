@@ -96,6 +96,16 @@ def test_semantic_rank_orders_and_filters():
     assert out[0]["score"] > 0.8
 
 
+def test_unknown_words_raise_the_semantic_floor():
+    from search import MIN_SEMANTIC, MIN_SEMANTIC_UNKNOWN, semantic_floor
+    assert semantic_floor([]) == MIN_SEMANTIC
+    assert semantic_floor(["knife"]) == MIN_SEMANTIC_UNKNOWN > MIN_SEMANTIC
+    q = np.array([1.0, 0, 0], np.float32)
+    so_so = dict(seg("person", 0, 2, 10, 40, tid=1), embedding_vec=np.array([0.23, 0.97, 0], np.float32))
+    assert semantic_rank([so_so], q, min_score=semantic_floor([]))          # "a person" keeps it
+    assert not semantic_rank([so_so], q, min_score=semantic_floor(["knife"]))  # "a person with a knife" does not
+
+
 def test_scene_windows_groups_standout_frames():
     from search import scene_windows
     q = np.array([1.0, 0, 0], np.float32)

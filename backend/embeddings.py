@@ -68,6 +68,15 @@ def _norm(x: np.ndarray) -> np.ndarray:
     return x / np.maximum(np.linalg.norm(x, axis=-1, keepdims=True), 1e-6)
 
 
+def _pil(crop_bgr):
+    """BGR uint8 -> PIL RGB, at least 8x8 (a 1 px sliver is useless and breaks the processor)."""
+    from PIL import Image
+    img = Image.fromarray(np.ascontiguousarray(crop_bgr[:, :, ::-1]))
+    if img.width < 8 or img.height < 8:
+        img = img.resize((max(img.width, 8), max(img.height, 8)))
+    return img
+
+
 def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
     """[HxWx3 BGR uint8, ...] -> (N, D) L2-normalised float32, or None."""
     if not available() or not crops_bgr:
@@ -76,12 +85,12 @@ def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
     if _model is None:
         return None
     import torch
-    from PIL import Image
     out = []
     with torch.no_grad():          # grad mode is per thread -> set it here
         for i in range(0, len(crops_bgr), 32):
-            batch = [Image.fromarray(c[:, :, ::-1]) for c in crops_bgr[i:i + 32]]
-            inputs = _processor(images=batch, return_tensors="pt")
+            batch = [_pil(c) for c in crops_bgr[i:i + 32]]
+            # channels_last: a 1- or 3-pixel-high crop is otherwise read as channels-first
+            inputs = _processor(images=batch, return_tensors="pt", input_data_format="channels_last")
             feats = _model.get_image_features(**inputs)
             out.append(feats.detach().cpu().numpy())
     return _norm(np.concatenate(out))

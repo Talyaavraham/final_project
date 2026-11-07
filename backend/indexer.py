@@ -20,6 +20,7 @@ model that finds the most in 20 probe frames indexes the video):
 """
 import os
 import time
+import traceback
 from collections import Counter
 
 import cv2
@@ -341,6 +342,7 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         status.update(status="ready", progress=1.0, stage="done",
                       segments=len(segments))
     except Exception as e:  # noqa: BLE001
+        traceback.print_exc()
         status.update(status=f"error: {e}", progress=0, stage="failed")
     finally:
         conn.close()

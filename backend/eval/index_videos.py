@@ -44,8 +44,12 @@ def main():
     ap.add_argument("--force", action="store_true", help="re-index even if cached")
     ap.add_argument("--gt", help="ground truth json -> run evaluate.py afterwards")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--videos", help="comma-separated file names: only these (e.g. the ones that failed)")
     args = ap.parse_args()
     files = sorted(glob.glob(os.path.join(args.folder, "*.mp4")))
+    if args.videos:
+        wanted = {v.strip() for v in args.videos.split(",")}
+        files = [f for f in files if os.path.basename(f) in wanted]
     if args.limit:
         files = files[:args.limit]
     print(f"{len(files)} videos -> {args.api}", flush=True)
