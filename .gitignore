@@ -23,3 +23,8 @@ backend/train/night/
 # security scenarios: downloaded datasets and benchmark videos
 backend/eval/data/
 backend/train/security/
+backend/eval/*.log
+backend/eval/*.txt
+backend/eval/redo.txt
+backend/eval/benchmark.db
+backend/eval/benchmark_videos/
