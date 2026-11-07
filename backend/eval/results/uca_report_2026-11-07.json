@@ -1,0 +1,4929 @@
+{
+  "server": {
+    "ok": true,
+    "service": "video-search-agent",
+    "version": "2.0",
+    "model": "yolov8n.pt,night.pt",
+    "models": [
+      "yolov8n.pt",
+      "night.pt"
+    ],
+    "extra_models": [],
+    "open_vocab": false,
+    "clip": true,
+    "clip_error": null,
+    "llm_parser": false,
+    "ffmpeg": true
+  },
+  "iou": 0.3,
+  "overall": {
+    "precision": 0.11049723756906077,
+    "recall": 0.31746031746031744,
+    "f1": 0.16393442622950818
+  },
+  "by_scenario": {
+    "knife": {
+      "tp": 11,
+      "fp": 119,
+      "fn": 35,
+      "queries": 49,
+      "precision": 0.085,
+      "recall": 0.239,
+      "f1": 0.125
+    },
+    "weapon": {
+      "tp": 34,
+      "fp": 114,
+      "fn": 47,
+      "queries": 52,
+      "precision": 0.23,
+      "recall": 0.42,
+      "f1": 0.297
+    },
+    "snatch": {
+      "tp": 3,
+      "fp": 195,
+      "fn": 8,
+      "queries": 29,
+      "precision": 0.015,
+      "recall": 0.273,
+      "f1": 0.029
+    },
+    "fire": {
+      "tp": 8,
+      "fp": 15,
+      "fn": 36,
+      "queries": 38,
+      "precision": 0.348,
+      "recall": 0.182,
+      "f1": 0.239
+    },
+    "package": {
+      "tp": 4,
+      "fp": 40,
+      "fn": 3,
+      "queries": 18,
+      "precision": 0.091,
+      "recall": 0.571,
+      "f1": 0.157
+    }
+  },
+  "queries": [
+    {
+      "video": "Arrest035_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 5,
+      "tp": 1,
+      "fp": 0,
+      "fn": 4,
+      "precision": 1.0,
+      "recall": 0.2,
+      "f1": 0.333
+    },
+    {
+      "video": "Robbery001_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 3,
+      "tp": 0,
+      "fp": 3,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery088_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 8,
+      "expected": 4,
+      "tp": 2,
+      "fp": 5,
+      "fn": 2,
+      "precision": 0.286,
+      "recall": 0.5,
+      "f1": 0.364
+    },
+    {
+      "video": "Robbery084_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 1,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    {
+      "video": "Assault004_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arrest038_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arrest038_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 4,
+      "expected": 3,
+      "tp": 0,
+      "fp": 4,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery102_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.667
+    },
+    {
+      "video": "Robbery102_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.333,
+      "recall": 1.0,
+      "f1": 0.5
+    },
+    {
+      "video": "Robbery038_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 2,
+      "tp": 0,
+      "fp": 1,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery129_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 5,
+      "expected": 2,
+      "tp": 1,
+      "fp": 4,
+      "fn": 1,
+      "precision": 0.2,
+      "recall": 0.5,
+      "f1": 0.286
+    },
+    {
+      "video": "Robbery018_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 1,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    {
+      "video": "Robbery017_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 7,
+      "expected": 1,
+      "tp": 1,
+      "fp": 5,
+      "fn": 0,
+      "precision": 0.167,
+      "recall": 1.0,
+      "f1": 0.286
+    },
+    {
+      "video": "Fighting024_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 11,
+      "expected": 2,
+      "tp": 0,
+      "fp": 11,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Fighting024_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 10,
+      "expected": 1,
+      "tp": 1,
+      "fp": 4,
+      "fn": 0,
+      "precision": 0.2,
+      "recall": 1.0,
+      "f1": 0.333
+    },
+    {
+      "video": "Fighting008_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 5,
+      "expected": 2,
+      "tp": 0,
+      "fp": 5,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery068_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Robbery122_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 0,
+      "fp": 3,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery132_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery132_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Robbery143_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery087_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.667
+    },
+    {
+      "video": "Robbery031_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery031_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.667
+    },
+    {
+      "video": "Robbery127_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery011_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery108_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Assault015_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 0,
+      "fp": 3,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery016_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 0,
+      "fp": 3,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Assault007_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery022_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Shooting011_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Shooting011_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 0,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Shooting014_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 4,
+      "expected": 1,
+      "tp": 0,
+      "fp": 4,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Shooting014_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 6,
+      "expected": 0,
+      "tp": 0,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery021_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 11,
+      "expected": 1,
+      "tp": 0,
+      "fp": 11,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Shoplifting008_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Fighting015_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 10,
+      "expected": 1,
+      "tp": 0,
+      "fp": 10,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery019_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 6,
+      "tp": 0,
+      "fp": 1,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Shooting031_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 4,
+      "expected": 2,
+      "tp": 1,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    {
+      "video": "Robbery078_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 4,
+      "expected": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Robbery006_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 4,
+      "tp": 1,
+      "fp": 1,
+      "fn": 3,
+      "precision": 0.5,
+      "recall": 0.25,
+      "f1": 0.333
+    },
+    {
+      "video": "Robbery024_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 3,
+      "tp": 1,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.333,
+      "f1": 0.5
+    },
+    {
+      "video": "Robbery065_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 3,
+      "tp": 1,
+      "fp": 0,
+      "fn": 2,
+      "precision": 1.0,
+      "recall": 0.333,
+      "f1": 0.5
+    },
+    {
+      "video": "Shooting020_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 8,
+      "expected": 4,
+      "tp": 1,
+      "fp": 7,
+      "fn": 3,
+      "precision": 0.125,
+      "recall": 0.25,
+      "f1": 0.167
+    },
+    {
+      "video": "Robbery014_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 16,
+      "expected": 2,
+      "tp": 2,
+      "fp": 12,
+      "fn": 0,
+      "precision": 0.143,
+      "recall": 1.0,
+      "f1": 0.25
+    },
+    {
+      "video": "Robbery124_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 13,
+      "expected": 4,
+      "tp": 1,
+      "fp": 11,
+      "fn": 3,
+      "precision": 0.083,
+      "recall": 0.25,
+      "f1": 0.125
+    },
+    {
+      "video": "Robbery033_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 4,
+      "tp": 1,
+      "fp": 0,
+      "fn": 3,
+      "precision": 1.0,
+      "recall": 0.25,
+      "f1": 0.4
+    },
+    {
+      "video": "Robbery099_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 2,
+      "tp": 1,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.5,
+      "recall": 0.5,
+      "f1": 0.5
+    },
+    {
+      "video": "Robbery051_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 3,
+      "tp": 1,
+      "fp": 1,
+      "fn": 2,
+      "precision": 0.5,
+      "recall": 0.333,
+      "f1": 0.4
+    },
+    {
+      "video": "Robbery100_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 13,
+      "expected": 3,
+      "tp": 2,
+      "fp": 6,
+      "fn": 1,
+      "precision": 0.25,
+      "recall": 0.667,
+      "f1": 0.364
+    },
+    {
+      "video": "Robbery036_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 4,
+      "tp": 1,
+      "fp": 2,
+      "fn": 3,
+      "precision": 0.333,
+      "recall": 0.25,
+      "f1": 0.286
+    },
+    {
+      "video": "Robbery073_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 13,
+      "expected": 3,
+      "tp": 3,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.333,
+      "recall": 1.0,
+      "f1": 0.5
+    },
+    {
+      "video": "Shooting001_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Shooting030_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.667
+    },
+    {
+      "video": "Shooting038_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 4,
+      "expected": 3,
+      "tp": 1,
+      "fp": 3,
+      "fn": 2,
+      "precision": 0.25,
+      "recall": 0.333,
+      "f1": 0.286
+    },
+    {
+      "video": "Robbery004_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 1,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.333,
+      "recall": 0.5,
+      "f1": 0.4
+    },
+    {
+      "video": "Shooting026_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 2,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.667,
+      "recall": 1.0,
+      "f1": 0.8
+    },
+    {
+      "video": "Shooting004_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Robbery118_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 5,
+      "expected": 3,
+      "tp": 2,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.5,
+      "recall": 0.667,
+      "f1": 0.571
+    },
+    {
+      "video": "Robbery025_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 3,
+      "tp": 0,
+      "fp": 1,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson019_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 3,
+      "tp": 0,
+      "fp": 0,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson025_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 6,
+      "tp": 0,
+      "fp": 2,
+      "fn": 6,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson025_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 5,
+      "expected": 1,
+      "tp": 0,
+      "fp": 5,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson053_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 0,
+      "fp": 3,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson008_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 2,
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson036_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson040_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 2,
+      "tp": 0,
+      "fp": 1,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson032_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 3,
+      "tp": 0,
+      "fp": 0,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson003_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Arson013_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson022_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Arson015_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 2,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.667,
+      "recall": 1.0,
+      "f1": 0.8
+    },
+    {
+      "video": "Arson049_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 2,
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson012_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 3,
+      "tp": 0,
+      "fp": 3,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson030_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 3,
+      "tp": 0,
+      "fp": 0,
+      "fn": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson051_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 2,
+      "tp": 2,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Arson005_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Arson031_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 2,
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson035_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 2,
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson027_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 5,
+      "expected": 2,
+      "tp": 0,
+      "fp": 5,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Arson001_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 2,
+      "tp": 0,
+      "fp": 0,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery062_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 0,
+      "fp": 3,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery062_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 1,
+      "tp": 1,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.333,
+      "recall": 1.0,
+      "f1": 0.5
+    },
+    {
+      "video": "Robbery032_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 8,
+      "expected": 1,
+      "tp": 0,
+      "fp": 8,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery089_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery138_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery072_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 1,
+      "tp": 0,
+      "fp": 0,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery093_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery060_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 4,
+      "expected": 1,
+      "tp": 1,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0.25,
+      "recall": 1.0,
+      "f1": 0.4
+    },
+    {
+      "video": "Robbery075_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Robbery080_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery029_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.667
+    },
+    {
+      "video": "Burglary049_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 2,
+      "tp": 0,
+      "fp": 3,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery020_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 9,
+      "expected": 1,
+      "tp": 0,
+      "fp": 9,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Robbery020_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 2,
+      "tp": 0,
+      "fp": 2,
+      "fn": 2,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos084_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos084_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos084_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos084_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 30,
+      "expected": 0,
+      "tp": 0,
+      "fp": 30,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos084_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 7,
+      "expected": 3,
+      "tp": 1,
+      "fp": 6,
+      "fn": 2,
+      "precision": 0.143,
+      "recall": 0.333,
+      "f1": 0.2
+    },
+    {
+      "video": "Normal_Videos473_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 30,
+      "expected": 0,
+      "tp": 0,
+      "fp": 30,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos473_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 6,
+      "expected": 0,
+      "tp": 0,
+      "fp": 6,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos473_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos473_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 103,
+      "expected": 0,
+      "tp": 0,
+      "fp": 103,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos473_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 19,
+      "expected": 0,
+      "tp": 0,
+      "fp": 19,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos225_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos225_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 12,
+      "expected": 0,
+      "tp": 0,
+      "fp": 12,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos225_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos225_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 22,
+      "expected": 0,
+      "tp": 0,
+      "fp": 22,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos225_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 5,
+      "expected": 0,
+      "tp": 0,
+      "fp": 5,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos737_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos737_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos737_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos737_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos737_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos736_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos736_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos736_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos736_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos736_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 1,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos254_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos254_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos254_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos254_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 0,
+      "tp": 0,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos254_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 1,
+      "tp": 1,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.5,
+      "recall": 1.0,
+      "f1": 0.667
+    },
+    {
+      "video": "Normal_Videos361_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos361_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos361_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos361_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos361_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 0,
+      "tp": 0,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos073_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos073_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 3,
+      "expected": 0,
+      "tp": 0,
+      "fp": 3,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos073_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos073_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos073_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 1,
+      "tp": 0,
+      "fp": 1,
+      "fn": 1,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos705_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos705_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos705_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos705_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos705_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_881_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_881_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_881_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_881_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos_881_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 0,
+      "tp": 0,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos_345_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_345_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_345_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_345_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos_345_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_889_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_889_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_889_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_889_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos_889_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos344_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos344_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos344_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos344_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos344_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos916_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos916_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos916_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos916_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos916_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos157_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos157_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos157_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos157_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos157_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos297_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos297_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos297_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos297_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos297_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 0,
+      "tp": 0,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos_745_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_745_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_745_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_745_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos_745_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos170_x264.mp4",
+      "query": "a person holding a knife",
+      "scenario": "knife",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person holding a knife",
+        "unknown": [
+          "holding",
+          "knife"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos170_x264.mp4",
+      "query": "a person with a gun",
+      "scenario": "weapon",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person with a gun",
+        "unknown": [
+          "gun"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 2,
+      "tp": 1,
+      "fp": 0,
+      "fn": 1,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.667
+    },
+    {
+      "video": "Normal_Videos170_x264.mp4",
+      "query": "fire",
+      "scenario": "fire",
+      "parsed": {
+        "objects": [],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "fire",
+        "unknown": [
+          "fire"
+        ],
+        "source": "rules"
+      },
+      "returned": 0,
+      "expected": 0,
+      "tp": 0,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    {
+      "video": "Normal_Videos170_x264.mp4",
+      "query": "someone grabbing a bag",
+      "scenario": "snatch",
+      "parsed": {
+        "objects": [
+          "person",
+          "bag"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "someone grabbing a bag",
+        "unknown": [
+          "grabbing"
+        ],
+        "source": "rules"
+      },
+      "returned": 2,
+      "expected": 0,
+      "tp": 0,
+      "fp": 2,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    },
+    {
+      "video": "Normal_Videos170_x264.mp4",
+      "query": "a person carrying a package",
+      "scenario": "package",
+      "parsed": {
+        "objects": [
+          "person"
+        ],
+        "colors": [],
+        "actions": [],
+        "timeRange": null,
+        "semantic": "a person carrying a package",
+        "unknown": [
+          "carrying",
+          "package"
+        ],
+        "source": "rules"
+      },
+      "returned": 1,
+      "expected": 0,
+      "tp": 0,
+      "fp": 1,
+      "fn": 0,
+      "precision": 0.0,
+      "recall": 1.0,
+      "f1": 0.0
+    }
+  ]
+}

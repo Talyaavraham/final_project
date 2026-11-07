@@ -1,0 +1,8 @@
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+148 object+text queries on 107 videos (of 107)
+  min |                 ALL P/R/F1 |          knife        package         snatch         weapon
+ 0.20 | 0.02/0.72/0.03 (104/5798/145) |  0.03(36/2358)  0.01(6/997)  0.00(0/51)  0.05(62/2392)
+ 0.24 | 0.04/0.37/0.07 (54/1358/145) |  0.06(21/683)  0.03(4/251)  0.00(0/14)  0.12(29/410)
+ 0.26 | 0.10/0.14/0.12 (20/196/145) |  0.05(3/82)  0.07(2/49)  0.00(0/3)  0.21(15/62)
+ 0.28 | 0.11/0.01/0.01 (1/9/145) |  0.00(0/3)  0.00(0/3)  0.00(0/2)  0.02(1/1)
+cells: F1 (windows found/segments returned); hit scoring, see evaluate.score_hits
