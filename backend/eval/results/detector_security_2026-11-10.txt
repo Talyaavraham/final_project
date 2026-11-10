@@ -1,0 +1,18 @@
+security.pt, 1 fps, imgsz 800, smoke counted as fire:
+107 videos to scan with security.pt (0 already in eval/ground_truth_uca_security_raw.json)
+ thr |                   fire                  knife                 weapon
+ 0.2 | P0.07 R0.39 F1 0.12 (17/240/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.21 R0.07 F1 0.11 (6/28/81)
+ 0.3 | P0.11 R0.39 F1 0.18 (17/150/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.33 R0.05 F1 0.09 (4/12/81)
+ 0.4 | P0.15 R0.36 F1 0.22 (16/104/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.50 R0.04 F1 0.07 (3/6/81)
+ 0.5 | P0.22 R0.32 F1 0.26 (14/65/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.60 R0.04 F1 0.07 (3/5/81)
+ 0.6 | P0.30 R0.30 F1 0.30 (13/44/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.67 R0.02 F1 0.05 (2/3/81)
+cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring
+
+fire only (smoke not counted):
+ thr |                   fire                  knife                 weapon
+ 0.2 | P0.18 R0.41 F1 0.25 (18/99/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.21 R0.07 F1 0.11 (6/28/81)
+ 0.3 | P0.27 R0.36 F1 0.31 (16/60/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.33 R0.05 F1 0.09 (4/12/81)
+ 0.4 | P0.29 R0.32 F1 0.30 (14/48/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.50 R0.04 F1 0.07 (3/6/81)
+ 0.5 | P0.39 R0.27 F1 0.32 (12/31/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.60 R0.04 F1 0.07 (3/5/81)
+ 0.6 | P0.48 R0.25 F1 0.33 (11/23/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.67 R0.02 F1 0.05 (2/3/81)
+cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring

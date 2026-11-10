@@ -42,6 +42,7 @@ PROBE_FOCUS = 0.3           # ...and 30% of what it finds at conf 0.3 survives P
 # models that run on every frame IN ADDITION to the chosen one, e.g.
 # "security.pt" (gun / knife / fire / smoke) next to the COCO model
 EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", "").split(",") if m.strip()]
+NO_COLOR = {"fire", "smoke"}  # "white fire" is not a thing: no colour attribute for these
 EXTRA_ID_BASE = 100000
 EXTRA_CONF = float(os.environ.get("EXTRA_CONF", "0.2"))  # extra models (gun, knife, fire) are rare-event detectors: keep weaker hits, tracks still need 2+      # track ids of extra models are offset so they never collide
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.3"))
@@ -290,7 +291,7 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                     rows.append((name, t, tid, cls, conf,
                                  100 * x1 / W, 100 * y1 / H,
                                  100 * (x2 - x1) / W, 100 * (y2 - y1) / H,
-                                 dominant_color(color_crop)))
+                                 dominant_color(color_crop) if cls not in NO_COLOR else ""))
                     key = (tid, cls)
                     if embeddings.available() and conf > best_crop.get(key, (0,))[0]:
                         ok_enc, buf = cv2.imencode(
