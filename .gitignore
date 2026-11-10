@@ -19,6 +19,7 @@ backend/*.log
 # night detector training (train/night_dataset.py)
 backend/train/night/
 !backend/night.pt
+!backend/security.pt
 
 # security scenarios: downloaded datasets and benchmark videos
 backend/eval/data/

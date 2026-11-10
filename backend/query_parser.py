@@ -68,6 +68,12 @@ VOCAB_OBJECTS = {
     "potted plant": ["plant", "עציץ"],
     "tv": ["tv", "television", "טלוויזיה"],
     "fire hydrant": ["hydrant", "ברז כיבוי"],
+    # classes of the security detector (train/security_dataset.py, EXTRA_MODELS=security.pt)
+    "gun": ["gun", "guns", "pistol", "handgun", "rifle", "firearm", "weapon",
+            "אקדח", "רובה", "נשק", "כלי נשק"],
+    "knife": ["knife", "knives", "blade", "machete", "סכין", "סכינים", "להב"],
+    "fire": ["fire", "flames", "flame", "burning", "blaze", "אש", "שריפה", "להבות", "בוער"],
+    "smoke": ["smoke", "עשן"],
     "clock": ["clock", "שעון"],
     # classes of the fine-tuned game model (train/README.md)
     "character": ["character", "characters", "player", "hero", "avatar",
@@ -216,6 +222,14 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
             found["unknown"].append(tok)
     if found["unknown"]:
         found["semantic"] = text.strip()
+    # a class the detector did not find in this video ("a person with a gun"
+    # indexed without security.pt) becomes a CLIP question about the rest
+    if classes:
+        absent = [c for c in found["objects"] if c not in classes]
+        if absent and len(absent) < len(found["objects"]):
+            found["objects"] = [c for c in found["objects"] if c in classes]
+            found["unknown"] += [c for c in absent if c not in found["unknown"]]
+            found["semantic"] = text.strip()
     return found
 
 

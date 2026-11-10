@@ -42,7 +42,8 @@ PROBE_FOCUS = 0.3           # ...and 30% of what it finds at conf 0.3 survives P
 # models that run on every frame IN ADDITION to the chosen one, e.g.
 # "security.pt" (gun / knife / fire / smoke) next to the COCO model
 EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", "").split(",") if m.strip()]
-EXTRA_ID_BASE = 100000      # track ids of extra models are offset so they never collide
+EXTRA_ID_BASE = 100000
+EXTRA_CONF = float(os.environ.get("EXTRA_CONF", "0.2"))  # extra models (gun, knife, fire) are rare-event detectors: keep weaker hits, tracks still need 2+      # track ids of extra models are offset so they never collide
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.3"))
 SAMPLE_FPS = float(os.environ.get("SAMPLE_FPS", "3"))
 IMGSZ = int(os.environ.get("IMGSZ", "640"))   # detector input size; 800+ for small objects
@@ -216,7 +217,8 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
             model_name, model = choose_model(path, status=status)
             status["stage"] = "detecting"
         extras = [n for n in EXTRA_MODELS if n != model_name]
-        runs = [(model, 0)] + [(load_model(n), EXTRA_ID_BASE * (k + 1)) for k, n in enumerate(extras)]
+        runs = [(model, 0, CONF_THRESHOLD)] + [(load_model(n), EXTRA_ID_BASE * (k + 1), EXTRA_CONF)
+                                            for k, n in enumerate(extras)]
         if extras:
             model_name = "+".join([model_name] + extras)
         status["model"] = model_name
@@ -260,9 +262,9 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                 H, W = frame.shape[:2]
                 t = frame_i / fps
                 boxes = []
-                for m, id_base in runs:
+                for m, id_base, conf_thr in runs:
                     res = m.track(frame, persist=True, verbose=False,
-                                  conf=CONF_THRESHOLD, tracker=TRACKER,
+                                  conf=conf_thr, tracker=TRACKER,
                                   imgsz=IMGSZ)[0]
                     boxes += [(m, id_base, box) for box in (res.boxes or [])]
                 for m, id_base, box in boxes:

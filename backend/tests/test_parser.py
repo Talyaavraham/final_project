@@ -92,3 +92,19 @@ def test_colour_binds_to_the_object_next_to_it():
     # colour of the subject itself stays as is
     p = parse_rules("red car next to a bus")
     assert p["objects"] == ["car", "bus"]
+
+
+def test_security_classes_are_objects_when_the_video_has_them():
+    q = parse_rules("a person with a gun", classes=["person", "gun", "car"])
+    assert q["objects"] == ["person", "gun"] and q["unknown"] == []
+    q = parse_rules("אדם עם סכין", classes=["person", "knife"])
+    assert q["objects"] == ["person", "knife"]
+    assert parse_rules("fire", classes=["fire"])["objects"] == ["fire"]
+
+
+def test_absent_security_class_becomes_a_clip_question():
+    q = parse_rules("a person with a gun", classes=["person", "car"])
+    assert q["objects"] == ["person"]
+    assert q["unknown"] == ["gun"] and q["semantic"] == "a person with a gun"
+    # nothing left to filter on -> stays an object (the search falls back to scenes)
+    assert parse_rules("fire", classes=["person"])["objects"] == ["fire"]
