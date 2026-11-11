@@ -11,6 +11,8 @@ from collections import Counter, defaultdict
 
 import numpy as np
 
+from query_parser import EVENT_CLASSES, english_phrase
+
 # Speeds are measured in "body heights per second" (box-center movement
 # divided by the box height), so they do not depend on how far the
 # object is from the camera. A walking person is ~0.5-1, running ~1.5+.
@@ -96,6 +98,12 @@ def make_segment(tid, cls, dets, duration, W, H):
 
 
 # ---------------------------------------------------------- entity merge
+def identity(segment):
+    """The vector of the track's best crop: the first row when several views are kept."""
+    v = segment["embedding_vec"]
+    return v if v.ndim == 1 else v[0]
+
+
 def merge_entities(segments, threshold=0.88):
     """
     ByteTrack ids break whenever an object is occluded for a while, so the
@@ -120,7 +128,7 @@ def merge_entities(segments, threshold=0.88):
                 ea, eb = a["entity_id"], b["entity_id"]
                 if ea == eb:
                     continue
-                if float(np.dot(a["embedding_vec"], b["embedding_vec"])) < threshold:
+                if float(np.dot(identity(a), identity(b))) < threshold:
                     continue
                 if any(overlaps(x, y) for x in members[ea] for y in members[eb]):
                     continue
@@ -224,23 +232,56 @@ def filter_segments(segments, objects, colors, actions, time_range,
     return segments
 
 
-MIN_SCENE = float(os.environ.get("MIN_SCENE", "0.24"))  # whole-frame CLIP similarity below this => no scene
+# ------------------------------------------------------------ scene search
+# Whole-frame CLIP. A raw cosine similarity means little by itself (every CCTV
+# frame is ~0.2 away from every sentence), so a frame is scored the zero-shot
+# way: a softmax over the query, phrased a few ways, against prompts for
+# "nothing special is going on" (measured with eval/sweep_scene.py).
+SCENE_TEMPLATES = ("{}", "a photo of {}", "security camera footage of {}", "a cctv image of {}")
+SCENE_NEGATIVES = ("a photo", "a security camera image", "an empty room", "an empty street",
+                   "people walking", "people standing", "a person", "a shop", "a parking lot",
+                   "a road with cars", "an office", "a street at night", "people talking")
+CLIP_T = 100.0      # CLIP's logit scale
+MIN_SCENE = float(os.environ.get("MIN_SCENE", "0.2"))  # P(query | frame) below this => no scene
 SCENE_Z = float(os.environ.get("SCENE_Z", "1.5"))      # ...and it must stand out: mean + z*std of the video
 SCENE_GAP = 1.5     # s between hits that still belong to one window
+MIN_CROP_NO_OBJECT = 0.25   # crop similarity needed when the question names no object class
 
 
-def scene_windows(frames, text_vec, min_score=MIN_SCENE, z=SCENE_Z, gap=SCENE_GAP):
+def scene_prompts(text):
+    """-> (prompts for the query, prompts for 'nothing special')."""
+    return [t.format(text) for t in SCENE_TEMPLATES], list(SCENE_NEGATIVES)
+
+
+def match_prob(vecs, pos, neg):
     """
-    frames: [(t, vec), ...] whole-frame CLIP vectors in time order.
-    Frames whose similarity to the query stands out (above min_score AND
-    above the video's mean + z*std, so a video that is all fire still ranks
-    its strongest seconds) are grouped into time windows. Returned as
-    segment-like dicts (cls "scene") so the rest of the pipeline can use them.
+    vecs (n, D) image vectors, pos (k, D) query prompts, neg (m, D) negative
+    prompts -> (n,) probability of the query in a softmax against the negatives.
+    """
+    pos, neg = np.atleast_2d(pos), np.atleast_2d(neg)
+    vecs = np.asarray(vecs, dtype=np.float32).reshape(-1, pos.shape[-1])
+    q = CLIP_T * (vecs @ pos.T).mean(axis=1)
+    n = CLIP_T * (vecs @ neg.T)
+    top = np.maximum(q, n.max(axis=1))                 # keeps exp() in range
+    eq = np.exp(q - top)
+    return eq / (eq + np.exp(n - top[:, None]).sum(axis=1))
+
+
+def scene_windows(frames, pos, neg, min_score=MIN_SCENE, z=SCENE_Z, gap=SCENE_GAP):
+    """
+    frames: [(t, vec), ...] whole-frame CLIP vectors in time order; a time may
+    come with several vectors (views of the same frame), the best one counts.
+    Frames whose probability of the query (match_prob) stands out (above
+    min_score AND above the video's mean + z*std, so a video that is all fire
+    still ranks its strongest seconds) are grouped into time windows. Returned
+    as segment-like dicts (cls "scene") so the rest of the pipeline can use them.
     """
     if not frames:
         return []
-    ts = np.array([t for t, _ in frames], dtype=np.float32)
-    sims = np.array([float(np.dot(v, text_vec)) for _, v in frames], dtype=np.float32)
+    probs = match_prob(np.stack([v for _, v in frames]), pos, neg)
+    ts, inv = np.unique(np.array([t for t, _ in frames], dtype=np.float32), return_inverse=True)
+    sims = np.zeros(len(ts), dtype=np.float32)
+    np.maximum.at(sims, inv, probs)
     thr = max(min_score, float(sims.mean() + z * sims.std())) if len(sims) > 3 else min_score
     hit = sims >= thr
     out = []
@@ -270,19 +311,80 @@ def semantic_floor(unknown_words) -> float:
     return MIN_SEMANTIC_UNKNOWN if unknown_words else MIN_SEMANTIC
 
 
+def crop_score(vec, text_vec) -> float:
+    """Best cosine similarity between the text and the views kept of a track ((D,) or (k, D))."""
+    return float((np.asarray(vec).reshape(-1, len(text_vec)) @ text_vec).max())
+
+
 def semantic_rank(segments, text_vec, min_score=MIN_SEMANTIC):
     """
-    Score segments by cosine similarity between their CLIP crop embedding
+    Score segments by cosine similarity between their CLIP crop embedding(s)
     and the query text embedding. Segments without an embedding are kept
     with score 0 so a missing model never hides results.
     """
     out = []
     for s in segments:
         v = s.get("embedding_vec")
-        score = float(np.dot(v, text_vec)) if v is not None else 0.0
+        score = crop_score(v, text_vec) if v is not None else 0.0
         if v is not None and score < min_score:
             continue
         s = dict(s, score=score)
         out.append(s)
     out.sort(key=lambda s: -s["score"])
     return out
+
+
+# ------------------------------------------------------------------ query
+def run_query(segments, frames, objects=(), colors=(), actions=(), time_range=None,
+              semantic="", unknown=(), embed=None, near=True, W=16, H=9):
+    """
+    The whole answer to one structured query, without a server or a model:
+
+    segments : every segment of the video ("embedding_vec" set or None)
+    frames   : [(t, vec), ...] whole-frame CLIP vectors
+    embed    : function [texts] -> (n, D) matrix or None (CLIP's text tower)
+
+    -> (results, semantic_used). Three kinds of evidence, in this order:
+      1. the detector: tracks of the classes asked for (colour, action, time,
+         "with" = near each other)
+      2. CLIP on the tracks' crops, when the question says more than classes
+      3. CLIP on whole frames ("scenes"), when the tracks do not answer it
+    For event classes (fire, gun, knife) the detector's tracks are kept as
+    they are and CLIP adds the moments the detector missed: on UCF-Crime the
+    fire detector alone finds 14 of 44 fire windows, CLIP alone 17, both 19.
+    """
+    objects, unknown = list(objects), list(unknown)
+    lo = (time_range[0] or 0) if time_range else 0
+    hi = time_range[1] if time_range and time_range[1] is not None else float("inf")
+
+    def in_range(s):
+        return s["t"] <= hi and s["t"] + s["dur"] >= lo
+
+    def detector(objs):
+        cand = [s for s in segments if not objs or s["cls"] in objs]
+        return filter_segments(cand, objs, colors, actions, time_range, require_near=near, W=W, H=H)
+
+    events = [o for o in objects if o in EVENT_CLASSES]
+    hits = detector(objects)
+    text = semantic or (english_phrase(objects, colors, actions) if events else "")
+    vecs = None
+    if text and embed is not None:
+        pos, neg = scene_prompts(text)
+        vecs = embed([text] + pos + neg)
+    if vecs is None:
+        return sorted(hits, key=lambda s: s["t"]), False
+    text_vec, pos, neg = vecs[0], vecs[1:1 + len(pos)], vecs[1 + len(pos):]
+
+    def clip(cand, objs, unknown_words):
+        ranked = semantic_rank(cand, text_vec, min_score=semantic_floor(unknown_words))
+        scenes = [s for s in scene_windows(frames, pos, neg) if in_range(s)]
+        if not objs:        # "fire", "someone grabbing a bag": scenes lead, crops must match clearly
+            return scenes + [s for s in ranked if s["score"] >= MIN_CROP_NO_OBJECT]
+        return ranked or scenes
+
+    if not events:
+        return clip(hits, objects, unknown), True
+    found = sorted((dict(s, score=s["conf"]) for s in hits), key=lambda s: -s["score"])
+    rest = [o for o in objects if o not in events]
+    more = clip(detector(rest), rest, unknown + events)
+    return found + [s for s in more if not any(overlaps(s, f) for f in found)], True

@@ -106,5 +106,13 @@ def test_absent_security_class_becomes_a_clip_question():
     q = parse_rules("a person with a gun", classes=["person", "car"])
     assert q["objects"] == ["person"]
     assert q["unknown"] == ["gun"] and q["semantic"] == "a person with a gun"
-    # nothing left to filter on -> stays an object (the search falls back to scenes)
-    assert parse_rules("fire", classes=["person"])["objects"] == ["fire"]
+    # the only thing asked for is an event class the index does not have -> a scene question
+    q = parse_rules("fire", classes=["person"])
+    assert q["objects"] == [] and q["semantic"] == "fire" and q["unknown"] == ["fire"]
+    q = parse_rules("שריפה", classes=["person", "car"])
+    assert q["objects"] == [] and q["semantic"] == "fire"       # CLIP reads English
+    q = parse_rules("אדם בחולצה אדומה עם סכין", classes=["person"])
+    assert q["objects"] == ["person"] and q["semantic"] == "a red person with a knife"
+    # a COCO class the detector did not see is simply not there
+    q = parse_rules("a dog", classes=["person"])
+    assert q["objects"] == ["dog"] and q["semantic"] == ""

@@ -96,18 +96,33 @@ def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
     return _norm(np.concatenate(out))
 
 
+_text_cache: dict = {}       # text -> vector; the same prompts are asked again and again
+
+
+def embed_texts(texts: list) -> Optional[np.ndarray]:
+    """["fire", ...] -> (N, D) L2-normalised float32, or None. Cached per text."""
+    texts = [t.strip() for t in texts]
+    if not available() or not texts or not all(texts):
+        return None
+    todo = [t for t in dict.fromkeys(texts) if t not in _text_cache]
+    if todo:
+        _load()
+        if _model is None:
+            return None
+        import torch
+        with torch.no_grad():
+            inputs = _processor(text=todo, return_tensors="pt", padding=True,
+                                truncation=True)
+            feats = _norm(_model.get_text_features(**inputs).detach().cpu().numpy())
+        if len(_text_cache) > 4096:
+            _text_cache.clear()
+        _text_cache.update(zip(todo, feats))
+    return np.stack([_text_cache[t] for t in texts])
+
+
 def embed_text(text: str) -> Optional[np.ndarray]:
-    if not available() or not text.strip():
-        return None
-    _load()
-    if _model is None:
-        return None
-    import torch
-    with torch.no_grad():
-        inputs = _processor(text=[text], return_tensors="pt", padding=True,
-                            truncation=True)
-        feats = _model.get_text_features(**inputs)
-    return _norm(feats.detach().cpu().numpy())[0]
+    vecs = embed_texts([text])
+    return None if vecs is None else vecs[0]
 
 
 def to_blob(vec: Optional[np.ndarray]) -> Optional[bytes]:

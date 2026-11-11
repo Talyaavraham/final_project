@@ -6,8 +6,13 @@ Video analysis + indexing.
              -> detections written to SQLite in batches (nothing is lost if
                 the server dies after an hour of indexing)
              -> per-track segments (speed, entering/exiting, best box)
-             -> optional CLIP embedding of each track's best crop
+             -> optional second pass, CLIP (embed_video): vectors of whole
+                frames and of several views of every track
              -> tracks that look alike are merged into one entity
+
+    python indexer.py reembed [--db index.db] [--videos videos]
+        redo only the CLIP pass of every indexed video (after changing
+        CLIP_MODEL / TRACK_VIEWS / SCENE_EVERY); the detections are kept
 
 Models (env YOLO_MODEL, one name or a comma-separated list — with a list the
 model that finds the most in 20 probe frames indexes the video):
@@ -18,10 +23,11 @@ model that finds the most in 20 probe frames indexes the video):
                                           (see train/README.md); class names
                                           come from the weights file
 """
+import math
 import os
 import time
 import traceback
-from collections import Counter
+from collections import Counter, defaultdict
 
 import cv2
 import numpy as np
@@ -52,9 +58,14 @@ FLUSH_EVERY = 2000          # detections per DB write
 # ByteTrack: no camera-motion compensation step, so it is faster than the
 # default BoT-SORT and does not need texture to work on
 TRACKER = os.environ.get("TRACKER", "bytetrack.yaml")
-MAX_CROP = 224              # px, crops kept for CLIP
+MAX_CROP = 224              # px, CLIP's input size: views are shrunk to this
 SCENE_EVERY = float(os.environ.get("SCENE_EVERY", "1.0"))   # s between whole-frame CLIP vectors (0 = off)
-SCENE_BATCH = 128           # frames embedded per CLIP call
+# views of a track kept for CLIP next to its best crop: square crops with some
+# surroundings, spread over the track's life. "holding a knife" is true for a
+# few seconds of a track and shows next to the person, not in the tight box
+TRACK_VIEWS = int(os.environ.get("TRACK_VIEWS", "4"))
+VIEW_PAD = 1.3              # side of a context view / longer side of the box
+EMBED_BATCH = 64            # images per CLIP call
 
 # class names that we rename (the rest keep the model's name, lower-cased).
 # COCO: the three bag classes. Open Images (yolov8s-oiv7.pt): people classes.
@@ -194,11 +205,163 @@ def choose_model(path: str, names=None, status: dict = None):
     return best, models[best]
 
 
+def reset_tracker(model):
+    """
+    track(persist=True) keeps the tracker inside the cached model, so without
+    this the tracks of the previous video are still "lost, waiting to come
+    back" during the first seconds of the next one, and ids keep counting up.
+    """
+    for tracker in getattr(getattr(model, "predictor", None), "trackers", None) or []:
+        tracker.reset()
+
+
 def _shrink(img, max_side=MAX_CROP):
     s = max_side / max(img.shape[:2])
     if s < 1:
         img = cv2.resize(img, None, fx=s, fy=s, interpolation=cv2.INTER_AREA)
     return img
+
+
+# ------------------------------------------------------------------ CLIP
+def frame_views(frame):
+    """
+    Square views that together cover the frame. CLIP looks at a square: fed a
+    16:9 frame it sees the middle 56% only, and whatever happens at the sides
+    (a door, a parked car) is not in the vector at all.
+    """
+    H, W = frame.shape[:2]
+    side, long = min(H, W), max(H, W)
+    if long <= 1.15 * side:
+        return [frame]
+    n = math.ceil(long / side)
+    starts = [round(i * (long - side) / (n - 1)) for i in range(n)]
+    return [frame[:, a:a + side] if W >= H else frame[a:a + side] for a in starts]
+
+
+def context_crop(frame, x1, y1, x2, y2, pad=VIEW_PAD):
+    """The square around a box, `pad` times its longer side, clipped to the frame."""
+    H, W = frame.shape[:2]
+    side = pad * max(x2 - x1, y2 - y1)
+    cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+    a1, b1 = int(max(0, cx - side / 2)), int(max(0, cy - side / 2))
+    a2, b2 = int(min(W, cx + side / 2)), int(min(H, cy + side / 2))
+    return frame[b1:max(b2, b1 + 1), a1:max(a2, a1 + 1)]
+
+
+def view_points(path, k=None):
+    """Up to k points of a track's path [[t, x, y, w, h], ...], spread evenly over it."""
+    k = TRACK_VIEWS if k is None else k
+    if k <= 0 or not path:
+        return []
+    n = min(k, len(path))
+    idx = sorted({round(i * (len(path) - 1) / max(1, n - 1)) for i in range(n)})
+    return [path[i] for i in idx]
+
+
+def embed_video(path: str, name: str, segments: list, conn, status: dict = None,
+                scene_every: float = None) -> bool:
+    """
+    The CLIP pass: reads the video once more and stores
+      * whole-frame vectors every `scene_every` s (frame_views) in `frames`
+      * per segment a (k, D) matrix in s["embedding_vec"] / s["embedding"]:
+        row 0 its best crop (the box the UI shows), then the context views
+    It runs after the segments are known, so the views are chosen per segment
+    with the whole track in hand. False when CLIP is not available.
+    """
+    scene_every = SCENE_EVERY if scene_every is None else scene_every
+    if not embeddings.available():
+        return False
+    cap = cv2.VideoCapture(path)
+    if not cap.isOpened():
+        return False
+    fps = cap.get(cv2.CAP_PROP_FPS) or 25
+    jobs = defaultdict(list)            # frame index -> [("scene", t) | ("seg", i, row, box)]
+    for i, s in enumerate(segments):
+        if not s["path"]:
+            continue
+        best = min(s["path"], key=lambda p: abs(p[0] - s["best_t"]))
+        jobs[int(round(best[0] * fps))].append(("seg", i, 0, best[1:]))
+        for row, p in enumerate(view_points(s["path"]), 1):
+            jobs[int(round(p[0] * fps))].append(("seg", i, row, p[1:]))
+    end = max([s["t"] + s["dur"] for s in segments] + [0.0])
+    total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or int(end * fps) + 1
+    if scene_every > 0:
+        for k in range(int(total / fps / scene_every) + 1):
+            if int(round(k * scene_every * fps)) < total:
+                jobs[int(round(k * scene_every * fps))].append(("scene", k * scene_every))
+
+    database.delete_frames(conn, name)
+    rows = defaultdict(dict)            # segment index -> {row: vector}
+    pending = []                        # (job, image)
+    ok_all = True
+
+    def flush():
+        nonlocal ok_all
+        if not pending:
+            return
+        vecs = embeddings.embed_images([img for _, img in pending])
+        if vecs is None:
+            ok_all = False
+        else:
+            database.insert_frames(conn, name, [(job[1], embeddings.to_blob(v))
+                                                for (job, _), v in zip(pending, vecs) if job[0] == "scene"])
+            conn.commit()
+            for (job, _), v in zip(pending, vecs):
+                if job[0] == "seg":
+                    rows[job[1]][job[2]] = v
+        pending.clear()
+
+    last = max(jobs) if jobs else -1
+    i = 0
+    while i <= last and ok_all:
+        if not cap.grab():
+            break
+        if i in jobs:
+            ok, frame = cap.retrieve()
+            if ok:
+                H, W = frame.shape[:2]
+                for job in jobs[i]:
+                    if job[0] == "scene":
+                        pending += [(job, _shrink(v)) for v in frame_views(frame)]
+                        continue
+                    x, y, w, h = job[3]
+                    x1, y1 = int(x * W / 100), int(y * H / 100)
+                    x2, y2 = max(x1 + 1, int((x + w) * W / 100)), max(y1 + 1, int((y + h) * H / 100))
+                    crop = frame[y1:y2, x1:x2] if job[2] == 0 else context_crop(frame, x1, y1, x2, y2)
+                    if crop.size:
+                        pending.append((job, _shrink(crop)))
+                if len(pending) >= EMBED_BATCH:
+                    flush()
+                if status is not None:
+                    status["progress"] = 0.9 + 0.09 * i / max(1, last)
+        i += 1
+    cap.release()
+    flush()
+    for i, s in enumerate(segments):
+        if rows[i]:
+            s["embedding_vec"] = np.stack([rows[i][r] for r in sorted(rows[i])])
+            s["embedding"] = embeddings.to_blob(s["embedding_vec"])
+    return ok_all
+
+
+def reembed(db_path: str = None, video_dir: str = "videos"):
+    """Redo the CLIP pass of every indexed video; detections and segments stay as they are."""
+    conn = database.connect(db_path)
+    videos = [r[0] for r in conn.execute("SELECT video FROM videos ORDER BY video")]
+    t0 = time.time()
+    for n, name in enumerate(videos, 1):
+        path = os.path.join(video_dir, name)
+        if not os.path.isfile(path):
+            print(f"[{n}/{len(videos)}] {name}: file not found in {video_dir}, skipped", flush=True)
+            continue
+        segments = database.load_segments(conn, name)
+        done = embed_video(path, name, segments, conn)
+        if done:
+            database.update_embeddings(conn, name, [(s["seg_id"], s.get("embedding")) for s in segments])
+        conn.commit()
+        print(f"[{n}/{len(videos)}] {name}: {len(segments)} segments{'' if done else ' (CLIP FAILED)'} "
+              f"({(time.time() - t0) / 60:.1f} min)", flush=True)
+    conn.close()
 
 
 # ----------------------------------------------------------------- index
@@ -222,6 +385,8 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                                             for k, n in enumerate(extras)]
         if extras:
             model_name = "+".join([model_name] + extras)
+        for m, _, _ in runs:
+            reset_tracker(m)
         status["model"] = model_name
         cap = cv2.VideoCapture(path)
         if not cap.isOpened():
@@ -234,25 +399,9 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         conn.commit()
 
         rows, W, H = [], 0, 0
-        best_crop = {}          # (track_id, cls) -> (conf, jpeg bytes)
         untracked_id = -1
         frame_i = 0
         status["stage"] = "detecting"
-
-        # whole-frame CLIP vectors every SCENE_EVERY seconds: "fire", "someone
-        # grabbing a bag" are scenes, not objects the detector knows
-        scene_on = SCENE_EVERY > 0 and embeddings.available()
-        scene_buf, next_scene_t = [], 0.0
-
-        def flush_scene():
-            if not scene_buf:
-                return
-            vecs = embeddings.embed_images([f for _, f in scene_buf])
-            if vecs is not None:
-                database.insert_frames(conn, name, [(t, embeddings.to_blob(v))
-                                                    for (t, _), v in zip(scene_buf, vecs)])
-                conn.commit()
-            scene_buf.clear()
         while True:
             if not cap.grab():          # grab() skips decoding unused frames
                 break
@@ -292,18 +441,6 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                                  100 * x1 / W, 100 * y1 / H,
                                  100 * (x2 - x1) / W, 100 * (y2 - y1) / H,
                                  dominant_color(color_crop) if cls not in NO_COLOR else ""))
-                    key = (tid, cls)
-                    if embeddings.available() and conf > best_crop.get(key, (0,))[0]:
-                        ok_enc, buf = cv2.imencode(
-                            ".jpg", _shrink(frame[y1:y2, x1:x2]),
-                            [cv2.IMWRITE_JPEG_QUALITY, 85])
-                        if ok_enc:
-                            best_crop[key] = (conf, buf.tobytes())
-                if scene_on and t >= next_scene_t:
-                    scene_buf.append((t, _shrink(frame, 320)))
-                    next_scene_t = t + SCENE_EVERY
-                    if len(scene_buf) >= SCENE_BATCH:
-                        flush_scene()
                 if len(rows) >= FLUSH_EVERY:
                     database.insert_detections(conn, rows)
                     conn.commit()
@@ -317,26 +454,14 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         duration = frame_i / fps
 
         # ---- segments --------------------------------------------------
-        if scene_on:
-            status.update(stage="embedding scenes", progress=0.9)
-            flush_scene()
-        status.update(stage="building segments", progress=0.92)
+        status.update(stage="building segments", progress=0.9)
         dets = database.load_detections(conn, name)
         segments = track_segments(dets, duration, W or 16, H or 9)
 
-        # ---- embeddings + entity merge --------------------------------
-        if best_crop and segments:
-            status.update(stage="computing embeddings", progress=0.93)
-            keys = list(best_crop)
-            crops = [cv2.imdecode(np.frombuffer(best_crop[k][1], np.uint8),
-                                  cv2.IMREAD_COLOR) for k in keys]
-            vecs = embeddings.embed_images(crops)
-            if vecs is not None:
-                by_key = dict(zip(keys, vecs))
-                for s in segments:
-                    v = by_key.get((s["track_id"], s["cls"]))
-                    s["embedding_vec"] = v
-                    s["embedding"] = embeddings.to_blob(v)
+        # ---- CLIP: scenes, views of every track, entity merge ---------
+        if embeddings.available():
+            status["stage"] = "computing embeddings"
+            if embed_video(path, name, segments, conn, status):
                 merge_entities(segments)
 
         database.replace_segments(conn, name, segments)
@@ -350,3 +475,13 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
     finally:
         conn.close()
     return status
+
+
+if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser(description="maintenance of an index")
+    ap.add_argument("command", choices=["reembed"])
+    ap.add_argument("--db", default=None, help="index file (default: DB_PATH / index.db)")
+    ap.add_argument("--videos", default=os.environ.get("VIDEO_DIR", "videos"), help="folder of the video files")
+    a = ap.parse_args()
+    reembed(a.db, a.videos)

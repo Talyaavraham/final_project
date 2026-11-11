@@ -84,6 +84,11 @@ VOCAB_OBJECTS = {
     "sun": ["sun", "שמש"],
 }
 
+# rare-event classes of the security detector. It misses most of them on real
+# CCTV (eval/results/detector_security_*.txt), so "no detection" is not "not
+# there": queries about them are also answered by CLIP
+EVENT_CLASSES = {"gun", "knife", "fire", "smoke"}
+
 # when the video was indexed by a model without this class, use the stand-in
 CLASS_FALLBACK = {"person": "character", "sports ball": "fruit"}
 VOCAB_COLORS = {
@@ -156,6 +161,22 @@ def _to_sec(s: str) -> float:
     return out
 
 
+MASS_NOUNS = {"fire", "smoke"}
+
+
+def english_phrase(objects, colors, actions) -> str:
+    """["person", "knife"], ["red"], ["running"] -> "a red person running with a knife"."""
+    def noun(o, adj=()):
+        words = " ".join([*adj, o])
+        return words if o in MASS_NOUNS else f"a {words}"
+    if not objects:
+        return " ".join([*colors, *actions])
+    out = " ".join([noun(objects[0], colors), *actions])
+    for o in objects[1:]:
+        out += f" with {noun(o)}"
+    return out
+
+
 def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     """Vocabulary parser. `classes`: classes present in the video (optional)."""
     tokens = tokenize(text)
@@ -220,16 +241,26 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
         if base not in known and base not in STOP and len(base) > 2 \
                 and not base.isdigit():
             found["unknown"].append(tok)
+    # CLIP reads English only: a Hebrew sentence is rebuilt from the words we know
+    phrase = text.strip()
+    if re.search("[֐-׿]", text):
+        phrase = english_phrase(found["objects"], found["colors"], found["actions"]) or phrase
     if found["unknown"]:
-        found["semantic"] = text.strip()
+        found["semantic"] = phrase
     # a class the detector did not find in this video ("a person with a gun"
     # indexed without security.pt) becomes a CLIP question about the rest
+    # ... and an event class (fire, gun, knife) is always worth a CLIP look,
+    # even when it was the only thing asked for: the video may have been
+    # indexed without the security model, and that model misses a lot.
+    # "a dog" in a video where the COCO model saw no dog stays an empty answer.
     if classes:
         absent = [c for c in found["objects"] if c not in classes]
-        if absent and len(absent) < len(found["objects"]):
-            found["objects"] = [c for c in found["objects"] if c in classes]
+        if len(absent) == len(found["objects"]):
+            absent = [c for c in absent if c in EVENT_CLASSES]
+        if absent:
+            found["objects"] = [c for c in found["objects"] if c not in absent]
             found["unknown"] += [c for c in absent if c not in found["unknown"]]
-            found["semantic"] = text.strip()
+            found["semantic"] = phrase
     return found
 
 

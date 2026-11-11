@@ -113,12 +113,16 @@ def test_scene_windows_groups_standout_frames():
     near = np.array([0.95, 0.31, 0], np.float32)
     # 30 s of nothing, a 3 s burst at 10-12, a lone hit at 25
     frames = [(float(t), near if t in (10, 11, 12, 25) else far) for t in range(30)]
-    out = scene_windows(frames, q)
+    out = scene_windows(frames, q, far)             # "far" is what nothing special looks like
     assert [round(s["t"]) for s in sorted(out, key=lambda s: s["t"])] == [10, 25]
     burst = next(s for s in out if round(s["t"]) == 10)
     assert burst["dur"] == 3.0 and burst["cls"] == "scene" and burst["score"] > 0.9
     assert burst["box"] == {"x": 0.0, "y": 0.0, "w": 100.0, "h": 100.0}
-    assert scene_windows([], q) == []
+    assert scene_windows([], q, far) == []
+    # several views of one frame: the best one counts, and the time is not duplicated
+    views = [(float(t), far) for t in range(30)] + [(10.0, near)]
+    out = scene_windows(sorted(views, key=lambda f: f[0]), q, far)
+    assert [round(s["t"]) for s in out] == [10] and out[0]["dur"] == 1.0
 
 
 def test_frames_roundtrip(tmp_path):
@@ -132,3 +136,71 @@ def test_frames_roundtrip(tmp_path):
     assert np.allclose(embeddings.from_blob(rows[0][1]), v)
     database.delete_video(conn, "v.mp4")
     assert database.load_frames(conn, "v.mp4") == []
+
+
+# ---------------------------------------------------------------- run_query
+def fake_embed(table):
+    """texts -> rows of `table` (by substring), like CLIP's text tower"""
+    def embed(texts):
+        return np.stack([next((v for k, v in table.items() if k in t), table[""]) for t in texts])
+    return embed
+
+
+X, Y, Z = (np.array(v, np.float32) for v in ([1, 0, 0], [0, 1, 0], [0, 0, 1]))
+
+
+def test_run_query_without_clip_is_the_detector_answer():
+    from search import run_query
+    a = seg("person", 5, 2, 10, 40)
+    b = seg("person", 0, 2, 10, 40, tid=2)
+    car = seg("car", 0, 2, 60, 40, tid=3)
+    out, semantic = run_query([a, b, car], [], ["person"])
+    assert out == [b, a] and semantic is False            # in time order
+    out, _ = run_query([a, b, car], [], ["person"], semantic="a tall man", embed=lambda texts: None)
+    assert out == [b, a]
+
+
+def test_run_query_ranks_crops_and_falls_back_to_scenes():
+    from search import run_query
+    embed = fake_embed({"knife": X, "": Y})
+    armed = dict(seg("person", 0, 2, 10, 40, tid=1), embedding_vec=np.array([0.9, 0.44, 0], np.float32))
+    plain = dict(seg("person", 5, 2, 10, 40, tid=2), embedding_vec=Y)
+    frames = [(float(t), X if t == 20 else Y) for t in range(30)]
+    out, semantic = run_query([armed, plain], frames, ["person"], semantic="a person with a knife",
+                              unknown=["knife"], embed=embed)
+    assert semantic and [s["track_id"] for s in out] == [1]
+    # no person matches -> the moment of the video that looks like the text
+    out, _ = run_query([plain], frames, ["person"], semantic="a person with a knife",
+                       unknown=["knife"], embed=embed)
+    assert [(s["cls"], round(s["t"])) for s in out] == [("scene", 20)]
+    # ... inside the time range only
+    out, _ = run_query([plain], frames, ["person"], time_range=[0, 10],
+                       semantic="a person with a knife", unknown=["knife"], embed=embed)
+    assert out == []
+
+
+def test_several_views_of_a_track_count_by_the_best_one():
+    from search import crop_score, merge_entities
+    views = np.stack([Y, np.array([0.8, 0.6, 0], np.float32)])
+    assert abs(crop_score(views, X) - 0.8) < 1e-6
+    assert abs(crop_score(views.reshape(-1), X) - 0.8) < 1e-6       # as it comes back from the DB
+    # entities are merged on the first view (the track's best crop) only
+    a = dict(seg("person", 0, 2, 10, 40, tid=1), embedding_vec=np.stack([Y, X]))
+    b = dict(seg("person", 10, 2, 10, 40, tid=2), embedding_vec=np.stack([Y, Z]))
+    c = dict(seg("person", 20, 2, 10, 40, tid=3), embedding_vec=np.stack([X, Y]))
+    merge_entities([a, b, c])
+    assert a["entity_id"] == b["entity_id"] != c["entity_id"]
+
+
+def test_event_class_keeps_detector_hits_and_adds_what_clip_finds():
+    from search import run_query
+    embed = fake_embed({"fire": X, "": Y})
+    fire = seg("fire", 3, 2, 10, 40, tid=7, color="")
+    person = dict(seg("person", 0, 30, 10, 40, tid=1), embedding_vec=Y)
+    frames = [(float(t), X if t in (4, 20) else Y) for t in range(30)]
+    out, semantic = run_query([fire, person], frames, ["fire"], embed=embed)
+    # the detector's fire first, then the scene at 20 s; the scene at 4 s is the same fire
+    assert semantic and [(s["cls"], round(s["t"])) for s in out] == [("fire", 3), ("scene", 20)]
+    assert out[0]["score"] == fire["conf"]
+    # without CLIP the detector's answer is all there is
+    assert run_query([fire, person], frames, ["fire"]) == ([fire], False)

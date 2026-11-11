@@ -6,7 +6,8 @@ No server, nothing re-indexed: the whole-frame CLIP vectors are in the DB.
     python eval/sweep_scene.py ... --prefix "security camera footage of "
 
 Prints precision / recall / F1 overall and per scenario for a grid of
-(min_score, z) — the MIN_SCENE / SCENE_Z knobs of search.scene_windows.
+(min_score, z) — the MIN_SCENE / SCENE_Z knobs of search.scene_windows
+(min_score is a probability, see search.match_prob).
 """
 import argparse
 import json
@@ -28,7 +29,7 @@ def main():
     ap.add_argument("gt")
     ap.add_argument("--prefix", default="", help="text put before every query, e.g. 'security camera footage of '")
     ap.add_argument("--iou", type=float, default=0.3)
-    ap.add_argument("--min", default="0,0.2,0.24,0.26,0.28,0.3")
+    ap.add_argument("--min", default="0.05,0.1,0.2,0.3,0.5")
     ap.add_argument("--z", default="1,1.5,2,2.5")
     args = ap.parse_args()
 
@@ -44,7 +45,8 @@ def main():
         for q in spec["queries"]:
             key = args.prefix + q["text"]
             if key not in texts:
-                texts[key] = embeddings.embed_text(key)
+                pos, neg = search.scene_prompts(key)
+                texts[key] = (embeddings.embed_texts(pos), embeddings.embed_texts(neg))
             data.append((q.get("scenario") or "all", frames, texts[key], q["expected"]))
     print(f"{len(data)} queries on {len(used)} indexed videos (of {len(gt['videos'])}), prefix={args.prefix!r}")
     scenarios = sorted({d[0] for d in data})
@@ -53,7 +55,7 @@ def main():
         for z in (float(x) for x in args.z.split(",")):
             agg = defaultdict(lambda: [0, 0, 0])
             for sc, frames, tv, exp in data:
-                tp, fp, fn = score(search.scene_windows(frames, tv, min_score=mn, z=z), exp, args.iou, "hit")
+                tp, fp, fn = score(search.scene_windows(frames, *tv, min_score=mn, z=z), exp, args.iou, "hit")
                 for k in (sc, "ALL"):
                     agg[k][0] += tp; agg[k][1] += fp; agg[k][2] += fn
             p, r, f = prf(*agg["ALL"])

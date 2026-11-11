@@ -46,14 +46,15 @@ CREATE TABLE IF NOT EXISTS segments (
     exiting   INTEGER,
     box       TEXT,      -- JSON {x,y,w,h} in % of frame
     path      TEXT,      -- JSON [[t,x,y,w,h], ...]
-    embedding BLOB,      -- float32 CLIP vector of the best crop (optional)
+    embedding BLOB,      -- float32 CLIP vectors, (k, D) flattened: best crop, then context views (optional)
     best_t    REAL       -- time of the most confident detection (= box)
 );
 CREATE INDEX IF NOT EXISTS idx_seg ON segments(video, cls, t);
 CREATE TABLE IF NOT EXISTS frames (
     video     TEXT,
     t         REAL,
-    embedding BLOB        -- float32 CLIP vector of the whole frame (scene search)
+    embedding BLOB        -- float32 CLIP vector of a square view of the frame (scene search);
+                          -- a wide frame has several rows with the same t
 );
 CREATE INDEX IF NOT EXISTS idx_frames ON frames(video, t);
 """
@@ -102,6 +103,10 @@ def insert_frames(conn, video: str, rows: Iterable[tuple]):
                      [(video, t, blob) for t, blob in rows])
 
 
+def delete_frames(conn, video: str):
+    conn.execute("DELETE FROM frames WHERE video=?", (video,))
+
+
 def load_frames(conn, video: str):
     """-> [(t, embedding blob), ...] in time order"""
     return conn.execute("SELECT t, embedding FROM frames WHERE video=? ORDER BY t",
@@ -132,6 +137,12 @@ def replace_segments(conn, video: str, segments: list[dict]):
           json.dumps(s["box"]), json.dumps(s["path"]),
           s.get("embedding"), s.get("best_t", s["t"]))
          for i, s in enumerate(segments)])
+
+
+def update_embeddings(conn, video: str, rows: Iterable[tuple]):
+    """rows: (seg_id, embedding blob): replace the CLIP vectors of existing segments"""
+    conn.executemany("UPDATE segments SET embedding=? WHERE video=? AND seg_id=?",
+                     [(blob, video, seg_id) for seg_id, blob in rows])
 
 
 def load_segments(conn, video: str, classes: Optional[list[str]] = None):

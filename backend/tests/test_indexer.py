@@ -1,5 +1,7 @@
 """Model selection per video and class-name normalisation (no real YOLO)."""
 
+import os
+
 import indexer
 from conftest import BlindModel, FakeModel, _Box, _Result
 
@@ -91,3 +93,76 @@ def test_default_model_keeps_the_video_from_a_loud_specialist(video_file, monkey
     # loud.pt sums more confidence than coco.pt (6 x 0.5 vs ~2.5 per frame)
     # but nothing above PROBE_CONF, so the default stays
     assert indexer.choose_model(video_file, ["coco.pt", "loud.pt"])[0] == "coco.pt"
+
+
+# ------------------------------------------------------------- CLIP pass
+def fake_clip(monkeypatch):
+    """CLIP stand-in: the vector of an image is its normalised mean colour."""
+    import numpy as np
+    import embeddings
+    calls = []
+
+    def embed_images(imgs):
+        calls.append(len(imgs))
+        v = np.stack([im.reshape(-1, 3).mean(0) for im in imgs]).astype(np.float32) + 1e-3
+        return v / np.linalg.norm(v, axis=1, keepdims=True)
+    monkeypatch.setattr(embeddings, "available", lambda: True)
+    monkeypatch.setattr(embeddings, "embed_images", embed_images)
+    return calls
+
+
+def test_frame_views_cover_a_wide_frame_with_squares():
+    import numpy as np
+    wide = np.zeros((180, 320, 3), np.uint8)
+    views = indexer.frame_views(wide)
+    assert [v.shape[:2] for v in views] == [(180, 180), (180, 180)]
+    wide[:, :5] = 255; wide[:, -5:] = 255                   # both edges are in some view
+    assert views[0][:, 0].max() == 255 and views[1][:, -1].max() == 255
+    assert len(indexer.frame_views(np.zeros((1080, 1920, 3), np.uint8))) == 2
+    assert len(indexer.frame_views(np.zeros((400, 1920, 3), np.uint8))) == 5
+    assert [v.shape[:2] for v in indexer.frame_views(np.zeros((320, 180, 3), np.uint8))] == [(180, 180)] * 2
+    assert len(indexer.frame_views(np.zeros((240, 260, 3), np.uint8))) == 1     # nearly square: as it is
+
+
+def test_view_points_are_spread_over_the_track():
+    path = [[float(t), 0, 0, 1, 1] for t in range(10)]
+    assert [p[0] for p in indexer.view_points(path, 4)] == [0, 3, 6, 9]
+    assert [p[0] for p in indexer.view_points(path[:2], 4)] == [0, 1]
+    assert indexer.view_points(path, 0) == [] and indexer.view_points([], 4) == []
+
+
+def test_context_crop_is_a_square_around_the_box_clipped_to_the_frame():
+    import numpy as np
+    frame = np.zeros((100, 200, 3), np.uint8)
+    assert indexer.context_crop(frame, 90, 40, 100, 60, pad=2.0).shape[:2] == (40, 40)
+    assert indexer.context_crop(frame, 0, 0, 10, 20, pad=2.0).shape[:2] == (30, 25)   # corner: clipped
+
+
+def test_index_stores_scene_views_and_several_views_per_track(video_file, tmp_path, monkeypatch, fake_model):
+    import numpy as np
+    import db as database
+    import embeddings
+    fake_clip(monkeypatch)
+    dbp = str(tmp_path / "c.db")
+    status = indexer.index_video(video_file, "street.mp4", db_path=dbp, model=fake_model)
+    assert status["status"] == "ready"
+    conn = database.connect(dbp)
+    frames = database.load_frames(conn, "street.mp4")
+    ts = [t for t, _ in frames]
+    assert sorted(set(ts)) == [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]          # every SCENE_EVERY second
+    assert len(ts) == 12                                             # 320x180: two square views each
+    segs = {s["cls"]: s for s in database.load_segments(conn, "street.mp4")}
+    person = embeddings.from_blob(segs["person"]["embedding"]).reshape(-1, 3)
+    assert len(person) == 1 + indexer.TRACK_VIEWS                    # best crop + context views
+    # row 0 is the tight crop: all red (BGR 40,40,220); the context views let the grey background in
+    assert person[0].argmax() == 2 and person[0][2] > 0.95
+    assert all(row[0] > person[0][0] for row in person[1:])
+
+    # reembed: same index, vectors recomputed from the stored tracks
+    monkeypatch.setattr(indexer, "TRACK_VIEWS", 2)
+    indexer.reembed(dbp, os.path.dirname(video_file))
+    conn = database.connect(dbp)
+    segs = {s["cls"]: s for s in database.load_segments(conn, "street.mp4")}
+    again = embeddings.from_blob(segs["person"]["embedding"]).reshape(-1, 3)
+    assert len(again) == 3 and np.allclose(again[0], person[0], atol=1e-4)
+    assert len(database.load_frames(conn, "street.mp4")) == 12       # replaced, not doubled

@@ -43,9 +43,7 @@ import embeddings
 import export
 import indexer
 import query_parser
-from search import filter_segments, scene_windows, semantic_floor, semantic_rank
-
-MIN_CROP_NO_OBJECT = 0.25   # crop similarity needed when the question names no object class
+from search import run_query
 
 app = FastAPI(title="Video Search Agent API", version="2.0")
 app.add_middleware(
@@ -250,44 +248,23 @@ def search(req: SearchRequest):
     q = req.query
     conn = database.connect()
     meta = require_indexed(conn, req.video)
-    segments = database.load_segments(conn, req.video, q.objects or None)
+    # only the classes asked for, unless CLIP has to look at every track
+    # (no class named, or only event classes: "fire", "a gun")
+    only = [o for o in q.objects if o not in query_parser.EVENT_CLASSES] and q.objects
+    segments = database.load_segments(conn, req.video, only or None)
+    frames = [(t, embeddings.from_blob(b)) for t, b in database.load_frames(conn, req.video)]
     conn.close()
 
-    W, H = meta["width"] or 16, meta["height"] or 9
     for s in segments:
         s["embedding_vec"] = embeddings.from_blob(s.pop("embedding"))
-
     tr = None
     if q.timeRange:
-        lo = q.timeRange[0] or 0
-        hi = q.timeRange[1] if len(q.timeRange) > 1 else None
-        tr = [lo, hi]
-    segments = filter_segments(segments, q.objects, q.colors, q.actions, tr,
-                               require_near=req.near, W=W, H=H)
-
-    semantic_used = False
-    if q.semantic and embeddings.available():
-        vec = embeddings.embed_text(q.semantic)
-        if vec is not None:
-            segments = semantic_rank(segments, vec, min_score=semantic_floor(q.unknown))
-            semantic_used = True
-            # whole-frame search: the moments of the video that look like the text
-            conn = database.connect()
-            frames = [(t, embeddings.from_blob(b)) for t, b in database.load_frames(conn, req.video)]
-            conn.close()
-            scenes = scene_windows([f for f in frames if f[1] is not None], vec)
-            if tr:
-                lo, hi = tr[0], float("inf") if tr[1] is None else tr[1]
-                scenes = [s for s in scenes if s["t"] <= hi and s["t"] + s["dur"] >= lo]
-            # no object named ("fire", "someone grabbing a bag") -> scenes lead and
-            # object crops must match clearly; an object named but nothing
-            # matched -> scenes are the fallback
-            if not q.objects:
-                segments = scenes + [s for s in segments if s.get("score", 0) >= MIN_CROP_NO_OBJECT]
-            elif not segments:
-                segments = scenes
-    if not semantic_used:
-        segments.sort(key=lambda s: s["t"])
+        tr = [q.timeRange[0] or 0, q.timeRange[1] if len(q.timeRange) > 1 else None]
+    segments, semantic_used = run_query(
+        segments, [f for f in frames if f[1] is not None],
+        q.objects, q.colors, q.actions, tr, q.semantic, q.unknown,
+        embed=embeddings.embed_texts if embeddings.available() else None,
+        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9)
 
     total = len(segments)
     page = segments[req.offset:req.offset + req.limit]
@@ -295,7 +272,7 @@ def search(req: SearchRequest):
         "total": total, "offset": req.offset, "semantic": semantic_used,
         "results": [{
             "t": s["t"], "dur": s["dur"], "conf": s["conf"], "cls": s["cls"],
-            "label": (f'scene: {q.semantic[:40]}' if s["cls"] == "scene"
+            "label": (f'scene: {(q.semantic or q.text)[:40]}' if s["cls"] == "scene"
                       else f'{s["color"]} {s["cls"]}'.strip()),
             "box": s["box"], "path": s["path"], "best_t": s.get("best_t", s["t"]),
             "track": s["track_id"], "entity": s["entity_id"],
