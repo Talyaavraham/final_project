@@ -179,11 +179,12 @@ def test_run_query_ranks_crops_and_falls_back_to_scenes():
     assert out == []
 
 
-def test_several_views_of_a_track_count_by_the_best_one():
+def test_several_views_of_a_track_are_averaged():
     from search import crop_score, merge_entities
     views = np.stack([Y, np.array([0.8, 0.6, 0], np.float32)])
-    assert abs(crop_score(views, X) - 0.8) < 1e-6
-    assert abs(crop_score(views.reshape(-1), X) - 0.8) < 1e-6       # as it comes back from the DB
+    assert abs(crop_score(views, X) - 0.4) < 1e-6
+    assert abs(crop_score(views.reshape(-1), X) - 0.4) < 1e-6       # as it comes back from the DB
+    assert abs(crop_score(views[1], X) - 0.8) < 1e-6                # an index with one crop per track
     # entities are merged on the first view (the track's best crop) only
     a = dict(seg("person", 0, 2, 10, 40, tid=1), embedding_vec=np.stack([Y, X]))
     b = dict(seg("person", 10, 2, 10, 40, tid=2), embedding_vec=np.stack([Y, Z]))

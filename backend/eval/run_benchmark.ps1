@@ -9,9 +9,10 @@ param([int]$Limit = 0, [int]$Port = 8011, [string]$Videos = "", [switch]$Force, 
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)          # backend/
 $env:YOLO_MODEL = "yolov8n.pt,night.pt"                 # not game.pt: it is confidently wrong on CCTV and the probe cannot tell
+$env:EXTRA_MODELS = "security.pt"                      # gun / knife / fire / smoke next to the chosen model (not in the 2026-11-07 index)
 $env:IMGSZ = "800"
 $env:CLIP_RERANK = "1"
-# MIN_SCENE / SCENE_Z / MIN_SEMANTIC_UNKNOWN: defaults, tuned on this benchmark (eval\sweep_scene.py, eval\sweep_crops.py)
+# MIN_SCENE / SCENE_Z / MIN_SEMANTIC_UNKNOWN: defaults, tuned on this benchmark (eval\offline_eval.py, eval\sweep_scene.py)
 $env:DB_PATH = "eval\benchmark.db"                        # separate index, keeps index.db clean
 $env:VIDEO_DIR = "eval\benchmark_videos"
 New-Item -ItemType Directory -Force $env:VIDEO_DIR | Out-Null

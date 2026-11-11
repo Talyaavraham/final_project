@@ -65,6 +65,7 @@ SCENE_EVERY = float(os.environ.get("SCENE_EVERY", "1.0"))   # s between whole-fr
 # few seconds of a track and shows next to the person, not in the tight box
 TRACK_VIEWS = int(os.environ.get("TRACK_VIEWS", "4"))
 VIEW_PAD = 1.3              # side of a context view / longer side of the box
+WIDE_FRAME = 1.4            # frames wider than this (x the short side) get several square views
 EMBED_BATCH = 64            # images per CLIP call
 
 # class names that we rename (the rest keep the model's name, lower-cased).
@@ -225,13 +226,16 @@ def _shrink(img, max_side=MAX_CROP):
 # ------------------------------------------------------------------ CLIP
 def frame_views(frame):
     """
-    Square views that together cover the frame. CLIP looks at a square: fed a
-    16:9 frame it sees the middle 56% only, and whatever happens at the sides
-    (a door, a parked car) is not in the vector at all.
+    The views of a frame given to CLIP. CLIP looks at the centre square: of a
+    4:3 frame that is 75%, and on UCF-Crime (4:3) the centre square alone
+    scored as well as squares covering the whole frame, at half the cost. Of a
+    16:9 frame it is 56% only, and whatever happens at the sides (a door, a
+    parked car) is not in the vector at all, so a wide frame is covered by
+    several squares (not measured: the benchmark has no wide videos).
     """
     H, W = frame.shape[:2]
     side, long = min(H, W), max(H, W)
-    if long <= 1.15 * side:
+    if long <= WIDE_FRAME * side:
         return [frame]
     n = math.ceil(long / side)
     starts = [round(i * (long - side) / (n - 1)) for i in range(n)]
@@ -322,7 +326,9 @@ def embed_video(path: str, name: str, segments: list, conn, status: dict = None,
                 H, W = frame.shape[:2]
                 for job in jobs[i]:
                     if job[0] == "scene":
-                        pending += [(job, _shrink(v)) for v in frame_views(frame)]
+                        # short side down to CLIP's input size, not the long one
+                        pending += [(job, _shrink(v, MAX_CROP * max(v.shape[:2]) / min(v.shape[:2])))
+                                    for v in frame_views(frame)]
                         continue
                     x, y, w, h = job[3]
                     x1, y1 = int(x * W / 100), int(y * H / 100)

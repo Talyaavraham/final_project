@@ -121,7 +121,7 @@ def test_frame_views_cover_a_wide_frame_with_squares():
     assert len(indexer.frame_views(np.zeros((1080, 1920, 3), np.uint8))) == 2
     assert len(indexer.frame_views(np.zeros((400, 1920, 3), np.uint8))) == 5
     assert [v.shape[:2] for v in indexer.frame_views(np.zeros((320, 180, 3), np.uint8))] == [(180, 180)] * 2
-    assert len(indexer.frame_views(np.zeros((240, 260, 3), np.uint8))) == 1     # nearly square: as it is
+    assert len(indexer.frame_views(np.zeros((240, 320, 3), np.uint8))) == 1     # 4:3: the centre square does
 
 
 def test_view_points_are_spread_over_the_track():

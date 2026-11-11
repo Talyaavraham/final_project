@@ -24,7 +24,7 @@ NEAR_DIST = 25.0    # % of frame width — "with" / "next to" means closer than 
 MIN_SEMANTIC = float(os.environ.get("MIN_SEMANTIC", "0.20"))  # CLIP crop similarity below this => not a match
 # words the detector has no class for ("knife", "gun", "package") leave CLIP as the
 # only evidence, so the crop must match clearly; measured on UCF-Crime (eval/sweep_crops.py)
-MIN_SEMANTIC_UNKNOWN = float(os.environ.get("MIN_SEMANTIC_UNKNOWN", "0.26"))
+MIN_SEMANTIC_UNKNOWN = float(os.environ.get("MIN_SEMANTIC_UNKNOWN", "0.27"))
 
 
 # ---------------------------------------------------------------- segments
@@ -267,7 +267,7 @@ def match_prob(vecs, pos, neg):
     return eq / (eq + np.exp(n - top[:, None]).sum(axis=1))
 
 
-def scene_windows(frames, pos, neg, min_score=MIN_SCENE, z=SCENE_Z, gap=SCENE_GAP):
+def scene_windows(frames, pos, neg, min_score=None, z=None, gap=SCENE_GAP):
     """
     frames: [(t, vec), ...] whole-frame CLIP vectors in time order; a time may
     come with several vectors (views of the same frame), the best one counts.
@@ -278,6 +278,8 @@ def scene_windows(frames, pos, neg, min_score=MIN_SCENE, z=SCENE_Z, gap=SCENE_GA
     """
     if not frames:
         return []
+    min_score = MIN_SCENE if min_score is None else min_score
+    z = SCENE_Z if z is None else z
     probs = match_prob(np.stack([v for _, v in frames]), pos, neg)
     ts, inv = np.unique(np.array([t for t, _ in frames], dtype=np.float32), return_inverse=True)
     sims = np.zeros(len(ts), dtype=np.float32)
@@ -312,8 +314,12 @@ def semantic_floor(unknown_words) -> float:
 
 
 def crop_score(vec, text_vec) -> float:
-    """Best cosine similarity between the text and the views kept of a track ((D,) or (k, D))."""
-    return float((np.asarray(vec).reshape(-1, len(text_vec)) @ text_vec).max())
+    """
+    Cosine similarity between the text and a track: the mean over the views
+    kept of it ((D,) or (k, D)). On UCF-Crime the mean ranks tracks a little
+    better than the best view, and one odd view cannot carry a track alone.
+    """
+    return float((np.asarray(vec).reshape(-1, len(text_vec)) @ text_vec).mean())
 
 
 def semantic_rank(segments, text_vec, min_score=MIN_SEMANTIC):
