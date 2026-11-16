@@ -21,6 +21,7 @@ _ENABLED = os.environ.get("CLIP_RERANK", "1") not in ("0", "false", "no")
 _lock = threading.Lock()
 _model = None
 _processor = None
+_device = "cpu"
 _failed: Optional[str] = None
 
 
@@ -42,7 +43,7 @@ def available() -> bool:
 
 
 def _load():
-    global _model, _processor, _failed
+    global _model, _processor, _device, _failed
     with _lock:
         if _model is not None or _failed:
             return
@@ -58,6 +59,9 @@ def _load():
             except OSError:
                 _model = CLIPModel.from_pretrained(CLIP_MODEL, use_safetensors=True)
                 _processor = CLIPProcessor.from_pretrained(CLIP_MODEL)
+            # GPU when there is one (Colab); float32 either way, so the vectors match a CPU index
+            _device = os.environ.get("CLIP_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu")
+            _model.to(_device)
             _model.eval()
         except Exception as e:  # noqa: BLE001
             _failed = f"{type(e).__name__}: {e}"
@@ -96,7 +100,7 @@ def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
         for i in range(0, len(crops_bgr), 32):
             batch = [_pil(c) for c in crops_bgr[i:i + 32]]
             # channels_last: a 1- or 3-pixel-high crop is otherwise read as channels-first
-            inputs = _processor(images=batch, return_tensors="pt", input_data_format="channels_last")
+            inputs = _processor(images=batch, return_tensors="pt", input_data_format="channels_last").to(_device)
             feats = _tensor(_model.get_image_features(**inputs))
             out.append(feats.detach().cpu().numpy())
     return _norm(np.concatenate(out))
@@ -118,7 +122,7 @@ def embed_texts(texts: list) -> Optional[np.ndarray]:
         import torch
         with torch.no_grad():
             inputs = _processor(text=todo, return_tensors="pt", padding=True,
-                                truncation=True)
+                                truncation=True).to(_device)
             feats = _norm(_tensor(_model.get_text_features(**inputs)).detach().cpu().numpy())
         if len(_text_cache) > 4096:
             _text_cache.clear()
