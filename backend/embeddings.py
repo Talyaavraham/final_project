@@ -68,6 +68,12 @@ def _norm(x: np.ndarray) -> np.ndarray:
     return x / np.maximum(np.linalg.norm(x, axis=-1, keepdims=True), 1e-6)
 
 
+def _tensor(out):
+    """get_image/text_features: a tensor in transformers 4.x; in 5.x an output object whose
+    pooler_output holds the projected embedding."""
+    return out if hasattr(out, "detach") else out.pooler_output
+
+
 def _pil(crop_bgr):
     """BGR uint8 -> PIL RGB, at least 8x8 (a 1 px sliver is useless and breaks the processor)."""
     from PIL import Image
@@ -91,7 +97,7 @@ def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
             batch = [_pil(c) for c in crops_bgr[i:i + 32]]
             # channels_last: a 1- or 3-pixel-high crop is otherwise read as channels-first
             inputs = _processor(images=batch, return_tensors="pt", input_data_format="channels_last")
-            feats = _model.get_image_features(**inputs)
+            feats = _tensor(_model.get_image_features(**inputs))
             out.append(feats.detach().cpu().numpy())
     return _norm(np.concatenate(out))
 
@@ -113,7 +119,7 @@ def embed_texts(texts: list) -> Optional[np.ndarray]:
         with torch.no_grad():
             inputs = _processor(text=todo, return_tensors="pt", padding=True,
                                 truncation=True)
-            feats = _norm(_model.get_text_features(**inputs).detach().cpu().numpy())
+            feats = _norm(_tensor(_model.get_text_features(**inputs)).detach().cpu().numpy())
         if len(_text_cache) > 4096:
             _text_cache.clear()
         _text_cache.update(zip(todo, feats))

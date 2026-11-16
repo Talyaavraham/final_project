@@ -4,7 +4,9 @@
 #   .\eval\run_benchmark.ps1 -Limit 5        # smoke test
 #   .\eval\run_benchmark.ps1 -Videos "Arson030_x264.mp4,Arson019_x264.mp4" -Force -NoEval   # redo some
 # Output: eval\ground_truth_uca_report.json + eval\benchmark.log
-param([int]$Limit = 0, [int]$Port = 8011, [string]$Videos = "", [switch]$Force, [switch]$NoEval)
+#   .\eval\run_benchmark.ps1 -Gt eval\ground_truth_uca_part4.json   # theft / vandalism (Anomaly-Videos-Part-4)
+param([int]$Limit = 0, [int]$Port = 8011, [string]$Videos = "", [switch]$Force, [switch]$NoEval,
+      [string]$Gt = "eval\ground_truth_uca.json")
 
 $ErrorActionPreference = "Stop"
 Set-Location (Split-Path $PSScriptRoot -Parent)          # backend/
@@ -27,7 +29,7 @@ try {
     if (-not $up) { throw "backend did not start on port $Port (see eval\server_benchmark.err.log)" }
     "backend up: models=$($r.models -join ',') clip=$($r.clip)" | Tee-Object -FilePath eval\benchmark.log
     $idxArgs = @("eval\index_videos.py", "eval\data\ucf", "--api", "http://127.0.0.1:$Port")
-    if (-not $NoEval) { $idxArgs += @("--gt", "eval\ground_truth_uca.json") }
+    if (-not $NoEval) { $idxArgs += @("--gt", $Gt) }
     if ($Limit -gt 0) { $idxArgs += @("--limit", "$Limit") }
     if ($Videos) { $idxArgs += @("--videos", $Videos) }
     if ($Force) { $idxArgs += "--force" }
@@ -36,4 +38,4 @@ try {
     Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue
     Get-Process python -ErrorAction SilentlyContinue | Where-Object { $_.Parent.Id -eq $server.Id } | Stop-Process -Force -ErrorAction SilentlyContinue
 }
-"done; report: eval\ground_truth_uca_report.json"
+"done; report: $($Gt -replace '\.json$', '_report.json')"
