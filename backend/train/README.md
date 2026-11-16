@@ -129,6 +129,38 @@ Validation של 36 פריימים, 589 תיבות:
 ציפייה: אנשים בלילה בגודל סביר יזוהו הרבה יותר טוב; אנשים של ~20 פיקסלים בסרטון
 מסונוור יישארו קשים. לדמו עדיף גם סרטון לילה ב-720p ומעלה.
 
+## גלאי אבטחה (`security.pt`) — `security_dataset.py`, `pack_exports.py`
+
+אקדח / סכין / אש / עשן, רץ **בנוסף** לגלאי הראשי (`EXTRA_MODELS=security.pt`). המקורות:
+
+| מקור | מה יש בו | תיבות |
+|---|---|---|
+| "Real-time gun detection in CCTV" (Hugging Face) | מצלמות אבטחה אמיתיות, 1080p | gun 2,511, **knife 210** |
+| D-Fire (Hugging Face) | אש ועשן | fire, smoke |
+| `knives.zip`: שני דאטהסטים של Roboflow Universe (`mbb-hrfxf/knife-sqcle` v2, `nust-5tnkk/knife-detection-v5urd` v1, Public Domain) | סכינים ביד, אימוני הגנה עצמית, חלק בגווני אפור | knife 3,600 |
+
+210 תיבות של סכין לא מספיקות: `security.pt` הראשון (2026-11-10) לא זיהה **אף** סכין ב-585 תמונות ה-validation
+של `knives.zip` (mAP50 0.000, גם בסף 0.05), ו-0 ב-UCF-Crime.
+
+**אריזת דאטהסטים ציבוריים** — `pack_exports.py`. שני הייצואים מ-Roboflow הם 13,418 קבצים אבל רק 3,511 תמונות מקור:
+כל תמונת אימון נשמרה שם 3 פעמים (אוגמנטציה), והדאטהסט השני מכיל כמעט את כל הראשון (1,948 מתוך 2,078 תמונות),
+כולל 797 תמונות שהן אימון באחד ו-validation/test בשני. הסקריפט שומר כל תמונת מקור פעם אחת, שם ב-validation כל תמונה שהיא
+validation באחד הייצואים, וממיר פוליגונים לתיבות:
+
+```bash
+python train/pack_exports.py "C:/.../knife.v2i.yolov8" "C:/.../Knife detection.v1i.yolov8" --out train/security/knives.zip
+# kept train: 2926, kept valid: 585, boxes {'knife': 3600}  (273 MB)
+```
+
+**אימון ב-Colab**: [colab_train_security.ipynb](colab_train_security.ipynb). שמים את `knives.zip` ב-Google Drive
+בתיקייה `security_exports`; המחברת מורידה את שני המקורות האחרים, בונה, מאמנת (yolov8s, imgsz 800, 25 epochs,
+כשעתיים על T4) ומדפיסה mAP לכל מחלקה פעמיים: על כל ה-validation, ועל **base** (מצלמות האבטחה + D-Fire בלבד,
+אותן תמונות כמו באימון הראשון: gun 0.69, knife 0.35, fire 0.73, smoke 0.84). המספר של סכין על כל ה-validation
+מחמיא (תמונות אינטרנט קלות, ופריימים מאותם סרטונים נמצאים גם באימון); ההשוואה ההוגנת היא ה-base וה-benchmark.
+
+בנייה מקומית: `python train/security_dataset.py --own DIR` (ייצוא קטן, עד 500 תמונות אימון, מוכפל ×4; גדול נכנס פעם אחת).
+בדיקות: `tests/test_security_dataset.py`.
+
 ## אותו רעיון לסרטון אחר
 
 אם המשחק שלכן, הכי מדויק לייצר את התיבות מהקוד של המשחק (הוא יודע איפה כל

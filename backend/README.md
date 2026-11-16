@@ -21,7 +21,7 @@ uvicorn main:app --reload --port 8000
 | `OPEN_VOCAB` | — | רשימה מופרדת בפסיקים שמחליפה את `indexer.OPEN_VOCAB` עבור YOLO-World, למשל `tree,apple,character` |
 | `YOLO_MODEL=game.pt` | — | מודל שאומן על המחלקות שלכן (דמות, עץ, פרי, שמש במשחק של ex4_demo; mAP50 0.97). איך מאמנים: [train/README.md](train/README.md). להריץ עם `IMGSZ=800` |
 | `YOLO_MODEL=yolov8n.pt,game.pt` | — | **כמה מודלים**: לכל סרטון נבחר המודל שמוצא הכי הרבה ב-20 פריימים מפוזרים (סכום הביטחון של הזיהויים). סרטון מהמציאות מקבל את מודל COCO, המשחק מקבל את `game.pt`. המודל שנבחר נשמר ב-`/videos` |
-| `EXTRA_MODELS=security.pt` | — | מודלים שרצים על כל פריים **בנוסף** למודל שנבחר לסרטון. `security.pt` (yolov8s, בריפו): gun / knife / fire / smoke, אומן על CCTV weapons + D-Fire; mAP50 על validation: gun 0.69, knife 0.35, fire 0.73, smoke 0.84. אימון: `train/security_dataset.py`, `train/colab_train_security.ipynb` |
+| `EXTRA_MODELS=security.pt` | — | מודלים שרצים על כל פריים **בנוסף** למודל שנבחר לסרטון. `security.pt` (yolov8s, בריפו): gun / knife / fire / smoke, אומן על CCTV weapons + D-Fire; mAP50 על validation: gun 0.69, knife 0.35, fire 0.73, smoke 0.84. הסכין חלש (210 תיבות אימון; 0 זיהויים על 585 תמונות סכין חדשות): האימון הבא מוסיף 3,600 תיבות סכין (`train/pack_exports.py`). אימון: `train/security_dataset.py`, `train/colab_train_security.ipynb`, פירוט ב-`train/README.md` |
 | `EXTRA_CONF` | `0.2` | סף הביטחון למודלים הנוספים (אירועים נדירים: עדיף לשמור זיהוי חלש; track עדיין צריך 2+ זיהויים) |
 | `YOLO_MODEL=yolov8n.pt,game.pt,night.pt` | — | `night.pt` = מודל שאומן על תמונות לילה (ExDark + פריימים שלכן) לסרטוני מצלמות אבטחה חשוכים. איך: [train/README.md](train/README.md), `train/night_dataset.py`, `train/colab_train_night.ipynb` |
 | `YOLO_MODEL=yolov8s-oiv7.pt` | — | Open Images V7, 601 מחלקות (Tree, Window, Footwear…). פחות אמין מ-COCO על אנשים ורכבים, אז לא ברירת מחדל. Man/Woman/Boy/Girl ממופים ל-`person`, חלקי גוף (Human face וכו') מדולגים |
@@ -81,7 +81,7 @@ export.py        פריימים, קליפים (ffmpeg מובנה דרך imageio-
 db.py            סכמת SQLite: videos / detections / segments
 evaluate.py      precision / recall / F1 מול ground truth מתויג (eval/: benchmark UCF-Crime, כיול ספים)
 train/           תיוג אוטומטי לפי צבע + אימון YOLOv8 על מחלקות חדשות (train/README.md)
-tests/           pytest — 51 בדיקות, כולל end-to-end עם גלאי מדומה ו-CLIP מדומה
+tests/           pytest — 55 בדיקות, כולל end-to-end עם גלאי מדומה ו-CLIP מדומה
 ```
 
 - **זיהוי**: כל 80 מחלקות COCO (לא רק 9), או רשימה פתוחה עם YOLO-World

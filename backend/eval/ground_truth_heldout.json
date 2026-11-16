@@ -1,0 +1,839 @@
+{
+ "videos": {
+  "Abuse001_x264.mp4": {
+   "category": "Abuse",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Abuse014_x264.mp4": {
+   "category": "Abuse",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Abuse017_x264.mp4": {
+   "category": "Abuse",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Abuse026_x264.mp4": {
+   "category": "Abuse",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Abuse036_x264.mp4": {
+   "category": "Abuse",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arrest002_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arrest004_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arrest009_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       38.2,
+       55.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest016_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       37.3,
+       39.9
+      ],
+      [
+       58.8,
+       101.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest022_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       10.1,
+       31.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest024_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       30.4,
+       40.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest027_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arrest039_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       54.5,
+       65.4
+      ],
+      [
+       238.0,
+       244.7
+      ],
+      [
+       386.6,
+       387.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest041_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       12.9,
+       16.0
+      ],
+      [
+       17.8,
+       26.7
+      ],
+      [
+       55.1,
+       71.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest042_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       10.1,
+       19.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arrest048_x264.mp4": {
+   "category": "Arrest",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arson002_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       94.4,
+       122.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson006_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       73.6,
+       83.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson007_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       41.7,
+       111.9
+      ],
+      [
+       120.6,
+       173.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson009_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       8.2,
+       10.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson010_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       30.1,
+       32.0
+      ],
+      [
+       76.5,
+       81.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson011_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arson014_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       33.5,
+       61.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson016_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       30.5,
+       55.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson017_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arson018_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       13.4,
+       17.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson020_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       46.6,
+       79.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson021_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       30.8,
+       47.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson023_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       40.9,
+       45.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson024_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       48.5,
+       50.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson026_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       85.3,
+       90.1
+      ],
+      [
+       120.6,
+       124.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson028_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       47.3,
+       79.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson029_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       10.6,
+       27.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson034_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       38.3,
+       78.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson037_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       11.3,
+       15.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson038_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Arson039_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       8.9,
+       10.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson041_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       115.0,
+       124.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson042_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       131.5,
+       192.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson044_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       3.1,
+       35.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson045_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       119.1,
+       122.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson046_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       64.6,
+       68.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson047_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       40.7,
+       47.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson048_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       3.7,
+       5.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson050_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       18.0,
+       24.2
+      ],
+      [
+       32.5,
+       42.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Arson052_x264.mp4": {
+   "category": "Arson",
+   "queries": [
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": [
+      [
+       30.6,
+       40.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Assault002_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Assault019_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Assault020_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Assault031_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Assault032_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": [
+      [
+       1.1,
+       6.6
+      ],
+      [
+       8.6,
+       18.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Assault034_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Assault035_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  },
+  "Assault049_x264.mp4": {
+   "category": "Assault",
+   "queries": [
+    {
+     "text": "a person with a gun",
+     "scenario": "weapon",
+     "expected": []
+    },
+    {
+     "text": "fire",
+     "scenario": "fire",
+     "expected": []
+    }
+   ]
+  }
+ }
+}

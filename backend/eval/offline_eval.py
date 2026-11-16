@@ -8,6 +8,7 @@ change to the search logic can be measured right away.
     python eval/offline_eval.py ... --extra-raw eval/ground_truth_uca_security_raw.json
     python eval/offline_eval.py ... --set MIN_SCENE=0.3 --set SCENE_Z=2
     python eval/offline_eval.py ... --track-views 1      # ablation: best crop only
+    python eval/offline_eval.py ... --without gun,knife,fire,smoke   # ablation: no security.pt tracks
 
 --extra-raw adds the tracks an extra detector WOULD have put in the index,
 from the per-second confidences saved by eval/detector_bench.py (1 fps, so
@@ -76,6 +77,8 @@ def main():
                     help="override a constant of search.py, e.g. MIN_SCENE=0.3")
     ap.add_argument("--track-views", type=int, default=0, metavar="N",
                     help="use only the first N CLIP views of every track (1 = the best crop alone), to see what the context views add")
+    ap.add_argument("--without", default="", metavar="CLASSES",
+                    help="ablation: drop the tracks of these classes, e.g. gun,knife,fire,smoke = the index without security.pt")
     ap.add_argument("--report", help="write the per-query rows to this json")
     args = ap.parse_args()
     for kv in args.set:
@@ -83,6 +86,7 @@ def main():
         assert hasattr(search, k), f"search.py has no {k}"
         setattr(search, k, float(v))
 
+    without = {c.strip() for c in args.without.split(",") if c.strip()}
     conn = sqlite3.connect(args.db)
     gt = json.load(open(args.gt, encoding="utf-8"))
     raw = json.load(open(args.extra_raw)) if args.extra_raw else {}
@@ -93,7 +97,7 @@ def main():
         if meta is None:
             skipped += 1
             continue
-        segments = db.load_segments(conn, video)
+        segments = [s for s in db.load_segments(conn, video) if s["cls"] not in without]
         for s in segments:
             s["embedding_vec"] = embeddings.from_blob(s.pop("embedding"))
             if args.track_views and s["embedding_vec"] is not None:

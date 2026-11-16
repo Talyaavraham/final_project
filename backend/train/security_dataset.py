@@ -7,7 +7,10 @@ Build the training set for the security detector (security.pt):
     (jsalazar/US-Real-time-gun-detection-in-CCTV-An-open-problem-dataset).
   * fire + smoke: D-Fire (YOLO labels inside parquet files, Hugging Face
     mirror badsaarow/d-fire) -> classes fire, smoke.
-  * your own labelled frames (Roboflow "YOLOv8" export), optional.
+  * more exports in the Roboflow "YOLOv8" layout, optional (--own): your own
+    labelled frames (few, so repeated 4x), or a big public set packed with
+    train/pack_exports.py (used once), e.g. knives: the CCTV set above has
+    only 210 knife boxes.
 
 Output: one YOLO dataset with classes  gun, knife, fire, smoke  (+ person
 is NOT trained here: the COCO model keeps that job; the security model is
@@ -16,6 +19,11 @@ run next to it, per video, like game.pt / night.pt).
     python train/security_dataset.py                       # everything
     python train/security_dataset.py --limit 300           # quick test
     python train/security_dataset.py --own DIR             # add own export
+    python train/security_dataset.py --own A --own B       # several
+
+With --own, data_base.yaml validates on the weapons + D-Fire images alone:
+the same validation images as a build without --own, so two trainings can be
+compared (public knife photos are easier than CCTV and would flatter it).
 
 Negatives (images with no box) are kept, capped by --neg-ratio.
 """
@@ -43,6 +51,7 @@ sys.path.insert(0, HERE)
 from night_dataset import ALIASES, find_splits, read_names, convert_label  # noqa: E402
 
 ALIASES.update({"gun": "gun", "pistol": "gun", "handgun": "gun", "rifle": "gun", "weapon": "gun",
+                "knife": "knife", "knives": "knife", "blade": "knife",
                 "fire": "fire", "flame": "fire", "smoke": "smoke"})
 
 
@@ -51,6 +60,7 @@ class Writer:
         self.out, self.val_ratio = out, val_ratio
         self.rnd = random.Random(seed)
         self.n = {"train": 0, "val": 0}
+        self.files = {"train": [], "val": []}        # image paths, in the order written
         self.boxes = {c: 0 for c in CLASSES}
         for split in ("train", "val"):
             os.makedirs(os.path.join(out, "images", split), exist_ok=True)
@@ -58,17 +68,25 @@ class Writer:
 
     def add(self, name, image_bytes, lines, split=None, ext=".jpg"):
         split = split or ("val" if self.rnd.random() < self.val_ratio else "train")
-        with open(os.path.join(self.out, "images", split, name + ext), "wb") as f:
+        path = os.path.join(self.out, "images", split, name + ext)
+        with open(path, "wb") as f:
             f.write(image_bytes)
+        self.files[split].append(os.path.abspath(path))
         with open(os.path.join(self.out, "labels", split, name + ".txt"), "w") as f:
             f.write("\n".join(lines) + ("\n" if lines else ""))
         for line in lines:
             self.boxes[CLASSES[int(line.split()[0])]] += 1
         self.n[split] += 1
 
-    def yaml(self):
-        with open(os.path.join(self.out, "data.yaml"), "w", encoding="utf-8") as f:
-            f.write(f"path: {os.path.abspath(self.out)}\ntrain: images/train\nval: images/val\nnames:\n")
+    def yaml(self, name="data.yaml", val=None):
+        """data.yaml of the whole set; with `val` (image paths), a yaml that validates on those images only."""
+        val_entry = "images/val"
+        if val is not None:
+            val_entry = os.path.splitext(name)[0] + "_val.txt"
+            with open(os.path.join(self.out, val_entry), "w", encoding="utf-8") as f:
+                f.write("\n".join(val) + "\n")
+        with open(os.path.join(self.out, name), "w", encoding="utf-8") as f:
+            f.write(f"path: {os.path.abspath(self.out)}\ntrain: images/train\nval: {val_entry}\nnames:\n")
             for i, c in enumerate(CLASSES):
                 f.write(f"  {i}: {c}\n")
 
@@ -153,13 +171,19 @@ def add_dfire(writer, limit=0, neg_ratio=0.3, rnd=None):
     print(f"D-Fire: {n_pos} with boxes + {n_neg} negatives")
 
 
-def add_own(writer, src, repeat=4):
+BIG_EXPORT = 500      # training images; below this an export is "a few own frames" and is repeated
+
+
+def add_own(writer, src, repeat=None):
+    """repeat: copies of every training image. None = 4 for a small export, 1 for a big public one."""
     from night_dataset import class_map
     cmap = class_map(read_names(os.path.join(src, "data.yaml")), CLASSES)
     if not cmap:
         print(f"{src}: none of its classes are in {CLASSES}, skipped")
         return
     splits = find_splits(src)
+    if repeat is None:
+        repeat = 4 if len(splits["train"]) < BIG_EXPORT else 1
     n = 0
     for split, items in splits.items():
         for img, lbl in items:
@@ -177,6 +201,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", default=OUT_DEFAULT)
     ap.add_argument("--own", action="append", default=[], metavar="DIR")
+    ap.add_argument("--own-repeat", type=int, default=None,
+                    help=f"copies of every --own training image (default: 4 for an export under {BIG_EXPORT} training images, else 1)")
     ap.add_argument("--no-weapons", action="store_true")
     ap.add_argument("--no-fire", action="store_true")
     ap.add_argument("--limit", type=int, default=0, help="images per source (quick test)")
@@ -188,9 +214,12 @@ def main():
         add_weapons(w, args.limit)
     if not args.no_fire:
         add_dfire(w, args.limit)
+    base_val = list(w.files["val"])
     for d in args.own:
-        add_own(w, d)
+        add_own(w, d, args.own_repeat)
     w.yaml()
+    if args.own:
+        w.yaml("data_base.yaml", base_val)
     print(f"images: train {w.n['train']}, val {w.n['val']} | boxes: {w.boxes} -> {args.out}")
 
 
