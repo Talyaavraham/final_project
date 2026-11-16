@@ -77,7 +77,18 @@ def main():
     ap.add_argument("--track-views", type=int, default=0, metavar="N",
                     help="use only the first N CLIP views of every track (1 = the best crop alone), to see what the context views add")
     ap.add_argument("--report", help="write the per-query rows to this json")
+    ap.add_argument("--split", choices=("Train", "Val", "Test"),
+                    help="only the videos of this UCA split (eval/data/uca_src/UCFCrime_<split>.json)")
+    ap.add_argument("--adapter", help="text adapter .npz (train/clip_adapter.py); 0 = plain CLIP. "
+                                      "Default: backend/clip_adapter.npz when it exists")
     args = ap.parse_args()
+    if args.adapter is not None:
+        embeddings.set_adapter(args.adapter)
+    print("text adapter:", embeddings.ADAPTER_PATH if embeddings.adapter() is not None else "none (plain CLIP)")
+    only = None
+    if args.split:
+        p = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "uca_src", f"UCFCrime_{args.split}.json")
+        only = {n + ".mp4" for n in json.load(open(p, encoding="utf-8"))}
     for kv in args.set:
         k, v = kv.split("=")
         assert hasattr(search, k), f"search.py has no {k}"
@@ -89,6 +100,8 @@ def main():
     dim = embeddings.embed_texts(["x"]).shape[1]
     rows, skipped = [], 0
     for video, spec in gt["videos"].items():
+        if only is not None and video not in only:
+            continue
         meta = db.get_video(conn, video)
         if meta is None:
             skipped += 1

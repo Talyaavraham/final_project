@@ -106,11 +106,44 @@ def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
     return _norm(np.concatenate(out))
 
 
-_text_cache: dict = {}       # text -> vector; the same prompts are asked again and again
+_text_cache: dict = {}       # text -> raw CLIP vector; the same prompts are asked again and again
+
+# Text-side adapter (train/clip_adapter.py): t -> norm(t + t @ W + b), trained on UCA
+# sentences so that a description lands nearer the CCTV frames it describes. Image
+# vectors are untouched, so an existing index keeps working. CLIP_ADAPTER=0 turns it off.
+ADAPTER_PATH = os.environ.get("CLIP_ADAPTER",
+                              os.path.join(os.path.dirname(os.path.abspath(__file__)), "clip_adapter.npz"))
+_adapter = None              # (W, b), False when there is none
 
 
-def embed_texts(texts: list) -> Optional[np.ndarray]:
-    """["fire", ...] -> (N, D) L2-normalised float32, or None. Cached per text."""
+def adapter():
+    """-> (W, b) or None."""
+    global _adapter
+    if _adapter is None:
+        _adapter = False
+        if ADAPTER_PATH not in ("", "0", "false", "no") and os.path.isfile(ADAPTER_PATH):
+            z = np.load(ADAPTER_PATH)
+            _adapter = (z["W"].astype(np.float32), z["b"].astype(np.float32))
+    return _adapter or None
+
+
+def set_adapter(path: Optional[str]):
+    """Switch the adapter at run time (None / "0" = off); used by the evaluation scripts."""
+    global ADAPTER_PATH, _adapter
+    ADAPTER_PATH, _adapter = (path or "0"), None
+
+
+def apply_adapter(vecs: np.ndarray) -> np.ndarray:
+    a = adapter()
+    if a is None:
+        return vecs
+    W, b = a
+    return _norm(vecs + vecs @ W + b)
+
+
+def embed_texts(texts: list, raw: bool = False) -> Optional[np.ndarray]:
+    """["fire", ...] -> (N, D) L2-normalised float32, or None. Cached per text.
+    raw=True skips the adapter (what the adapter itself is trained on)."""
     texts = [t.strip() for t in texts]
     if not available() or not texts or not all(texts):
         return None
@@ -127,7 +160,8 @@ def embed_texts(texts: list) -> Optional[np.ndarray]:
         if len(_text_cache) > 4096:
             _text_cache.clear()
         _text_cache.update(zip(todo, feats))
-    return np.stack([_text_cache[t] for t in texts])
+    vecs = np.stack([_text_cache[t] for t in texts])
+    return vecs if raw else apply_adapter(vecs)
 
 
 def embed_text(text: str) -> Optional[np.ndarray]:
