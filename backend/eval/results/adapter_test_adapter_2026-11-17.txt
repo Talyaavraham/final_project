@@ -1,0 +1,7 @@
+text adapter: /content/ucf_bench/clip_adapter.npz
+conceal    P=0.09 R=0.67 F1=0.158  (found 8 of 12 windows, 89 segments returned)
+vandal     P=0.20 R=0.64 F1=0.304  (found 7 of 11 windows, 35 segments returned)
+vehicle    P=0.15 R=0.62 F1=0.244  (found 5 of 8 windows, 33 segments returned)
+OVERALL    P=0.13 R=0.65 F1=0.213  (found 20 of 31 windows, 157 segments returned)
+half 0     P=0.12 R=0.75 F1=0.209  (found 9 of 12 windows, 74 segments returned)
+half 1     P=0.13 R=0.58 F1=0.216  (found 11 of 19 windows, 83 segments returned)

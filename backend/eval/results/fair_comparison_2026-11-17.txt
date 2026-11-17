@@ -1,0 +1,19 @@
+Theft / vandalism benchmark (UCF-Crime Anomaly-Videos-Part-4), UCA split: thresholds tuned on Val, scored on Test.
+Grid: MIN_SCENE in (0.2, 0.3, 0.4, 0.5) x SCENE_Z in (1.0, 1.5, 2.0, 2.5). Colab T4, 2026-11-17.
+
+plain CLIP default (0.2 / 1.5)          -> Test P=0.07 R=0.45 F1=0.128
+plain CLIP best on Val {'MIN_SCENE': 0.5, 'SCENE_Z': 2.0} (Val F1 0.206) -> Test P=0.09 R=0.39 F1=0.141
+adapter    best on Val {'MIN_SCENE': 0.2, 'SCENE_Z': 2.0} (Val F1 0.231) -> Test P=0.11 R=0.35 F1=0.171
+
+Val grid (F1):
+                 SCENE_Z=1.0  1.5    2.0    2.5
+plain MIN_SCENE=0.2  0.168  0.173  0.192  0.131
+plain MIN_SCENE=0.3  0.177  0.173  0.192  0.131
+plain MIN_SCENE=0.4  0.180  0.178  0.197  0.132
+plain MIN_SCENE=0.5  0.185  0.184  0.206  0.139
+adapt MIN_SCENE=0.2  0.164  0.199  0.231  0.226
+adapt MIN_SCENE=0.3  0.155  0.183  0.203  0.185
+adapt MIN_SCENE=0.4  0.160  0.194  0.222  0.204
+adapt MIN_SCENE=0.5  0.155  0.200  0.222  0.204
+
+Test has 33 videos / 31 expected windows: a 0.03 F1 gap is within noise. Val also picked the adapter's epoch.

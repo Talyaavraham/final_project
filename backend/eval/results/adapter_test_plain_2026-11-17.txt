@@ -1,0 +1,7 @@
+text adapter: none (plain CLIP)
+conceal    P=0.04 R=0.42 F1=0.076  (found 5 of 12 windows, 119 segments returned)
+vandal     P=0.12 R=0.55 F1=0.190  (found 6 of 11 windows, 52 segments returned)
+vehicle    P=0.18 R=0.38 F1=0.240  (found 3 of 8 windows, 17 segments returned)
+OVERALL    P=0.07 R=0.45 F1=0.128  (found 14 of 31 windows, 188 segments returned)
+half 0     P=0.06 R=0.33 F1=0.104  (found 4 of 12 windows, 65 segments returned)
+half 1     P=0.08 R=0.53 F1=0.141  (found 10 of 19 windows, 123 segments returned)

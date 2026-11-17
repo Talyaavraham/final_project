@@ -1,0 +1,47 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+indexed videos with UCA sentences: {'Train': 126, 'Val': 40, 'Test': 33} (not in a split: 0)
+2094 sentences embedded in 11s
+sentences: train 1273, val 363, test 492
+plain CLIP   val: best second inside the window 0.138, P(sentence) inside 0.222 / outside 0.198
+epoch   1  loss 5.840  val: inside 0.185, P in 0.440 / out 0.398  generic drift 0.076
+epoch   2  loss 5.264  val: inside 0.193, P in 0.447 / out 0.407  generic drift 0.081
+epoch   3  loss 5.086  val: inside 0.185, P in 0.470 / out 0.426  generic drift 0.078
+epoch   4  loss 4.919  val: inside 0.179, P in 0.512 / out 0.465  generic drift 0.080
+epoch   5  loss 4.806  val: inside 0.174, P in 0.441 / out 0.397  generic drift 0.078
+epoch   6  loss 4.722  val: inside 0.176, P in 0.449 / out 0.404  generic drift 0.074
+epoch   7  loss 4.629  val: inside 0.174, P in 0.402 / out 0.361  generic drift 0.073
+epoch   8  loss 4.548  val: inside 0.174, P in 0.431 / out 0.389  generic drift 0.072
+epoch   9  loss 4.501  val: inside 0.165, P in 0.403 / out 0.363  generic drift 0.078
+epoch  10  loss 4.451  val: inside 0.168, P in 0.446 / out 0.405  generic drift 0.076
+epoch  11  loss 4.383  val: inside 0.168, P in 0.346 / out 0.310  generic drift 0.075
+epoch  12  loss 4.340  val: inside 0.157, P in 0.387 / out 0.349  generic drift 0.073
+epoch  13  loss 4.310  val: inside 0.157, P in 0.436 / out 0.396  generic drift 0.073
+epoch  14  loss 4.263  val: inside 0.163, P in 0.418 / out 0.379  generic drift 0.077
+epoch  15  loss 4.221  val: inside 0.154, P in 0.362 / out 0.328  generic drift 0.073
+epoch  16  loss 4.167  val: inside 0.160, P in 0.364 / out 0.331  generic drift 0.074
+epoch  17  loss 4.150  val: inside 0.163, P in 0.379 / out 0.344  generic drift 0.074
+epoch  18  loss 4.106  val: inside 0.157, P in 0.368 / out 0.335  generic drift 0.072
+epoch  19  loss 4.045  val: inside 0.152, P in 0.349 / out 0.320  generic drift 0.072
+epoch  20  loss 4.012  val: inside 0.160, P in 0.350 / out 0.319  generic drift 0.075
+epoch  21  loss 3.990  val: inside 0.146, P in 0.342 / out 0.313  generic drift 0.073
+epoch  22  loss 3.943  val: inside 0.154, P in 0.353 / out 0.325  generic drift 0.075
+epoch  23  loss 3.936  val: inside 0.149, P in 0.317 / out 0.291  generic drift 0.075
+epoch  24  loss 3.887  val: inside 0.140, P in 0.285 / out 0.259  generic drift 0.074
+epoch  25  loss 3.846  val: inside 0.143, P in 0.342 / out 0.316  generic drift 0.072
+epoch  26  loss 3.818  val: inside 0.138, P in 0.310 / out 0.286  generic drift 0.072
+epoch  27  loss 3.782  val: inside 0.132, P in 0.304 / out 0.280  generic drift 0.073
+epoch  28  loss 3.766  val: inside 0.138, P in 0.281 / out 0.257  generic drift 0.070
+epoch  29  loss 3.732  val: inside 0.127, P in 0.273 / out 0.250  generic drift 0.071
+epoch  30  loss 3.706  val: inside 0.138, P in 0.237 / out 0.218  generic drift 0.071
+epoch  31  loss 3.682  val: inside 0.138, P in 0.279 / out 0.256  generic drift 0.071
+epoch  32  loss 3.635  val: inside 0.135, P in 0.262 / out 0.241  generic drift 0.070
+epoch  33  loss 3.622  val: inside 0.135, P in 0.277 / out 0.255  generic drift 0.071
+epoch  34  loss 3.595  val: inside 0.140, P in 0.265 / out 0.245  generic drift 0.070
+epoch  35  loss 3.565  val: inside 0.132, P in 0.265 / out 0.244  generic drift 0.068
+epoch  36  loss 3.553  val: inside 0.129, P in 0.246 / out 0.227  generic drift 0.072
+epoch  37  loss 3.517  val: inside 0.135, P in 0.255 / out 0.236  generic drift 0.071
+epoch  38  loss 3.488  val: inside 0.127, P in 0.233 / out 0.215  generic drift 0.068
+epoch  39  loss 3.477  val: inside 0.129, P in 0.259 / out 0.241  generic drift 0.067
+epoch  40  loss 3.444  val: inside 0.127, P in 0.253 / out 0.233  generic drift 0.067
+saved epoch 2 (val 0.193 vs plain CLIP 0.138) -> /content/ucf_bench/clip_adapter.npz
+Test: best second inside the window  plain CLIP 0.126 -> adapter 0.132
