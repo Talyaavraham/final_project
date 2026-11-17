@@ -113,6 +113,21 @@ python evaluate.py eval/ground_truth_uca.json --match hit   # התרעות: קט
 של UCA (סכין, אקדח, אש, חטיפת תיק, חבילה) ל-107 סרטונים; `eval/run_benchmark.ps1` מאנדקס אותם
 ומריץ את ההערכה דרך השרת.
 
+**גניבה וונדליזם (UCF-Crime "Anomaly-Videos-Part-4": Shoplifting / Stealing / Vandalism, 200 סרטונים):**
+הסרטונים ב-`eval/data/ucf/` (שטוח, בלי תתי-תיקיות). ההערות של UCA מ-GitHub
+(`Xuange923/Surveillance-Video-Understanding`, `UCF Annotation/json/UCFCrime_{Train,Val,Test}.json`)
+מאוחדות ל-`eval/data/uca_all.json`, ו-`eval/data/ucf_selection_part4.json` = שמות הסרטונים המקומיים.
+שלושה תרחישים חדשים, רק כשמבקשים אותם (ברירת המחדל לא משתנה):
+`conceal` (הכנסת מוצר לתיק / כיס), `vandal` (ניפוץ / השחתה / גרפיטי), `vehicle` (פריצה לרכב / לקיחת אופנוע).
+
+```bash
+python eval/uca_ground_truth.py --sel eval/data/ucf_selection_part4.json --scenarios conceal,vandal,vehicle --out eval/ground_truth_uca_part4.json
+.\eval\run_benchmark.ps1 -Gt eval\ground_truth_uca_part4.json
+```
+
+על GPU בלי המחשב המקומי: [eval/colab_benchmark.ipynb](eval/colab_benchmark.ipynb) (ה-zip ב-`MyDrive/ucf_bench/`,
+אינדוקס בקבוצות של 25, ההתקדמות נשמרת ב-Drive).
+
 **בלי שרת ובלי לאנדקס מחדש:**
 
 ```bash

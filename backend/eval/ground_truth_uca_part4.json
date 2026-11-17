@@ -1,0 +1,2294 @@
+{
+ "videos": {
+  "Shoplifting001_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       57.9,
+       74.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting003_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting004_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       6.1,
+       14.4
+      ],
+      [
+       183.6,
+       190.5
+      ],
+      [
+       201.9,
+       213.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting005_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       24.8,
+       28.7
+      ],
+      [
+       32.4,
+       37.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting006_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting007_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       15.3,
+       33.4
+      ],
+      [
+       162.4,
+       165.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting008_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       172.5,
+       177.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting009_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       55.8,
+       76.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting010_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       21.3,
+       40.8
+      ],
+      [
+       51.2,
+       70.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting012_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting013_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       35.8,
+       49.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting014_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       1061.9,
+       1087.3
+      ]
+     ]
+    },
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       1335.5,
+       1337.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting015_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       65.6,
+       75.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting016_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting017_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting018_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       12.4,
+       57.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting019_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting020_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       80.3,
+       84.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting021_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       68.6,
+       76.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting022_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       1.2,
+       13.0
+      ],
+      [
+       16.4,
+       24.1
+      ],
+      [
+       25.2,
+       32.7
+      ],
+      [
+       45.0,
+       55.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting024_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       26.4,
+       37.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting025_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting026_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       1.7,
+       29.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting027_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       30.0,
+       40.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting028_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       14.0,
+       21.1
+      ],
+      [
+       22.5,
+       32.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting029_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       29.6,
+       50.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting030_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting031_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       1.9,
+       13.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting032_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting033_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       11.4,
+       26.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting034_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       162.5,
+       175.8
+      ],
+      [
+       186.9,
+       192.2
+      ],
+      [
+       216.9,
+       223.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting036_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting037_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    },
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       40.4,
+       45.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting038_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting039_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting040_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       42.5,
+       69.9
+      ],
+      [
+       138.2,
+       163.8
+      ],
+      [
+       274.9,
+       299.6
+      ],
+      [
+       340.3,
+       355.2
+      ],
+      [
+       437.1,
+       451.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting041_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       211.3,
+       241.2
+      ],
+      [
+       291.3,
+       308.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting042_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting043_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting044_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       64.2,
+       83.2
+      ],
+      [
+       358.5,
+       378.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting045_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting047_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       42.3,
+       53.7
+      ],
+      [
+       74.2,
+       79.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting048_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting049_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       33.9,
+       47.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting050_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting051_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       143.8,
+       178.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting052_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting053_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": []
+    }
+   ]
+  },
+  "Shoplifting054_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       16.8,
+       34.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Shoplifting055_x264.mp4": {
+   "category": "Shoplifting",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       70.9,
+       86.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing002_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing003_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing004_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing006_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       80.5,
+       93.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing007_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       44.1,
+       59.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing008_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing009_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing010_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       58.0,
+       59.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing011_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       20.2,
+       36.6
+      ],
+      [
+       54.4,
+       61.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing012_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing013_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing014_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       33.1,
+       41.8
+      ],
+      [
+       99.1,
+       105.4
+      ]
+     ]
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       105.4,
+       110.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing015_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing016_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing017_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing018_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       36.8,
+       48.1
+      ]
+     ]
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       2.8,
+       36.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing019_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       66.7,
+       85.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing020_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       50.1,
+       55.5
+      ],
+      [
+       150.8,
+       160.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing021_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing022_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing023_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       69.8,
+       112.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing024_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       7.2,
+       18.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing025_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       391.2,
+       396.1
+      ],
+      [
+       631.3,
+       649.9
+      ],
+      [
+       685.9,
+       691.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing026_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       46.1,
+       60.6
+      ]
+     ]
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       35.6,
+       46.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing027_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       2.2,
+       10.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing028_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing029_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing030_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       9.9,
+       15.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing031_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing032_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing035_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing036_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       7.1,
+       18.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing037_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing042_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing043_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing044_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing045_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing046_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing047_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing048_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       109.1,
+       117.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing049_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing050_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing051_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing052_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       30.5,
+       100.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing053_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing054_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       59.5,
+       63.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing055_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing057_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing058_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       55.2,
+       79.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing059_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing060_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing061_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       28.2,
+       30.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing062_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing063_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing065_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       22.2,
+       23.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing066_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing067_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing068_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       59.0,
+       78.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing069_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing070_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing071_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing072_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing073_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing074_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing075_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       0.0,
+       33.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing077_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       423.5,
+       446.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing078_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       38.8,
+       51.5
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing079_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing080_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing081_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing082_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing083_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       126.9,
+       133.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing084_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing086_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing087_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       0.0,
+       21.1
+      ],
+      [
+       39.2,
+       69.9
+      ],
+      [
+       75.9,
+       102.4
+      ],
+      [
+       104.4,
+       148.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing088_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing089_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing091_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing092_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       264.1,
+       277.3
+      ]
+     ]
+    },
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       264.1,
+       277.3
+      ]
+     ]
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       251.8,
+       264.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing093_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing094_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing095_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing096_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       65.2,
+       122.6
+      ],
+      [
+       146.3,
+       177.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing097_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing098_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing100_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing101_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing102_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       14.1,
+       25.4
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing103_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing104_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       87.4,
+       95.0
+      ]
+     ]
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       64.1,
+       95.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing105_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing106_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing107_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       137.0,
+       147.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing108_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       93.0,
+       107.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing109_x264.mp4": {
+   "category": "Stealing",
+   "queries": [
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       146.7,
+       160.1
+      ],
+      [
+       173.3,
+       207.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Stealing110_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing111_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing112_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing113_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Stealing114_x264.mp4": {
+   "category": "Stealing",
+   "queries": []
+  },
+  "Vandalism001_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism002_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism003_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism004_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism005_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       21.8,
+       28.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism006_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       18.1,
+       23.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism007_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism008_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       97.9,
+       119.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism009_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism010_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       11.5,
+       13.8
+      ]
+     ]
+    },
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism011_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       75.3,
+       94.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism012_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism013_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism014_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism015_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       63.8,
+       74.3
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism016_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       175.3,
+       178.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism017_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       7.8,
+       11.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism018_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism019_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       50.9,
+       68.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism020_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       17.0,
+       22.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism021_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism022_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism023_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       170.1,
+       190.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism024_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism025_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism026_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism027_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism028_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism029_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism030_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       16.2,
+       43.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism031_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       9.7,
+       27.1
+      ],
+      [
+       33.1,
+       38.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism032_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       7.2,
+       12.2
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism033_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism034_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       39.6,
+       58.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism035_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "a person putting an item into their bag or pocket",
+     "scenario": "conceal",
+     "expected": [
+      [
+       9.9,
+       17.7
+      ]
+     ]
+    },
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       9.9,
+       17.7
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism036_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism038_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       10.1,
+       20.9
+      ]
+     ]
+    },
+    {
+     "text": "someone breaking into a car or taking a motorcycle",
+     "scenario": "vehicle",
+     "expected": [
+      [
+       66.9,
+       77.6
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism039_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism040_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       4.2,
+       14.9
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism041_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism042_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       59.6,
+       104.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism043_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       28.4,
+       47.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism044_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       17.8,
+       42.1
+      ],
+      [
+       53.3,
+       68.8
+      ],
+      [
+       102.2,
+       150.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism045_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       22.8,
+       34.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism046_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       19.4,
+       36.0
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism047_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  },
+  "Vandalism048_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       93.5,
+       185.8
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism049_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": [
+      [
+       46.5,
+       83.1
+      ],
+      [
+       122.3,
+       137.6
+      ],
+      [
+       148.0,
+       157.7
+      ],
+      [
+       162.3,
+       201.1
+      ]
+     ]
+    }
+   ]
+  },
+  "Vandalism050_x264.mp4": {
+   "category": "Vandalism",
+   "queries": [
+    {
+     "text": "someone smashing or damaging property",
+     "scenario": "vandal",
+     "expected": []
+    }
+   ]
+  }
+ }
+}

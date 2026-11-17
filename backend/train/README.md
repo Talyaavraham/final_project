@@ -166,3 +166,18 @@ python train/pack_exports.py "C:/.../knife.v2i.yolov8" "C:/.../Knife detection.v
 אם המשחק שלכן, הכי מדויק לייצר את התיבות מהקוד של המשחק (הוא יודע איפה כל
 אובייקט מצויר). אם זה סרטון מהעולם האמיתי, `autolabel.py` לא רלוונטי — מתייגים
 150–300 פריימים ב-CVAT / Roboflow ומייצאים בפורמט YOLO לאותו מבנה תיקיות.
+
+## מתאם טקסט ל-CLIP (`clip_adapter.npz`) — `clip_adapter.py`
+
+ניסיוני. שכבה קטנה (low-rank) אחרי וקטור הטקסט של CLIP, שמאומנת על המשפטים של UCA
+(משפט + חלון זמן) מול וקטורי הפריימים שכבר ב-`eval/benchmark.db`, בלי לאנדקס מחדש.
+אימון על סרטוני UCA Train, בחירת epoch על Val, דיווח על Test. אם אף epoch לא עוקף את CLIP הרגיל על Val, לא נשמר כלום.
+
+```bash
+python train/clip_adapter.py eval/benchmark.db --out clip_adapter.npz
+python eval/offline_eval.py eval/benchmark.db eval/ground_truth_uca_part4.json --split Test --adapter 0                 # CLIP רגיל
+python eval/offline_eval.py eval/benchmark.db eval/ground_truth_uca_part4.json --split Test --adapter clip_adapter.npz  # עם המתאם
+```
+
+החיפוש משתמש ב-`backend/clip_adapter.npz` אוטומטית כשהקובץ קיים (`CLIP_ADAPTER=0` מכבה).
+ב-Colab: תא 8 ב-[eval/colab_benchmark.ipynb](../eval/colab_benchmark.ipynb).

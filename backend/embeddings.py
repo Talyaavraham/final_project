@@ -21,6 +21,7 @@ _ENABLED = os.environ.get("CLIP_RERANK", "1") not in ("0", "false", "no")
 _lock = threading.Lock()
 _model = None
 _processor = None
+_device = "cpu"
 _failed: Optional[str] = None
 
 
@@ -42,7 +43,7 @@ def available() -> bool:
 
 
 def _load():
-    global _model, _processor, _failed
+    global _model, _processor, _device, _failed
     with _lock:
         if _model is not None or _failed:
             return
@@ -58,6 +59,9 @@ def _load():
             except OSError:
                 _model = CLIPModel.from_pretrained(CLIP_MODEL, use_safetensors=True)
                 _processor = CLIPProcessor.from_pretrained(CLIP_MODEL)
+            # GPU when there is one (Colab); float32 either way, so the vectors match a CPU index
+            _device = os.environ.get("CLIP_DEVICE") or ("cuda" if torch.cuda.is_available() else "cpu")
+            _model.to(_device)
             _model.eval()
         except Exception as e:  # noqa: BLE001
             _failed = f"{type(e).__name__}: {e}"
@@ -66,6 +70,12 @@ def _load():
 def _norm(x: np.ndarray) -> np.ndarray:
     x = x.astype(np.float32)
     return x / np.maximum(np.linalg.norm(x, axis=-1, keepdims=True), 1e-6)
+
+
+def _tensor(out):
+    """get_image/text_features: a tensor in transformers 4.x; in 5.x an output object whose
+    pooler_output holds the projected embedding."""
+    return out if hasattr(out, "detach") else out.pooler_output
 
 
 def _pil(crop_bgr):
@@ -90,17 +100,50 @@ def embed_images(crops_bgr: list) -> Optional[np.ndarray]:
         for i in range(0, len(crops_bgr), 32):
             batch = [_pil(c) for c in crops_bgr[i:i + 32]]
             # channels_last: a 1- or 3-pixel-high crop is otherwise read as channels-first
-            inputs = _processor(images=batch, return_tensors="pt", input_data_format="channels_last")
-            feats = _model.get_image_features(**inputs)
+            inputs = _processor(images=batch, return_tensors="pt", input_data_format="channels_last").to(_device)
+            feats = _tensor(_model.get_image_features(**inputs))
             out.append(feats.detach().cpu().numpy())
     return _norm(np.concatenate(out))
 
 
-_text_cache: dict = {}       # text -> vector; the same prompts are asked again and again
+_text_cache: dict = {}       # text -> raw CLIP vector; the same prompts are asked again and again
+
+# Text-side adapter (train/clip_adapter.py): t -> norm(t + t @ W + b), trained on UCA
+# sentences so that a description lands nearer the CCTV frames it describes. Image
+# vectors are untouched, so an existing index keeps working. CLIP_ADAPTER=0 turns it off.
+ADAPTER_PATH = os.environ.get("CLIP_ADAPTER",
+                              os.path.join(os.path.dirname(os.path.abspath(__file__)), "clip_adapter.npz"))
+_adapter = None              # (W, b), False when there is none
 
 
-def embed_texts(texts: list) -> Optional[np.ndarray]:
-    """["fire", ...] -> (N, D) L2-normalised float32, or None. Cached per text."""
+def adapter():
+    """-> (W, b) or None."""
+    global _adapter
+    if _adapter is None:
+        _adapter = False
+        if ADAPTER_PATH not in ("", "0", "false", "no") and os.path.isfile(ADAPTER_PATH):
+            z = np.load(ADAPTER_PATH)
+            _adapter = (z["W"].astype(np.float32), z["b"].astype(np.float32))
+    return _adapter or None
+
+
+def set_adapter(path: Optional[str]):
+    """Switch the adapter at run time (None / "0" = off); used by the evaluation scripts."""
+    global ADAPTER_PATH, _adapter
+    ADAPTER_PATH, _adapter = (path or "0"), None
+
+
+def apply_adapter(vecs: np.ndarray) -> np.ndarray:
+    a = adapter()
+    if a is None:
+        return vecs
+    W, b = a
+    return _norm(vecs + vecs @ W + b)
+
+
+def embed_texts(texts: list, raw: bool = False) -> Optional[np.ndarray]:
+    """["fire", ...] -> (N, D) L2-normalised float32, or None. Cached per text.
+    raw=True skips the adapter (what the adapter itself is trained on)."""
     texts = [t.strip() for t in texts]
     if not available() or not texts or not all(texts):
         return None
@@ -112,12 +155,13 @@ def embed_texts(texts: list) -> Optional[np.ndarray]:
         import torch
         with torch.no_grad():
             inputs = _processor(text=todo, return_tensors="pt", padding=True,
-                                truncation=True)
-            feats = _norm(_model.get_text_features(**inputs).detach().cpu().numpy())
+                                truncation=True).to(_device)
+            feats = _norm(_tensor(_model.get_text_features(**inputs)).detach().cpu().numpy())
         if len(_text_cache) > 4096:
             _text_cache.clear()
         _text_cache.update(zip(todo, feats))
-    return np.stack([_text_cache[t] for t in texts])
+    vecs = np.stack([_text_cache[t] for t in texts])
+    return vecs if raw else apply_adapter(vecs)
 
 
 def embed_text(text: str) -> Optional[np.ndarray]:
