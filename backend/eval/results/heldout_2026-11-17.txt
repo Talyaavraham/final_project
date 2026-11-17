@@ -1,0 +1,27 @@
+Held-out set: UCF-Crime part 1 (Abuse / Arrest / Arson / Assault), 54 videos NOT in the benchmark (84 min),
+45 expected windows, fire + weapon only, 16 videos with neither. No threshold was tuned on these videos.
+Index: eval/heldout.db, YOLO_MODEL=yolov8n.pt,night.pt EXTRA_MODELS=security.pt IMGSZ=800, 147.9 min on CPU (2026-11-16/17).
+security.pt (2026-11-10) tracks in the index: fire 32 (17 videos), smoke 25 (14 videos), gun 17 (2 videos), knife 0.
+
+== python eval/offline_eval.py eval/heldout.db eval/ground_truth_heldout.json
+fire       P=0.18 R=0.42 F1=0.255  (found 13 of 31 windows, 71 segments returned)
+weapon     P=0.06 R=0.43 F1=0.108  (found 6 of 14 windows, 97 segments returned)
+OVERALL    P=0.11 R=0.42 F1=0.178  (found 19 of 45 windows, 168 segments returned)
+half 0     P=0.13 R=0.48 F1=0.206  (found 11 of 23 windows, 84 segments returned)
+half 1     P=0.10 R=0.36 F1=0.151  (found 8 of 22 windows, 84 segments returned)
+
+== ... --without gun,knife,fire,smoke   (the same index without the security.pt tracks: CLIP alone)
+fire       P=0.15 R=0.29 F1=0.200  (found 9 of 31 windows, 59 segments returned)
+weapon     P=0.06 R=0.29 F1=0.094  (found 4 of 14 windows, 71 segments returned)
+OVERALL    P=0.10 R=0.29 F1=0.149  (found 13 of 45 windows, 130 segments returned)
+half 0     P=0.14 R=0.35 F1=0.203  (found 8 of 23 windows, 56 segments returned)
+half 1     P=0.07 R=0.23 F1=0.104  (found 5 of 22 windows, 74 segments returned)
+
+== the benchmark, same code, for comparison: python eval/offline_eval.py eval/benchmark_v2.db eval/ground_truth_uca.json
+fire       P=0.36 R=0.36 F1=0.360  (found 16 of 44 windows, 45 segments returned)
+weapon     P=0.11 R=0.31 F1=0.160  (found 25 of 81 windows, 231 segments returned)
+OVERALL    P=0.12 R=0.35 F1=0.180  (found 67 of 189 windows, 555 segments returned)
+
+False alarms on the videos with no event (almost all from CLIP: the numbers without security.pt in brackets):
+  fire:   10 of 19 videos, 18 segments   (10 videos, 18 segments)
+  weapon: 14 of 16 videos, 44 segments   (14 videos, 42 segments)

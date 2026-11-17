@@ -137,3 +137,25 @@ python indexer.py reembed --db eval/benchmark.db --videos eval/data/ucf         
 התרחישים האחרים קטנים מהרעש (שני חצאי הסרטונים נותנים 0.14 ו-0.28). סכין, חטיפה וחבילה נשארים קרוב לניחוש:
 ב-320x240 אדם הוא כ-30 פיקסלים ו-CLIP ViT-B/32 לא רואה מה יש לו ביד. כיסוי הפריים בריבועים לא עזר ב-4:3
 ולכן פועל רק בפריים רחב (לא נמדד: אין ב-benchmark סרטונים רחבים).
+
+**סט שלא כוילו עליו (held-out, 2026-11-17):** כל הספים נבחרו על 107 הסרטונים של ה-benchmark, אז המספרים שם אופטימיים.
+`eval/uca_ground_truth.py --heldout` בונה סט מ-54 סרטונים אחרים של UCF-Crime (חלק 1: 38 עם אש או אקדח, 16 בלי; 45 חלונות),
+והם אונדקסו עם `security.pt` אמיתי (לא סימולציה):
+
+```bash
+python eval/uca_ground_truth.py --heldout C:/path/Anomaly-Videos-Part-1 --scenarios fire,weapon --out eval/ground_truth_heldout.json
+python eval/index_videos.py C:/path/Anomaly-Videos-Part-1 --db eval/heldout.db --gt eval/ground_truth_heldout.json --only-gt   # בלי שרת
+python eval/offline_eval.py eval/heldout.db eval/ground_truth_heldout.json --without gun,knife,fire,smoke                      # בלי ה-tracks של security.pt
+```
+
+| held-out | F1 | precision | recall | חלונות שנמצאו |
+|---|---|---|---|---|
+| CLIP בלבד (בלי ה-tracks של `security.pt`) | 0.149 | 0.10 | 0.29 | 13 מתוך 45 |
+| `security.pt` + CLIP | 0.178 | 0.11 | 0.42 | 19 מתוך 45 |
+
+מה זה אומר: (1) הגלאי מוסיף recall אמיתי (אש 9 → 13 חלונות, אקדח 4 → 6) וה-precision לא נפגע; בסרטונים בלי אירוע
+הוא מוסיף רק 2 התרעות שווא (60 → 62);
+(2) ה-F1 הכולל דומה ל-benchmark (0.18), אבל אש עם CLIP בלבד יורדת מ-0.36 ב-benchmark ל-0.20 כאן (precision 0.36 → 0.15):
+הספים של חיפוש הסצנה מתאימים ל-benchmark יותר מאשר לסרטונים חדשים; (3) החולשה היא התרעות שווא של CLIP: "a person with a gun"
+מחזיר משהו ב-14 מתוך 16 סרטונים שאין בהם אקדח, ו-"fire" ב-10 מתוך 19. הסט קטן (שני החצאים שלו: 0.21 ו-0.15), ולכן
+לא מכיילים עליו: הוא נשאר סט בדיקה.
