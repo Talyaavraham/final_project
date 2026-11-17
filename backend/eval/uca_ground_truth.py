@@ -5,19 +5,31 @@ of the sentences that describe it (overlapping windows merged).
 
     python eval/uca_ground_truth.py            -> eval/ground_truth_uca.json
 
-Theft / vandalism scenarios (UCF-Crime "Anomaly-Videos-Part-4": Shoplifting,
-Stealing, Vandalism) are opt-in, so the default output above does not change:
-
-    python eval/uca_ground_truth.py --sel eval/data/ucf_selection_part4.json \
-        --scenarios conceal,vandal,vehicle --out eval/ground_truth_uca_part4.json
-
 A sentence counts for a scenario only when it says the thing is on screen
 (TAGS): "poured gasoline on the door" is not fire yet, "the fire truck
 arrived" is not fire either. Normal videos get every query with
 expected = [] so false alarms count; Arson / Shooting videos always get
 their query, even when no sentence matched, so a miss there is a real miss.
+
+A held-out set — UCF-Crime videos on disk that are NOT in the benchmark, so
+no threshold was ever tuned on them:
+
+    python eval/uca_ground_truth.py --heldout C:/path/Anomaly-Videos-Part-1 \
+        --scenarios fire,weapon --out eval/ground_truth_heldout.json
+
+Its negatives are videos of the same folder with no sentence about the chosen
+scenarios (UCA describes every event of a video, so no sentence = not there),
+picked in a fixed pseudo-random order up to --negative-minutes of video.
+
+Theft / vandalism scenarios (UCF-Crime "Anomaly-Videos-Part-4": Shoplifting,
+Stealing, Vandalism) are opt-in, so the default output above does not change:
+
+    python eval/uca_ground_truth.py --sel eval/data/ucf_selection_part4.json \
+        --scenarios conceal,vandal,vehicle --out eval/ground_truth_uca_part4.json
 """
 import argparse
+import glob
+import hashlib
 import json
 import os
 import re
@@ -70,9 +82,12 @@ CATEGORY_SCENARIO = {"Arson": "fire", "Shooting": "weapon", "Explosion": "fire",
                      "Shoplifting": "conceal", "Vandalism": "vandal"}
 
 
-def tag(sentence, scenarios=None):
-    s = NOT_VISIBLE.sub(" ", sentence.lower())
-    return [sc for sc, rx in TAGS.items() if (scenarios is None or sc in scenarios) and rx.search(s)]
+OPEN_FIRE = re.compile(r"\b(open(s|ed|ing)?|return(s|ed|ing)?) fire\b")      # shooting, nothing burns
+
+
+def tag(sentence):
+    s = OPEN_FIRE.sub("shoot", NOT_VISIBLE.sub(" ", sentence.lower()))
+    return [sc for sc, rx in TAGS.items() if rx.search(s)]
 
 
 def category(name):
@@ -89,45 +104,83 @@ def merge(windows, gap=1.0):
     return out
 
 
+def tagged_windows(entry):
+    """UCA entry -> {scenario: [[t0, t1], ...]} (not merged) and the tagged (scenario, t, sentence) rows."""
+    windows, rows = defaultdict(list), []
+    for t, sent in zip(entry["timestamps"], entry["sentences"]):
+        for sc in tag(sent):
+            windows[sc].append(list(t))
+            rows.append((sc, t, sent))
+    return windows, rows
+
+
+def heldout_names(folder, uca, benchmark, scenarios, negative_minutes):
+    """-> (positives, negatives): videos under `folder` that UCA describes and the benchmark does not use."""
+    on_disk = {os.path.splitext(os.path.basename(p))[0]
+               for p in glob.glob(os.path.join(folder, "**", "*.mp4"), recursive=True)}
+    names = sorted(n for n in on_disk if n in uca and n not in benchmark)
+    pos, rest = [], []
+    for n in names:
+        windows, _ = tagged_windows(uca[n])
+        asked = CATEGORY_SCENARIO.get(category(n)) in scenarios
+        (pos if asked or any(sc in windows for sc in scenarios) else rest).append(n)
+    neg, left = [], negative_minutes * 60.0
+    for n in sorted(rest, key=lambda n: hashlib.md5(n.encode()).hexdigest()):
+        if float(uca[n]["duration"]) <= left:       # a string in the UCA json files
+            neg.append(n)
+            left -= float(uca[n]["duration"])
+    return pos, sorted(neg)
+
+
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--heldout", metavar="DIR", help="folder of UCF-Crime videos: build a set from those NOT in the benchmark")
+    ap.add_argument("--scenarios", default=",".join(DEFAULT_SCENARIOS),
+                    help=f"only these scenarios, from: {','.join(QUERY)}")
+    ap.add_argument("--negative-minutes", type=float, default=20.0, help="held-out: minutes of videos without the scenarios")
     ap.add_argument("--sel", default=SEL, help="video selection json (names -> {bytes})")
     ap.add_argument("--out", default=OUT)
-    ap.add_argument("--scenarios", default=",".join(DEFAULT_SCENARIOS),
-                    help=f"comma separated, from: {','.join(QUERY)}")
     args = ap.parse_args()
-    active = [s.strip() for s in args.scenarios.split(",") if s.strip()]
-    unknown = [s for s in active if s not in QUERY]
+    unknown = [s for s in args.scenarios.split(",") if s.strip() and s.strip() not in QUERY]
     if unknown:
         ap.error(f"unknown scenarios: {unknown}")
     sel = json.load(open(args.sel))
     uca = json.load(open(ALL, encoding="utf-8"))
+    scenarios = [sc for sc in QUERY if sc in [s.strip() for s in args.scenarios.split(",")]]
+    negatives = set()
+    if args.heldout:
+        names, neg = heldout_names(args.heldout, uca, sel, scenarios, args.negative_minutes)
+        negatives = set(neg)
+        names = sorted(names + neg)
+    else:
+        names = [n for n in sel if n in uca]
+        for n in sel:
+            if n not in uca:
+                print(f"  skip {n}: no UCA annotation")
+
     videos, tagged, samples = {}, Counter(), defaultdict(list)
-    for name in sel:
-        if name not in uca:
-            print(f"  skip {name}: no UCA annotation")
-            continue
+    for name in names:
         cat = category(name)
-        windows = defaultdict(list)
-        for t, sent in zip(uca[name]["timestamps"], uca[name]["sentences"]):
-            for sc in tag(sent, active):
-                windows[sc].append(list(t))
+        windows, rows = tagged_windows(uca[name])
+        for sc, t, sent in rows:
+            if sc in scenarios:
                 tagged[sc] += 1
                 if len(samples[sc]) < 5:
                     samples[sc].append(f"    {name} {t}: {sent.strip()[:90]}")
-        forced = {CATEGORY_SCENARIO[cat]} & set(active) if cat in CATEGORY_SCENARIO else set()
-        if cat.startswith("Normal"):
-            scenarios = list(active)
+        if cat.startswith("Normal") or name in negatives:
+            asked = scenarios
         else:
-            scenarios = sorted(set(windows) | forced)
+            asked = sorted((set(windows) | {CATEGORY_SCENARIO.get(cat)}) & set(scenarios))
         queries = [{"text": QUERY[sc], "scenario": sc, "expected": merge(windows.get(sc, []))}
-                   for sc in scenarios]
+                   for sc in asked]
         videos[name + ".mp4"] = {"category": cat, "queries": queries}
     json.dump({"videos": videos}, open(args.out, "w"), indent=1)
     n_q = sum(len(v["queries"]) for v in videos.values())
     n_w = sum(len(q["expected"]) for v in videos.values() for q in v["queries"])
-    print(f"{len(videos)} videos, {n_q} queries, {n_w} expected windows -> {args.out}")
-    for sc in active:
+    minutes = sum(float(uca[n]["duration"]) for n in names) / 60
+    print(f"{len(videos)} videos ({minutes:.0f} min, {len(negatives)} negatives), {n_q} queries, "
+          f"{n_w} expected windows -> {args.out}")
+    for sc in scenarios:
         print(f"  {sc}: {tagged[sc]} sentences")
         print("\n".join(samples[sc]))
 
