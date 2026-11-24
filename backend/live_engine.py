@@ -29,8 +29,9 @@ EXTRA_MODELS = [m.strip() for m in os.environ.get("LIVE_EXTRA", _default_extra).
 CONF = float(os.environ.get("LIVE_CONF", "0.25"))
 IMGSZ = int(os.environ.get("LIVE_IMGSZ", "640"))
 DEVICE = os.environ.get("LIVE_DEVICE") or None
-# objects always drawn on the live view (plus whatever the rules ask for)
-SHOW = {"knife", "gun", "fire", "smoke", "scissors", "baseball bat"}
+# A detector runs only when a rule asks for one of its classes: a "raise a
+# hand" rule needs the pose model alone, which is ~3x faster on a CPU than
+# pose + COCO + security.pt on every frame.
 
 
 def _resolve(name):
@@ -79,7 +80,9 @@ class LiveEngine:
                 if key(r) == key(rule):
                     return r, False
             self.rules.append(rule)
-            return rule, True
+        print(f"[live] rule: {rule['label']}  kind={rule['kind']} object={rule['object'] or '-'} "
+              f"hands={rule.get('hands', 0)} duration={rule['duration']}s  <- \"{rule['text']}\"", flush=True)
+        return rule, True
 
     def remove_rule(self, rule_id):
         with self.rules_lock:
@@ -111,15 +114,19 @@ class LiveEngine:
                                 device=DEVICE, verbose=False)[0]
             persons = _people(r)
             rules = self.list_rules()
-            wanted = SHOW | {x["object"] for x in rules if x["object"]}
+            wanted = {x["object"] for x in rules if x["object"]}
             objects = []
             for d in self.detectors:
+                if not wanted & {str(n).lower() for n in d.names.values()}:
+                    continue
                 res = d.predict(frame, conf=CONF, imgsz=IMGSZ, device=DEVICE, verbose=False)[0]
                 for box, c, s in zip(res.boxes.xyxy.tolist(), res.boxes.cls.tolist(), res.boxes.conf.tolist()):
                     name = str(d.names[int(c)]).lower()
                     if name in wanted and name != "person":
                         objects.append({"cls": name, "conf": round(s, 3), "box": [round(v, 1) for v in box]})
             alerts, progress = self.evaluator.step(rules, persons, objects, time.monotonic())
+        for a in alerts:   # visible in the server window, for debugging
+            print(f"[live] ALERT: {a['label']}  (rule {a['rule']}, person {a['person']})", flush=True)
         h, w = frame.shape[:2]
         return {"w": w, "h": h, "persons": persons, "objects": objects, "alerts": alerts,
                 "progress": progress, "ms": round((time.time() - t0) * 1000)}

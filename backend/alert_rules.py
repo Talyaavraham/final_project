@@ -35,6 +35,10 @@ DEFAULT_DURATION = {"object": 0.5, "hold": 1.0, "raise_object": 0.4, "hands_up":
 DEFAULT_COOLDOWN = 5.0
 GAP = 0.7               # s: a condition that is off for less than this is still "on"
 TOUCH_MEMORY = 1.5      # s: a wrist that was on an object keeps "holding" it this long
+# On a slow computer frames come further apart than GAP: both windows then
+# stretch to this many frame intervals, so a raised hand seen on two frames
+# 1.2 s apart is one raise, not two separate ones that each last 0 s.
+GAP_FRAMES = 2.5
 KPT_CONF = 0.3
 
 # COCO keypoints (YOLOv8-pose)
@@ -370,6 +374,8 @@ class Evaluator:
         self.reset()
 
     def reset(self):
+        self.last = None       # time of the previous frame
+        self.dt = 0.0          # smoothed time between frames
         self.touch = {}        # (person, wrist, class) -> last time the wrist was on it
         self.state = {}        # (rule id, key) -> [first, last] time the condition was on
         self.fired = {}        # rule id -> last alert time
@@ -387,11 +393,19 @@ class Evaluator:
                     pad = max(0.3 * max(b[2] - b[0], b[3] - b[1]), 0.06 * ph)
                     if _near(pt, b, pad):
                         self.touch[(pid, w, o["cls"])] = now
-        self.touch = {k: t for k, t in self.touch.items() if now - t <= TOUCH_MEMORY}
+        self.touch = {k: t for k, t in self.touch.items() if now - t <= self.memory}
+
+    @property
+    def gap(self):
+        return max(GAP, GAP_FRAMES * self.dt)
+
+    @property
+    def memory(self):
+        return max(TOUCH_MEMORY, GAP_FRAMES * self.dt)
 
     def _held(self, pid, wrist, cls, now):
         t = self.touch.get((pid, wrist, cls))
-        return t is not None and now - t <= TOUCH_MEMORY
+        return t is not None and now - t <= self.memory
 
     def conditions(self, rule, persons, objects, now):
         """keys (person id / 'all') for which the rule's condition is true, with the box to show."""
@@ -417,6 +431,10 @@ class Evaluator:
     def step(self, rules, persons, objects, now):
         """-> (alerts, progress): alerts that fire now, and per rule how far
         (0..1) its condition is towards `duration`."""
+        if self.last is not None and now > self.last:
+            d = now - self.last
+            self.dt = d if not self.dt else 0.7 * self.dt + 0.3 * d
+        self.last = now
         self._touches(persons, objects, now)
         alerts, progress = [], {}
         for r in rules:
@@ -424,7 +442,7 @@ class Evaluator:
             for key, box in self.conditions(r, persons, objects, now).items():
                 sk = (r["id"], key)
                 st = self.state.get(sk)
-                if st is None or now - st[1] > GAP:
+                if st is None or now - st[1] > self.gap:
                     st = [now, now]
                 else:
                     st[1] = now
@@ -438,5 +456,5 @@ class Evaluator:
                                    "person": key if key != "all" else None, "box": box})
             progress[r["id"]] = round(best, 2)
         # forget conditions that went away long ago
-        self.state = {k: v for k, v in self.state.items() if now - v[1] <= GAP}
+        self.state = {k: v for k, v in self.state.items() if now - v[1] <= self.gap}
         return alerts, progress

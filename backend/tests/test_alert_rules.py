@@ -110,3 +110,17 @@ def test_one_hand_or_both():
     raised_left = [([person(120)], [])] * 15            # only the left wrist above the shoulder
     assert run(ar.Evaluator(), one, raised_left)[0] == 1
     assert run(ar.Evaluator(), both, raised_left)[0] == 0
+
+
+def test_slow_computer_still_alerts():
+    """1 frame per 1-1.5 s (a laptop CPU): a raised hand must still fire."""
+    r = rule("מישהו מרים יד")
+    for dt in (1.0, 1.5):
+        frames = [([person(120)], [])] * 6
+        assert run(ar.Evaluator(), r, frames, dt=dt)[0] >= 1, dt
+
+
+def test_slow_computer_phone_hold():
+    r = rule("מישהו מחזיק טלפון")
+    phone = [{"cls": "cell phone", "conf": 0.5, "box": [70, 240, 90, 260]}]
+    assert run(ar.Evaluator(), r, [([person(250)], phone)] * 5, dt=1.2)[0] == 1
