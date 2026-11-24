@@ -67,3 +67,39 @@ def test_packed_knives_join_the_security_set(tmp_path):
     assert "val: data_base_val.txt" in open(os.path.join(ds, "data_base.yaml")).read()
     listed = open(os.path.join(ds, "data_base_val.txt")).read().split("\n")[:-1]
     assert [os.path.basename(p) for p in listed] == ["weap_a.jpg"]
+
+
+def test_weapondet_lines_maps_and_drops_ambiguous():
+    names = ["weapons", "Aggressor", "Knife", "Pistol", "Person"]
+    lines = sd.weapondet_lines([[10, 20, 30, 40], [0, 0, 50, 50], [5, 5, 90, 90]], [2, 3, 4], names, 100, 200)
+    assert lines == ["1 0.250000 0.200000 0.300000 0.200000", "0 0.250000 0.125000 0.500000 0.250000"]
+    assert sd.weapondet_lines([[0, 0, 5, 5]], [0], names, 100, 100) is None      # "weapons": which one?
+
+
+def test_cctv_look_keeps_size_and_writes_jpeg():
+    import io
+    import random
+    from PIL import Image
+    out = sd.cctv_look(Image.new("RGB", (640, 480), (200, 30, 30)), random.Random(0))
+    im = Image.open(io.BytesIO(out))
+    assert im.size == (640, 480) and im.format == "JPEG"
+
+
+def test_add_weapondet_on_a_fake_dataset(tmp_path):
+    from PIL import Image
+    datasets = __import__("pytest").importorskip("datasets")
+    feats = datasets.Features({
+        "image": datasets.Image(), "width": datasets.Value("int32"), "height": datasets.Value("int32"),
+        "objects": datasets.Sequence({"bbox": datasets.Sequence(datasets.Value("float32"), length=4),
+                                      "category": datasets.ClassLabel(names=["weapons", "Knife", "Pistol", "Person"])})})
+    img = Image.new("RGB", (100, 100))
+    rows = {"image": [img, img, img], "width": [100] * 3, "height": [100] * 3,
+            "objects": [{"bbox": [[10, 10, 20, 20]], "category": [1]},
+                        {"bbox": [[10, 10, 20, 20]], "category": [0]},
+                        {"bbox": [[1, 1, 30, 30], [40, 40, 9, 9]], "category": [3, 2]}]}
+    dd = datasets.DatasetDict({"train": datasets.Dataset.from_dict(rows, features=feats),
+                               "validation": datasets.Dataset.from_dict(rows, features=feats)})
+    w = sd.Writer(str(tmp_path / "ds"))
+    st = sd.add_weapondet(w, dd)
+    assert st["dropped"] == 2 and st["images"] == 4 and st["cctv"] == 2
+    assert w.n == {"train": 4, "val": 2} and w.boxes["knife"] == 3 and w.boxes["gun"] == 3

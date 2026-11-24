@@ -171,6 +171,95 @@ def add_dfire(writer, limit=0, neg_ratio=0.3, rnd=None):
     print(f"D-Fire: {n_pos} with boxes + {n_neg} negatives")
 
 
+# ---------------------------------------------------------------- WeaponDetection (Hugging Face)
+# Subh775/WeaponDetection (CC BY 4.0, from Roboflow "weapon-detection" by yolov7test): ~9,600 images,
+# 29 classes, COCO boxes [x, y, w, h]. Its many knife boxes are what security.pt lacked.
+WEAPONDET_REPO = "Subh775/WeaponDetection"
+WD_KNIFE = {"knife", "knife_deploy", "knife_weapon"}
+WD_GUN = {"guns", "pistol", "pistols", "handgun", "heavy gun", "heavy_gun", "heavyweapon",
+          "rifle", "shotgun", "long guns", "long_guns", "larga"}
+# boxes that may hold a gun or a knife without saying which: the image is dropped rather than
+# kept with an unlabelled weapon in it (that would teach the model that a knife is background)
+WD_AMBIGUOUS = {"weapon", "weapons", "guns perspective", "guns_perspective", "al", "stabbing"}
+
+
+def weapondet_lines(bboxes, cats, names, w, h):
+    """COCO boxes + category ids -> YOLO lines (gun / knife), or None when the image has an ambiguous weapon box.
+    Classes that are not objects of ours (person, hand, blood, aggressor, ...) are ignored."""
+    lines = []
+    for (x, y, bw, bh), c in zip(bboxes, cats):
+        n = str(names[int(c)]).strip().lower()
+        if n in WD_AMBIGUOUS:
+            return None
+        cls = "knife" if n in WD_KNIFE else "gun" if n in WD_GUN else None
+        if cls is None or bw <= 1 or bh <= 1 or not w or not h:
+            continue
+        cx, cy = min(max((x + bw / 2) / w, 0), 1), min(max((y + bh / 2) / h, 0), 1)
+        lines.append(f"{CLASSES.index(cls)} {cx:.6f} {cy:.6f} {min(bw / w, 1):.6f} {min(bh / h, 1):.6f}")
+    return lines
+
+
+def cctv_look(img, rnd):
+    """A photo made to look like a security camera frame: low resolution, blur, heavy JPEG, sometimes grey.
+    Boxes are relative, so they stay valid. Returns JPEG bytes."""
+    from PIL import Image, ImageFilter
+    img = img.convert("RGB")
+    w, h = img.size
+    f = rnd.uniform(0.2, 0.45)                                     # UCF-Crime is 320x240
+    small = img.resize((max(16, int(w * f)), max(16, int(h * f))), Image.BILINEAR)
+    if rnd.random() < 0.5:
+        small = small.filter(ImageFilter.GaussianBlur(rnd.uniform(0.3, 1.0)))
+    img = small.resize((w, h), Image.BILINEAR)
+    if rnd.random() < 0.3:
+        img = img.convert("L").convert("RGB")                      # night / IR cameras
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=rnd.randint(20, 45))
+    return buf.getvalue()
+
+
+def add_weapondet(writer, dataset, limit=0, cctv=True, rnd=None):
+    """dataset: the DatasetDict of datasets.load_dataset(WEAPONDET_REPO). Its validation split goes to val;
+    train + test to train, each image twice when cctv=True (as is + cctv_look)."""
+    rnd = rnd or random.Random(3)
+    stats = {"images": 0, "dropped": 0, "no_box": 0, "cctv": 0}
+    for split_name, ds in dataset.items():
+        split = "val" if split_name.startswith("val") else "train"
+        objs = ds.features["objects"]
+        feat = getattr(objs, "feature", objs)
+        if isinstance(feat, (list, tuple)):
+            feat = feat[0]
+        cat_key = next(k for k in feat if k != "bbox" and hasattr(getattr(feat[k], "feature", feat[k]), "names")
+                       or k in ("category", "categories", "label", "labels", "class"))
+        cf = getattr(feat[cat_key], "feature", feat[cat_key])
+        names = cf.names
+        for i, r in enumerate(ds):
+            o = r["objects"]
+            if isinstance(o, list):            # a list of {bbox, category} instead of a dict of lists
+                o = {k: [x[k] for x in o] for k in ("bbox", cat_key)}
+            img = r["image"]
+            w, h = r.get("width") or img.size[0], r.get("height") or img.size[1]
+            lines = weapondet_lines(o["bbox"], o[cat_key], names, w, h)
+            if lines is None:
+                stats["dropped"] += 1
+                continue
+            if not lines:                      # people / blood only: a few as negatives
+                if rnd.random() > 0.2:
+                    stats["no_box"] += 1
+                    continue
+            buf = io.BytesIO()
+            img.convert("RGB").save(buf, "JPEG", quality=92)
+            stem = f"wd_{split_name}_{i}"
+            writer.add(stem, buf.getvalue(), lines, split=split)
+            stats["images"] += 1
+            if cctv and split == "train" and lines:
+                writer.add(stem + "_cctv", cctv_look(img, rnd), lines, split=split)
+                stats["cctv"] += 1
+            if limit and stats["images"] >= limit:
+                break
+    print(f"WeaponDetection: {stats}")
+    return stats
+
+
 BIG_EXPORT = 500      # training images; below this an export is "a few own frames" and is repeated
 
 
