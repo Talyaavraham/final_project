@@ -1,0 +1,29 @@
+Threshold calibration, plain CLIP, part-4 benchmark (eval/benchmark.db, 199 videos). 2026-11-19, CPU.
+python eval/calibrate.py eval/benchmark.db:eval/ground_truth_uca_part4.json
+
+text adapter: none (plain CLIP)
+uca_part4: 199 indexed videos of 199, 146 queries  (eval/benchmark.db)
+  one setting takes 6s, 90 settings
+
+top settings by mean F1 over uca_part4:
+  {'MIN_SCENE': 0.5, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.29}  mean F1 0.139  uca_part4 0.139
+  {'MIN_SCENE': 0.6, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.29}  mean F1 0.138  uca_part4 0.138
+  {'MIN_SCENE': 0.4, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.29}  mean F1 0.134  uca_part4 0.134
+  {'MIN_SCENE': 0.5, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.27}  mean F1 0.130  uca_part4 0.130
+  {'MIN_SCENE': 0.5, 'SCENE_Z': 1.5, 'MIN_SEMANTIC_UNKNOWN': 0.27}  mean F1 0.129  uca_part4 0.129
+  {'MIN_SCENE': 0.6, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.27}  mean F1 0.129  uca_part4 0.129
+  {'MIN_SCENE': 0.4, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.27}  mean F1 0.129  uca_part4 0.129
+  {'MIN_SCENE': 0.6, 'SCENE_Z': 1.5, 'MIN_SEMANTIC_UNKNOWN': 0.27}  mean F1 0.127  uca_part4 0.127
+  {'MIN_SCENE': 0.4, 'SCENE_Z': 1.5, 'MIN_SEMANTIC_UNKNOWN': 0.27}  mean F1 0.126  uca_part4 0.126
+  {'MIN_SCENE': 0.4, 'SCENE_Z': 1.5, 'MIN_SEMANTIC_UNKNOWN': 0.29}  mean F1 0.126  uca_part4 0.126
+
+current defaults {'MIN_SCENE': 0.2, 'SCENE_Z': 1.5, 'MIN_SEMANTIC_UNKNOWN': 0.27}:
+  uca_part4    P=0.06 R=0.47 F1=0.110 (62/133 windows, 990 segments)
+chosen {'MIN_SCENE': 0.5, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.29}:
+  uca_part4    P=0.10 R=0.22 F1=0.139 (29/133 windows, 285 segments)
+
+two halves of the videos (tuned on one half, scored on the other):
+  uca_part4    tuned on half 0 {'MIN_SCENE': 0.6, 'SCENE_Z': 1.5, 'MIN_SEMANTIC_UNKNOWN': 0.29} -> half 1 F1 0.109  (defaults 0.142)
+  uca_part4    tuned on half 1 {'MIN_SCENE': 0.1, 'SCENE_Z': 2.0, 'MIN_SEMANTIC_UNKNOWN': 0.29} -> half 0 F1 0.088  (defaults 0.083)
+
+to use it: environment variables MIN_SCENE=0.5 SCENE_Z=2.0 MIN_SEMANTIC_UNKNOWN=0.29  (or change the defaults in search.py)
