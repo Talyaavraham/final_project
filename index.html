@@ -1243,7 +1243,7 @@ function renderResults(parsed){
       <div class="thumb"><canvas data-i="${i}" width="168" height="120"></canvas></div>
       <div class="info">
         <b>${fmt(m.t)}${tags}</b>
-        <span class="what">${esc(m.label ? heLabel(m.label) : 'תוצאה')}</span> · ${m.dur.toFixed(0)} שנ'
+        <span class="what">${esc(m.label ? heLabel(m.label) : 'תוצאה')}${m.context && m.context.length ? ' · ליד ' + esc([...new Set(m.context.map(c => heLabel(c.label || c.cls)))].join(', ')) : ''}</span> · ${m.dur.toFixed(0)} שנ'
         <div class="actions">
           <button class="viewclip" data-i="${i}">▶ צפייה</button>
           <button data-dl="image" data-i="${i}" title="הורדת התמונה עם המסגרת">🖼 תמונה</button>
@@ -1433,8 +1433,19 @@ function drawOverlay(){
     el.className = 'bbox' + (m.cls !== state.matches[0].cls ? ' alt' : '');
     el.style.cssText = `left:${ox + b.x/100*pw}px;top:${oy + b.y/100*phh}px;` +
                        `width:${b.w/100*pw}px;height:${b.h/100*phh}px`;
-    el.innerHTML = `<label>${esc(m.label || m.cls || 'object')} #${m.track ?? i+1}</label>`;
+    el.innerHTML = `<label>${esc(heLabel(m.label || m.cls || 'object'))} #${m.track ?? i+1}</label>`;
     overlay.appendChild(el);
+    // what it was next to ("ליד הרכב הלבן"), in the second colour
+    for (const c of m.context || []){
+      const cb = boxAt(c, ct);
+      if (!cb) continue;
+      const ce = document.createElement('div');
+      ce.className = 'bbox alt';
+      ce.style.cssText = `left:${ox + cb.x/100*pw}px;top:${oy + cb.y/100*phh}px;` +
+                         `width:${cb.w/100*pw}px;height:${cb.h/100*phh}px`;
+      ce.innerHTML = `<label>${esc(heLabel(c.label || c.cls))}</label>`;
+      overlay.appendChild(ce);
+    }
   });
 }
 video.addEventListener('timeupdate', drawOverlay);

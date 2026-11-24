@@ -194,6 +194,32 @@ def near(a, b, max_dist=NEAR_DIST, W=16, H=9):
     return best <= max_dist
 
 
+def with_context(segments, objects, W=16, H=9, require_near=True):
+    """
+    "someone next to the white car": the answer is the PEOPLE. The segments of
+    the other objects (the car) are not results of their own, they are the
+    context of each person: a result's "context" lists the segments it was
+    near, so the interface can draw the car next to the person. Without this
+    the car came back as a result too, shown at the start of its own track,
+    when nobody was next to it yet.
+    No subject segment among the results (CLIP scenes, ...): unchanged.
+    """
+    if len(objects) < 2:
+        return segments
+    subject = objects[0]
+    subj = [s for s in segments if s["cls"] == subject]
+    if not subj:
+        return segments
+    others = [s for s in segments if s["cls"] != subject and s["cls"] in objects]
+    out = []
+    for s in subj:
+        ctx = [o for o in others if (near(s, o, W=W, H=H) if require_near else overlaps(s, o))]
+        out.append({**s, "context": [{"cls": o["cls"], "color": o["color"], "box": o["box"], "path": o["path"],
+                                      "t": o["t"], "dur": o["dur"]} for o in ctx]})
+    out += [s for s in segments if s["cls"] not in objects]       # scenes etc. stay
+    return sorted(out, key=lambda s: s["t"])
+
+
 def filter_segments(segments, objects, colors, actions, time_range,
                     require_near=True, W=16, H=9, object_colors=None):
     """

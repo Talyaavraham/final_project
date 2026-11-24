@@ -54,7 +54,7 @@ import indexer
 import alert_rules
 import query_parser
 from live_engine import engine as live
-from search import run_query
+from search import run_query, with_context
 
 app = FastAPI(title="Video Search Agent API", version="2.0")
 app.add_middleware(
@@ -279,6 +279,8 @@ def search(req: SearchRequest):
         embed=embeddings.embed_texts if embeddings.available() else None,
         near=req.near, W=meta["width"] or 16, H=meta["height"] or 9, object_colors=q.object_colors)
 
+    # "X next to Y": the results are the X's, each with the Y it was next to
+    segments = with_context(segments, q.objects, W=meta["width"] or 16, H=meta["height"] or 9, require_near=req.near)
     total = len(segments)
     page = segments[req.offset:req.offset + req.limit]
     return {
@@ -289,6 +291,8 @@ def search(req: SearchRequest):
                       else f'{s["color"]} {s["cls"]}'.strip()),
             "box": s["box"], "path": s["path"], "best_t": s.get("best_t", s["t"]),
             "track": s["track_id"], "entity": s["entity_id"],
+            "context": [{"cls": c["cls"], "label": f'{c["color"]} {c["cls"]}'.strip(), "box": c["box"],
+                         "path": c["path"], "t": c["t"], "dur": c["dur"]} for c in s.get("context", [])],
             "speed": round(s["speed"], 3),
             "score": round(s.get("score", 0.0), 3),
         } for s in page],

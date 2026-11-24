@@ -217,3 +217,13 @@ def test_colour_of_the_other_object():
     alone = seg("person", 0, 4, 10, 40, tid=4)
     assert filter_segments([alone, red_car], ["person", "car"], [], [], None,
                            object_colors={"car": ["white"]}) == []
+
+
+def test_results_are_the_subject_with_its_context():
+    from search import with_context
+    walker = seg("person", 30, 4, 10, 40)
+    car = seg("car", 10, 80, 20, 40, color="white", tid=2)     # the car's track starts long before anyone is there
+    out = with_context([car, walker], ["person", "car"])
+    assert [s["cls"] for s in out] == ["person"]
+    assert out[0]["t"] == 30 and [c["cls"] for c in out[0]["context"]] == ["car"]
+    assert with_context([car], ["car"]) == [car]               # one object: unchanged
