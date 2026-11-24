@@ -124,7 +124,12 @@ STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to",
         # clothing words: the colour already describes them
         "shirt", "shirts", "jacket", "coat", "pants", "dress", "clothes",
         "wearing", "wears", "dressed", "חולצה", "מעיל", "מכנסיים", "שמלה",
-        "לובש", "לובשת", "בגדים"}
+        "לובש", "לובשת", "בגדים",
+        # where one thing is relative to another: the multi-object search already means "together, near"
+        "next", "near", "nearby", "beside", "around", "close", "ליד", "שליד", "קרוב", "לצד", "בקרבת", "מול", "משהו", "something"}
+# "משהו שהולך" (literally "something that walks") is how people often write "someone": with an
+# action of a person it is a person
+SOMETHING = {"משהו", "something"}
 
 
 def tokenize(text: str):
@@ -204,6 +209,23 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     for key, words in VOCAB_ACTIONS.items():
         if any(_match_word(tokens, w) >= 0 for w in words):
             found["actions"].append(key)
+    found["object_colors"] = {}
+    something = [i for i, t in enumerate(tokens) if t in SOMETHING]
+    if something and found["actions"] and "person" not in positions:
+        positions["person"] = something[0]
+        found["objects"] = sorted(positions, key=positions.get)
+    # who does the action and what has the colour can be different objects:
+    # "someone walking next to the white car" = a walking PERSON near a WHITE CAR.
+    # The actor is the object named first; the colour stays on the object it
+    # stands next to (object_colors), and the actor becomes the subject.
+    if len(found["objects"]) > 1 and found["actions"] and color_pos:
+        actor = min(positions, key=positions.get)
+        p = min(color_pos.values())
+        owner = min(positions, key=lambda c: abs(positions[c] - p))
+        if owner != actor:
+            found["objects"] = [actor] + [o for o in sorted(positions, key=positions.get) if o != actor]
+            found["object_colors"] = {owner: found["colors"]}
+            found["colors"] = []
 
     if classes:
         found["objects"] = [CLASS_FALLBACK.get(c, c)

@@ -205,3 +205,15 @@ def test_event_class_keeps_detector_hits_and_adds_what_clip_finds():
     assert out[0]["score"] == fire["conf"]
     # without CLIP the detector's answer is all there is
     assert run_query([fire, person], frames, ["fire"]) == ([fire], False)
+
+
+def test_colour_of_the_other_object():
+    walker = seg("person", 0, 4, 10, 40)
+    white_car = seg("car", 0, 4, 20, 40, color="white", tid=2)
+    red_car = seg("car", 0, 4, 18, 42, color="red", tid=3)
+    out = filter_segments([walker, white_car, red_car], ["person", "car"], [], [], None,
+                          object_colors={"car": ["white"]})
+    assert walker in out and white_car in out and red_car not in out
+    alone = seg("person", 0, 4, 10, 40, tid=4)
+    assert filter_segments([alone, red_car], ["person", "car"], [], [], None,
+                           object_colors={"car": ["white"]}) == []

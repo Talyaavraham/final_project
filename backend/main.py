@@ -77,6 +77,7 @@ INDEX_LOCK = threading.Lock()          # one indexing job at a time
 class QueryModel(BaseModel):
     objects: list[str] = []
     colors: list[str] = []
+    object_colors: dict[str, list[str]] = {}   # colours of the other objects: {"car": ["white"]}
     actions: list[str] = []
     timeRange: Optional[list[Optional[float]]] = None
     semantic: str = ""                 # free text for CLIP re-ranking
@@ -276,7 +277,7 @@ def search(req: SearchRequest):
         segments, [f for f in frames if f[1] is not None],
         q.objects, q.colors, q.actions, tr, q.semantic, q.unknown,
         embed=embeddings.embed_texts if embeddings.available() else None,
-        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9)
+        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9, object_colors=q.object_colors)
 
     total = len(segments)
     page = segments[req.offset:req.offset + req.limit]

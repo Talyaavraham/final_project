@@ -1010,6 +1010,7 @@ async function queryBackend(parsed, offset = 0, limit = PAGE){
         body: JSON.stringify({
           video: state.videoName, offset, limit,
           query: { objects: parsed.objects, colors: parsed.colors, actions: parsed.actions,
+                   object_colors: parsed.object_colors || {},
                    timeRange: tr, semantic: parsed.semantic || '',
                    unknown: parsed.unknown || [], text: parsed.raw || '' },
         })
@@ -1057,7 +1058,10 @@ const heLabel = l => { const w = String(l).split(' ').map(he); return w.length =
 
 // what the assistant understood, as small chips ("🔎 מחפשת: אדם · אדום · רץ")
 function addParsedCard(p){
-  const parts = [...p.objects, ...p.colors, ...p.actions].map(he);
+  // the subject with its colour and action, then what it is near ("ליד מכונית לבנה")
+  const [subj, ...others] = p.objects;
+  const parts = [...(subj ? [subj] : []), ...p.colors, ...p.actions].map(he);
+  for (const o of others) parts.push('ליד ' + [o, ...((p.object_colors || {})[o] || [])].map(he).join(' '));
   if (p.timeRange) parts.push('⏱ ' + rangeText(p.timeRange));
   if (p.semantic) parts.push('“' + p.semantic + '”');
   if (!parts.length) return;

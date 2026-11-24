@@ -195,18 +195,22 @@ def near(a, b, max_dist=NEAR_DIST, W=16, H=9):
 
 
 def filter_segments(segments, objects, colors, actions, time_range,
-                    require_near=True, W=16, H=9):
+                    require_near=True, W=16, H=9, object_colors=None):
     """
-    objects   : list of class names, first one is the subject
-    colors    : apply to the subject (or to everything when no objects)
-    actions   : same
-    time_range: [lo, hi] in seconds or None
+    objects      : list of class names, first one is the subject
+    colors       : apply to the subject (or to everything when no objects)
+    actions      : same
+    time_range   : [lo, hi] in seconds or None
+    object_colors: colours of the other objects ({"car": ["white"]}: "someone
+                   walking next to the WHITE car")
     """
     main = objects[0] if objects else None
+    object_colors = object_colors or {}
 
     def attrs_ok(s):
         if main and s["cls"] != main:
-            return True
+            want = object_colors.get(s["cls"])
+            return not want or s["color"] in want
         if colors and s["color"] not in colors:
             return False
         return action_ok(s, actions)
@@ -342,7 +346,7 @@ def semantic_rank(segments, text_vec, min_score=MIN_SEMANTIC):
 
 # ------------------------------------------------------------------ query
 def run_query(segments, frames, objects=(), colors=(), actions=(), time_range=None,
-              semantic="", unknown=(), embed=None, near=True, W=16, H=9):
+              semantic="", unknown=(), embed=None, near=True, W=16, H=9, object_colors=None):
     """
     The whole answer to one structured query, without a server or a model:
 
@@ -368,7 +372,8 @@ def run_query(segments, frames, objects=(), colors=(), actions=(), time_range=No
 
     def detector(objs):
         cand = [s for s in segments if not objs or s["cls"] in objs]
-        return filter_segments(cand, objs, colors, actions, time_range, require_near=near, W=W, H=H)
+        return filter_segments(cand, objs, colors, actions, time_range, require_near=near, W=W, H=H,
+                               object_colors=object_colors)
 
     events = [o for o in objects if o in EVENT_CLASSES]
     hits = detector(objects)

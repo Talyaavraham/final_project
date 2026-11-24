@@ -92,3 +92,15 @@ def test_absent_security_class_becomes_a_clip_question():
     # a COCO class the detector did not see is simply not there
     q = parse_rules("a dog", classes=["person"])
     assert q["objects"] == ["dog"] and q["semantic"] == ""
+
+
+def test_actor_and_coloured_reference_are_different_objects():
+    # the person walks, the car is white ("someone walking next to the white car")
+    for text in ("תמצא מישהו שהולך ליד הרכב הלבן", "a person walking next to the white car",
+                 "תמצא משהו שהולך ליד הרכב הלבן"):        # "משהו" + an action of a person = someone
+        p = parse_rules(text)
+        assert p["objects"] == ["person", "car"], text
+        assert p["colors"] == [] and p["object_colors"] == {"car": ["white"]} and p["actions"] == ["walking"], text
+        assert p["semantic"] == "", text                     # "ליד" / "next" are not unknown words
+    # without an action the colour still makes its object the subject
+    assert parse_rules("red car next to a bus")["object_colors"] == {}
