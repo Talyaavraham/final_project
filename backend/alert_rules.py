@@ -192,7 +192,7 @@ def make_rule(text, kind, obj="", min_people=1, duration=None, cooldown=None,
         obj = "bag"
     rule = {
         "id": uuid.uuid4().hex[:8], "text": text, "kind": kind,
-        "object": obj if kind in NEEDS_OBJECT else "",
+        "object": obj if kind in NEEDS_OBJECT or (kind == "ignite" and obj in FIRE_CHOICES) else "",
         "min_people": max(1, int(min_people or 1)) if kind == "person" else 1,
         "hands": (1 if int(hands or 2) == 1 else 2) if kind == "hands_up" else 0,
         "duration": float(duration) if duration is not None else DEFAULT_DURATION[kind],
@@ -303,7 +303,9 @@ MODEL_OVERRIDE = 0.8
 def rule_objects(rule):
     """the detector classes a rule needs (what the live server must detect)."""
     if rule["kind"] == "ignite":
-        return set(FIRE)
+        return set(FIRE_CHOICES.get(rule.get("object") or "fire_or_smoke"))
+    if rule.get("object") in FIRE_CHOICES:
+        return set(FIRE_CHOICES[rule["object"]])
     return {rule["object"]} if rule.get("object") else set()
 
 
@@ -373,6 +375,8 @@ def parse(text: str, classes=None) -> dict:
 #   moved(object, since)     how far the object travelled since a moment
 # The kinds of rules combine them (Evaluator.conditions).
 FIRE = {"fire", "smoke"}
+# "fire_or_smoke" is a pseudo-class: an object rule / an ignite rule that accepts both
+FIRE_CHOICES = {"fire": {"fire"}, "smoke": {"smoke"}, "fire_or_smoke": FIRE}
 PRESENCE_BEFORE = 10.0   # s: someone near the spot this long before a fire is first seen -> they lit it
 STREAM_SETTLE = 3.0      # s: fire already there in the first seconds of a stream is not an ignition
 OWN_TIME = 1.5           # s next to an object to own it (or for an object to be "left" somewhere)
@@ -542,12 +546,13 @@ class Evaluator:
         """keys (person id / object id / 'all') for which the rule's condition is true, with the box to show."""
         k, cls = rule["kind"], rule["object"]
         if k == "object":
-            hits = [o for o in objects if o["cls"] == cls]
+            classes = FIRE_CHOICES.get(cls, {cls})
+            hits = [o for o in objects if o["cls"] in classes]
             return {"all": hits[0]["box"]} if hits else {}
         if k == "person":
             return {"all": None} if len(persons) >= rule["min_people"] else {}
         if k == "ignite":
-            return self._ignite(objects)
+            return self._ignite(objects, FIRE_CHOICES.get(cls or "fire_or_smoke", FIRE))
         if k == "snatch":
             return self._snatch(cls, persons, objects, now)
         out = {}
@@ -563,13 +568,13 @@ class Evaluator:
                 out[pid] = p["box"]
         return out
 
-    def _ignite(self, objects):
+    def _ignite(self, objects, classes=FIRE):
         """fire / smoke that appeared (not there when the stream started) where
         someone was: a person's box near the fire's first box, at any moment
         from PRESENCE_BEFORE s before the fire was first seen until now."""
         out = {}
         for o in objects:
-            if o["cls"] not in FIRE:
+            if o["cls"] not in classes:
                 continue
             t = self.objects.tracks.get(o["tid"])
             if not t or t["first"] - self.start < STREAM_SETTLE:

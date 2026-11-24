@@ -1,5 +1,5 @@
 {
-  "_doc": "Which alert methods eval_alerts.py compares for each scenario of the ground truth. A method is an alert rule (alert_rules kinds) + the detector confidence. Add methods here to compare new ideas; the scenario names match the ground truth (eval/ground_truth_uca.json and live/data/labels.json).",
+  "_doc": "Which alert methods eval_alerts.py compares for each scenario of the ground truth. A method is an alert rule (alert_rules kinds) + the detector confidence. Add methods here to compare new ideas; the scenario names match the ground truth (eval/ground_truth_uca.json and live/data/labels.json). 'target': the detector classes the scenario depends on (live/diagnose.py). Compare like with like: 'ignites (fire)' against 'fire seen', 'ignites (fire/smoke)' against 'fire or smoke seen'.",
   "knife": {
     "name": "החזקת סכין",
     "methods": {
@@ -15,7 +15,10 @@
         "kind": "raise_object",
         "object": "knife"
       }
-    }
+    },
+    "target": [
+      "knife"
+    ]
   },
   "knife_raise": {
     "name": "הרמת סכין",
@@ -32,7 +35,10 @@
         "kind": "raise_object",
         "object": "knife"
       }
-    }
+    },
+    "target": [
+      "knife"
+    ]
   },
   "weapon": {
     "name": "נשק",
@@ -49,7 +55,10 @@
         "kind": "raise_object",
         "object": "gun"
       }
-    }
+    },
+    "target": [
+      "gun"
+    ]
   },
   "fire": {
     "name": "אש",
@@ -62,10 +71,23 @@
         "kind": "object",
         "object": "smoke"
       },
-      "someone ignites": {
-        "kind": "ignite"
+      "fire or smoke seen": {
+        "kind": "object",
+        "object": "fire_or_smoke"
+      },
+      "ignites (fire)": {
+        "kind": "ignite",
+        "object": "fire"
+      },
+      "ignites (fire/smoke)": {
+        "kind": "ignite",
+        "object": "fire_or_smoke"
       }
-    }
+    },
+    "target": [
+      "fire",
+      "smoke"
+    ]
   },
   "arson": {
     "name": "הצתה",
@@ -78,10 +100,23 @@
         "kind": "object",
         "object": "smoke"
       },
-      "someone ignites": {
-        "kind": "ignite"
+      "fire or smoke seen": {
+        "kind": "object",
+        "object": "fire_or_smoke"
+      },
+      "ignites (fire)": {
+        "kind": "ignite",
+        "object": "fire"
+      },
+      "ignites (fire/smoke)": {
+        "kind": "ignite",
+        "object": "fire_or_smoke"
       }
-    }
+    },
+    "target": [
+      "fire",
+      "smoke"
+    ]
   },
   "snatch": {
     "name": "חטיפת תיק",
@@ -94,7 +129,10 @@
         "kind": "snatch",
         "object": "bag"
       }
-    }
+    },
+    "target": [
+      "bag"
+    ]
   },
   "hands_up": {
     "name": "ידיים למעלה",
@@ -107,6 +145,7 @@
         "kind": "hands_up",
         "hands": 2
       }
-    }
+    },
+    "target": []
   }
 }

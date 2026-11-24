@@ -32,3 +32,13 @@ def test_run_rule_on_frames_and_conf_threshold():
     assert ev.run_rule(raise_rule, frames, conf=0.5) == []      # knife below threshold: never held
     obj_rule = ev.make_rule("object only", {"kind": "object", "object": "knife"})
     assert len(ev.run_rule(obj_rule, frames)) == 1
+
+
+def test_diagnose_event_stats():
+    import diagnose
+    knife = {"cls": "knife", "conf": 0.2, "box": [70, 240, 90, 260]}
+    frames = [{"t": 1.0, "persons": [person(250)], "objects": [knife]},
+              {"t": 5.0, "persons": [], "objects": []}]
+    st = diagnose.event_stats(frames, 0.5, 2.0, {"knife"})
+    assert st["person"] and st["hand"] and st["best"] == 0.2
+    assert diagnose.event_stats(frames, 4.5, 6.0, {"knife"})["best"] == 0.0

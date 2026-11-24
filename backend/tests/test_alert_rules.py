@@ -224,3 +224,11 @@ def test_snatch_not_when_someone_only_touches_it():
     own = [([walker(1, 100)], [obj("bag", 160, 330)])] * 9
     touch = [([walker(1, 100), walker(2, 220, wrist=(165, 330))], [obj("bag", 160, 330)])] * 12
     assert play(r, own + touch) == 0
+
+
+def test_ignite_fire_only_ignores_smoke():
+    before = [([walker(1, 100)], [])] * 15
+    smoke = [([walker(1, 100)], [obj("smoke", 190, 380)])] * 6
+    assert play(ar.make_rule("x", "ignite", "fire"), before + smoke) == 0
+    assert play(ar.make_rule("x", "ignite", "fire_or_smoke"), before + smoke) == 1
+    assert play(ar.make_rule("x", "object", "fire_or_smoke"), smoke) == 1
