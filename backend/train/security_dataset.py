@@ -49,6 +49,7 @@ DFIRE_MAP = {0: "smoke", 1: "fire"}          # D-Fire convention (verified on sa
 
 sys.path.insert(0, HERE)
 from night_dataset import ALIASES, find_splits, read_names, convert_label  # noqa: E402
+import re as _re  # noqa: E402,F401
 
 ALIASES.update({"gun": "gun", "pistol": "gun", "handgun": "gun", "rifle": "gun", "weapon": "gun",
                 "knife": "knife", "knives": "knife", "blade": "knife",
@@ -258,6 +259,96 @@ def add_weapondet(writer, dataset, limit=0, cctv=True, rnd=None):
                 break
     print(f"WeaponDetection: {stats}")
     return stats
+
+
+# ---------------------------------------------------------------- Dangerous Items (Zenodo)
+# "Dangerous Items Dataset for 5-Class Object Detection" (Lublin University of Technology, CC BY-NC 4.0):
+# 8,478 images, 8,805 boxes: machete, knife, baseball bat, rifle, gun, + 826 backgrounds; YOLO labels.
+# Includes small, partly hidden, blurry and dark objects: closer to CCTV than product photos.
+DANGEROUS_URL = "https://zenodo.org/records/16422779/files/Dangerous%20Items.zip?download=1"
+DANGEROUS_MAP = {"knife": "knife", "machete": "knife", "gun": "gun", "pistol": "gun", "handgun": "gun"}
+DANGEROUS_DROP = {"rifle"}          # a long gun: neither our "gun" (handguns) nor background -> image dropped
+
+
+def find_names(root):
+    """Class names of a YOLO folder: data.yaml / *.yaml with names, or classes.txt / obj.names. {id: name}."""
+    for dirpath, _, files in os.walk(root):
+        for fn in sorted(files):
+            path = os.path.join(dirpath, fn)
+            if fn.endswith((".yaml", ".yml")):
+                names = read_names(path)
+                if names:
+                    return names
+            if fn in ("classes.txt", "obj.names", "classes.names"):
+                with open(path, encoding="utf-8") as f:
+                    return {i: n.strip() for i, n in enumerate(l for l in f if l.strip())}
+    return {}
+
+
+def yolo_pairs(root):
+    """Every (image, label, split) under root: a label file in a .../labels/... folder and the image with the
+    same stem in the matching .../images/... folder. split = val when the path says val/valid, else train."""
+    out = []
+    for dirpath, _, files in os.walk(root):
+        parts = dirpath.replace("\\", "/").split("/")
+        if "labels" not in parts:
+            continue
+        img_dir = "/".join("images" if x == "labels" else x for x in parts)
+        low = [x.lower() for x in parts]
+        split = "val" if ("val" in low or "valid" in low or "validation" in low) else "train"
+        for fn in sorted(files):
+            if not fn.endswith(".txt") or fn in ("classes.txt",):
+                continue
+            stem = os.path.splitext(fn)[0]
+            img = next((os.path.join(img_dir, stem + e) for e in IMG_EXT_ALL
+                        if os.path.exists(os.path.join(img_dir, stem + e))), None)
+            if img:
+                out.append((img, os.path.join(dirpath, fn), split))
+    return out
+
+
+IMG_EXT_ALL = (".jpg", ".jpeg", ".png", ".bmp", ".webp", ".JPG", ".JPEG", ".PNG")
+
+
+def add_dangerous(writer, root, cctv=True, rnd=None):
+    """The extracted Dangerous Items zip -> knife (knife + machete) and gun boxes. Images with a rifle are
+    dropped; baseball bats are kept as background. Training images with a box get a cctv_look copy too."""
+    from PIL import Image
+    rnd = rnd or random.Random(4)
+    names = find_names(root)
+    if not names:
+        raise SystemExit(f"{root}: no data.yaml / classes.txt found, cannot tell the classes apart")
+    print("Dangerous Items classes:", names)
+    cmap = {sid: CLASSES.index(DANGEROUS_MAP[n.strip().lower()]) for sid, n in names.items()
+            if n.strip().lower() in DANGEROUS_MAP}
+    drop = {sid for sid, n in names.items() if n.strip().lower() in DANGEROUS_DROP}
+    stats = {"images": 0, "dropped_rifle": 0, "cctv": 0}
+    for img, lbl, split in yolo_pairs(root):
+        with open(lbl, encoding="utf-8") as f:
+            rows = [l.split() for l in f if len(l.split()) >= 5]
+        if any(int(float(r[0])) in drop for r in rows):
+            stats["dropped_rifle"] += 1
+            continue
+        lines = [" ".join([str(cmap[int(float(r[0]))])] + r[1:5]) for r in rows if int(float(r[0])) in cmap]
+        with open(img, "rb") as f:
+            data = f.read()
+        stem = "dang_" + split + "_" + re.sub(r"[^\w.-]", "_", os.path.splitext(os.path.basename(img))[0])
+        writer.add(stem, data, lines, split=split, ext=os.path.splitext(img)[1].lower())
+        stats["images"] += 1
+        if cctv and split == "train" and lines:
+            writer.add(stem + "_cctv", cctv_look(Image.open(io.BytesIO(data)), rnd), lines, split=split)
+            stats["cctv"] += 1
+    print(f"Dangerous Items: {stats}")
+    return stats
+
+
+def check_enough(writer, need=None):
+    """Stop before a long training when a class is too thin (the WeaponDetection lesson: 7 knives)."""
+    need = need or {"knife": 1500, "gun": 1500, "fire": 1000, "smoke": 1000}
+    low = {c: writer.boxes[c] for c, n in need.items() if writer.boxes[c] < n}
+    if low:
+        raise SystemExit(f"too few boxes for {low} (need {need}): not training on this")
+    print("box counts OK:", writer.boxes)
 
 
 BIG_EXPORT = 500      # training images; below this an export is "a few own frames" and is repeated

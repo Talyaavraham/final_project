@@ -103,3 +103,25 @@ def test_add_weapondet_on_a_fake_dataset(tmp_path):
     st = sd.add_weapondet(w, dd)
     assert st["dropped"] == 2 and st["images"] == 4 and st["cctv"] == 2
     assert w.n == {"train": 4, "val": 2} and w.boxes["knife"] == 3 and w.boxes["gun"] == 3
+
+
+def test_add_dangerous_maps_machete_drops_rifle(tmp_path):
+    from PIL import Image
+    root = tmp_path / "Dangerous Items"
+    (root).mkdir()
+    (root / "data.yaml").write_text("names: ['machete', 'knife', 'baseball bat', 'rifle', 'gun']\n")
+    labels = {"train/a": "0 0.5 0.5 0.2 0.2\n", "train/b": "3 0.5 0.5 0.2 0.2\n4 0.1 0.1 0.1 0.1\n",
+              "train/c": "2 0.5 0.5 0.2 0.2\n", "val/d": "1 0.5 0.5 0.1 0.1\n4 0.3 0.3 0.1 0.1\n"}
+    for k, v in labels.items():
+        split, stem = k.split("/")
+        for sub in ("images", "labels"):
+            (root / sub / split).mkdir(parents=True, exist_ok=True)
+        Image.new("RGB", (64, 64)).save(root / "images" / split / (stem + ".jpg"))
+        (root / "labels" / split / (stem + ".txt")).write_text(v)
+    w = sd.Writer(str(tmp_path / "ds"))
+    st = sd.add_dangerous(w, str(root))
+    assert st == {"images": 3, "dropped_rifle": 1, "cctv": 1}       # a (+cctv copy), c (bat: background), d
+    assert w.n == {"train": 3, "val": 1} and w.boxes == {"gun": 1, "knife": 3, "fire": 0, "smoke": 0}   # machete x2 (cctv copy) + knife
+    import pytest
+    with pytest.raises(SystemExit):
+        sd.check_enough(w)
