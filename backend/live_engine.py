@@ -72,8 +72,14 @@ class LiveEngine:
 
     # ------------------------------------------------------------ rules
     def add_rule(self, rule):
+        """-> the rule kept: an existing one when the same alert is already set."""
+        key = lambda r: (r["kind"], r["object"], r["min_people"])
         with self.rules_lock:
+            for r in self.rules:
+                if key(r) == key(rule):
+                    return r, False
             self.rules.append(rule)
+            return rule, True
 
     def remove_rule(self, rule_id):
         with self.rules_lock:

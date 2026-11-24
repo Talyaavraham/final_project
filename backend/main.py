@@ -361,7 +361,7 @@ def add_live_rule(req: RuleRequest):
         raise HTTPException(400, "empty text")
     out = alert_rules.parse(req.text, live.classes())
     if out.get("rule"):
-        live.add_rule(out["rule"])
+        out["rule"], out["new"] = live.add_rule(out["rule"])
     return out
 
 

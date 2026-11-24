@@ -93,3 +93,10 @@ def test_people_count():
     assert run(ev, r, two)[0] == 0
     three = [([person(250, 1), person(250, 2), person(250, 3)], [])] * 20
     assert run(ev, r, three, t0=2.0)[0] == 1
+
+
+def test_friendly_text_in_the_users_language():
+    r = rule("תתריעי לי אם מישהו מרים סכין")
+    assert r["label"] == "מישהו מרים סכין"
+    assert r["description"] == "אתריע לך כשמישהו מרים סכין"
+    assert rule("someone holding a phone")["description"] == "I'll alert you when someone holds a phone"

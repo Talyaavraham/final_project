@@ -94,6 +94,7 @@ HE_NAMES = {"knife": "סכין", "gun": "נשק", "fire": "אש", "smoke": "עש
             "scissors": "מספריים", "bottle": "בקבוק", "cup": "כוס", "baseball bat": "מחבט",
             "laptop": "מחשב נייד", "book": "ספר", "backpack": "תיק", "umbrella": "מטריה",
             "dog": "כלב", "cat": "חתול"}
+EN_NAMES = {"cell phone": "phone", "baseball bat": "bat"}
 HEB_NUM = {"אחד": 1, "אחת": 1, "שני": 2, "שתי": 2, "שניים": 2, "שתיים": 2, "שלושה": 3, "שלוש": 3,
            "ארבעה": 4, "ארבע": 4, "חמישה": 5, "חמש": 5, "two": 2, "three": 3, "four": 4, "five": 5}
 HE_PREFIX = set("והשבלמכ")
@@ -157,7 +158,7 @@ def parse_people(text: str) -> Optional[int]:
 
 
 def make_rule(text, kind, obj="", min_people=1, duration=None, cooldown=None,
-              description="", source="rules"):
+              description="", source="rules", label=""):
     kind = kind if kind in KINDS else None
     if kind is None:
         return None
@@ -169,28 +170,43 @@ def make_rule(text, kind, obj="", min_people=1, duration=None, cooldown=None,
         "cooldown": float(cooldown) if cooldown is not None else DEFAULT_COOLDOWN,
         "source": source,
     }
-    rule["description"] = description or describe(rule, is_hebrew(text))
+    he = is_hebrew(text)
+    rule["description"] = description or describe(rule, he)
+    rule["label"] = label or short_label(rule, he)
+    rule["lang"] = "he" if he else "en"
     return rule
 
 
-def describe(rule, hebrew=False):
+def _what(rule, hebrew):
+    """the event in a few words: 'someone raises a knife' / 'מישהו מרים סכין'."""
     o, k, n = rule["object"], rule["kind"], rule["min_people"]
+    o = HE_NAMES.get(o, o) if hebrew else EN_NAMES.get(o, o)
     if hebrew:
-        o = HE_NAMES.get(o, o)
         return {
-            "object": f"התרעה כשרואים {o} בפריים",
-            "hold": f"התרעה כשמישהו מחזיק {o}",
-            "raise_object": f"התרעה כשמישהו מרים {o} מעל הכתף",
-            "hands_up": "התרעה כשמישהו מרים את שתי הידיים",
-            "person": "התרעה כשמישהו נמצא בפריים" if n == 1 else f"התרעה כשיש לפחות {n} אנשים בפריים",
+            "object": f"רואים {o}",
+            "hold": f"מישהו מחזיק {o}",
+            "raise_object": f"מישהו מרים {o}",
+            "hands_up": "מישהו מרים ידיים",
+            "person": "מישהו בפריים" if n == 1 else f"{n} אנשים או יותר בפריים",
         }[k]
     return {
-        "object": f"Alert when a {o} appears",
-        "hold": f"Alert when someone holds a {o}",
-        "raise_object": f"Alert when someone raises a {o} above the shoulder",
-        "hands_up": "Alert when someone raises both hands",
-        "person": "Alert when someone is in the frame" if n == 1 else f"Alert when there are at least {n} people in the frame",
+        "object": f"a {o} is in view",
+        "hold": f"someone holds a {o}",
+        "raise_object": f"someone raises a {o}",
+        "hands_up": "someone raises both hands",
+        "person": "someone is in view" if n == 1 else f"{n} or more people in view",
     }[k]
+
+
+def short_label(rule, hebrew=False):
+    w = _what(rule, hebrew)
+    return w[0].upper() + w[1:] if not hebrew else w
+
+
+def describe(rule, hebrew=False):
+    """the confirmation the user reads: 'I'll alert you when ...'."""
+    w = _what(rule, hebrew)
+    return (f"אתריע לך כש-{w}" if w[0].isdigit() else f"אתריע לך כש{w}") if hebrew else f"I'll alert you when {w}"
 
 
 def parse_rules(text: str, classes=None) -> Optional[dict]:
@@ -241,10 +257,11 @@ SCHEMA = {
         "object": {"type": "string", "description": "Detector class for object / hold / raise_object, else \"\""},
         "min_people": {"type": "integer", "description": "For kind person: alert at this many people or more; else 1"},
         "duration": {"type": ["number", "null"], "description": "Seconds the condition must last, if the user said so; else null"},
-        "description": {"type": "string", "description": "One short sentence, in the user's language, saying when the alert fires"},
+        "description": {"type": "string", "description": "Friendly confirmation in the user's language, e.g. \"I'll alert you when someone raises a knife\" / \"אתריע לך כשמישהו מרים סכין\""},
+        "label": {"type": "string", "description": "The event in 2-5 words, in the user's language, e.g. \"Someone raises a knife\" / \"מישהו מרים סכין\""},
         "reason": {"type": "string", "description": "For unsupported: what cannot be detected, in the user's language; else \"\""},
     },
-    "required": ["kind", "object", "min_people", "duration", "description", "reason"],
+    "required": ["kind", "object", "min_people", "duration", "description", "label", "reason"],
     "additionalProperties": False,
 }
 
@@ -301,7 +318,8 @@ def parse_llm(text: str, classes) -> Optional[dict]:
     if kind in NEEDS_OBJECT and obj not in set(classes):
         return {"unsupported": data.get("reason") or f"'{obj}' is not a class the detector knows"}
     return make_rule(text, kind, obj, data.get("min_people") or 1, data.get("duration"),
-                     description=data.get("description") or "", source="llm")
+                     description=data.get("description") or "", source="llm",
+                     label=data.get("label") or "")
 
 
 def parse(text: str, classes=None) -> dict:
@@ -316,7 +334,7 @@ def parse(text: str, classes=None) -> dict:
     rule = parse_rules(text, classes)
     if rule is None:
         return {"rule": None, "source": "rules", "reason":
-                "לא הבנתי איזו התרעה להגדיר" if is_hebrew(text) else "I could not tell which alert to set up"}
+                "לא הצלחתי להבין על מה להתריע 🤔" if is_hebrew(text) else "I couldn't tell what to alert you about 🤔"}
     return {"rule": rule, "source": "rules"}
 
 
@@ -410,7 +428,7 @@ class Evaluator:
                 if held >= r["duration"] and now - self.fired.get(r["id"], -1e9) >= r["cooldown"]:
                     self.fired[r["id"]] = now
                     alerts.append({"rule": r["id"], "kind": r["kind"], "object": r["object"],
-                                   "description": r["description"], "text": r["text"],
+                                   "description": r["description"], "label": r["label"], "text": r["text"],
                                    "person": key if key != "all" else None, "box": box})
             progress[r["id"]] = round(best, 2)
         # forget conditions that went away long ago

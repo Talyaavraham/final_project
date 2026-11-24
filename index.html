@@ -212,30 +212,42 @@ video{width:100%;height:100%;display:block}
 /* ---------- live mode ---------- */
 body:not(.live) .live-only{display:none!important}
 body.live .file-only{display:none!important}
-.camrow{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+/* live: three calm columns — chat | camera | alerts (the side menu is only for search) */
+body.live .app{grid-template-columns:340px 1fr 300px}
+body.live .sidebar{display:none}
+.camrow{display:flex;gap:8px;align-items:center;margin-bottom:12px}
 .camrow select{
-  flex:1;min-width:180px;background:var(--panel-2);border:1px solid var(--border);color:var(--text);
-  border-radius:10px;padding:8px 10px;font-size:.82rem;
+  flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:9px 11px;font-size:.85rem;
 }
 .camrow select:focus{outline:none;border-color:var(--accent)}
+.camrow .btn.icon{padding:8px 11px}
 #liveVideo{object-fit:contain;background:#000}
 #liveCanvas{width:100%;height:100%}
 .videowrap.alarm{box-shadow:0 0 0 4px var(--danger),0 0 28px rgba(240,86,76,.6);animation:alarm .5s 3}
 @keyframes alarm{50%{box-shadow:0 0 0 4px transparent}}
-.livestat{display:flex;gap:6px;align-items:center}
-.rule{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:8px;font-size:.8rem;display:flex;gap:10px;align-items:center}
-.rule .rinfo{flex:1;direction:auto}
-.rule .rinfo small{display:block;color:var(--text-dim);font-size:.68rem;margin-top:2px;direction:auto}
-.rule .rbar{height:4px;border-radius:3px;background:#0e1124;margin-top:6px;overflow:hidden}
-.rule .rbar i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .2s}
-.rule.hot{border-color:var(--danger)}
-.rule.hot .rbar i{background:var(--danger)}
-.rule button{border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:1rem}
-.rule button:hover{color:var(--danger)}
-.alertcard{border-color:rgba(240,86,76,.5)}
-.alertcard .thumb img{width:100%;height:100%;object-fit:cover}
-.alertcard .info b{color:var(--danger)}
-.msg.alert{background:rgba(240,86,76,.14);border:1px solid rgba(240,86,76,.5);align-self:flex-start;direction:auto}
+.livestatus{font-size:.78rem;color:var(--text-dim);display:flex;gap:6px;align-items:center;min-height:18px;margin-top:8px;direction:rtl}
+.btn[hidden]{display:none}
+.steps{list-style:none;display:flex;flex-direction:column;gap:8px;text-align:right;direction:rtl;font-size:.88rem}
+.steps li b{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;margin-left:8px}
+#rulesList{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;direction:rtl}
+.rhint{color:var(--text-dim);font-size:.8rem}
+.rpill{
+  position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:6px;
+  background:var(--panel-2);border:1px solid var(--border);border-radius:20px;padding:6px 8px 6px 12px;font-size:.82rem;direction:auto;
+}
+.rpill i{position:absolute;left:0;bottom:0;height:3px;width:0;background:var(--accent-2);transition:width .2s}
+.rpill.hot{border-color:var(--danger)}
+.rpill.hot i{background:var(--danger)}
+.rpill button{border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:.8rem;padding:0 3px}
+.rpill button:hover{color:var(--danger)}
+.alertcard{display:flex;gap:10px;align-items:center;background:var(--panel-2);border:1px solid rgba(240,86,76,.45);
+  border-radius:12px;padding:8px;margin-bottom:8px;cursor:pointer;direction:rtl}
+.alertcard:hover{border-color:var(--danger)}
+.alertcard img{width:84px;height:56px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.alertcard b{display:block;font-size:.85rem;direction:auto}
+.alertcard small{color:var(--text-dim);font-size:.72rem}
+@media (max-width:1100px){ body.live .app{grid-template-columns:300px 1fr 260px} }
 
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
@@ -312,12 +324,11 @@ body.live .file-only{display:none!important}
       <button class="chip">Find a person wearing a red shirt between 0:10 and 1:30</button>
       <button class="chip">a woman pushing a stroller</button>
     </div>
-    <div class="chips live-only" id="liveChips">
-      <button class="chip">תתריעי לי אם מישהו מרים סכין</button>
-      <button class="chip">Alert me if someone holds a phone</button>
+    <div class="chips live-only" id="liveChips" dir="rtl">
+      <button class="chip">מישהו מרים סכין</button>
       <button class="chip">מישהו מרים ידיים</button>
       <button class="chip">יותר משני אנשים בחדר</button>
-      <button class="chip">Alert if there is fire</button>
+      <button class="chip">someone holds a phone</button>
     </div>
     <div class="inputrow">
       <input id="queryInput" placeholder="Ask anything about your videos… / שאלו כל דבר על הסרטון…">
@@ -327,34 +338,25 @@ body.live .file-only{display:none!important}
 
   <!-- ===== MAIN PANE ===== -->
   <section class="mainpane">
-    <div class="demo-banner live-only" id="liveBanner">
-      <div>📷 Pick a camera and press <b>Start</b>. Then tell the agent in the chat <b>when</b> to alert you — in English or Hebrew.</div>
-      <div dir="rtl" style="margin-top:4px">בחרי מצלמה ולחצי Start, ואז כתבי בצ'אט מתי להתריע. טלפון שמחובר כמצלמת רשת יופיע ברשימה אחרי לחיצה על 🔄.</div>
-    </div>
-
     <div class="panel live-only">
-      <div class="videohead">
-        <h3>Live Camera <small id="camName">— not started</small></h3>
-        <div class="meta livestat" id="liveMeta"></div>
-      </div>
       <div class="camrow">
-        <select id="camSelect" aria-label="Camera"><option value="">No cameras found yet</option></select>
-        <button class="btn small" id="camRefresh">🔄 Find cameras</button>
-        <button class="btn small primary" id="camStart">▶ Start</button>
+        <select id="camSelect" aria-label="מצלמה"><option value="">📷 לחצי 🔄 כדי למצוא מצלמות</option></select>
+        <button class="btn icon" id="camRefresh" title="חיפוש מצלמות (גם טלפון שמחובר כמצלמת רשת)">🔄</button>
+        <button class="btn primary" id="camStart">▶ התחל</button>
       </div>
       <div class="videowrap" id="liveWrap">
         <video id="liveVideo" autoplay muted playsinline></video>
         <canvas class="overlay" id="liveCanvas"></canvas>
         <div class="dropzone" id="livePlaceholder" style="cursor:default">
-          <div class="big">📷</div>
-          <div><b>Choose a camera and press Start</b><br>בחרי מצלמה ולחצי Start</div>
+          <ol class="steps">
+            <li><b>1</b>בוחרים מצלמה למעלה. 🔄 מוצא גם טלפון שמחובר כמצלמה</li>
+            <li><b>2</b>לוחצים ▶ התחל</li>
+            <li><b>3</b>כותבים בצ'אט מתי להתריע</li>
+          </ol>
         </div>
       </div>
-    </div>
-
-    <div class="panel live-only">
-      <h3>Alert Rules <small>(what I am watching for)</small></h3>
-      <div id="rulesList"><div class="empty">No alert rules yet.<br>Write in the chat when you want an alert, e.g. "תתריעי לי אם מישהו מרים סכין".</div></div>
+      <div class="livestatus" id="liveMeta"></div>
+      <div id="rulesList"></div>
     </div>
 
     <div class="demo-banner file-only" id="demoBanner">
@@ -395,14 +397,14 @@ body.live .file-only{display:none!important}
   <!-- ===== RESULTS PANE ===== -->
   <aside class="resultspane">
     <div class="live-only">
-      <div class="reshead"><b>Alerts</b>
+      <div class="reshead"><b>🚨 התרעות</b>
         <div class="tools">
-          <button class="btn small" id="soundBtn" title="Alert sound on / off">🔊</button>
-          <button class="btn small" id="clearAlerts" title="Clear the list">Clear</button>
-          <span class="badge" id="alertBadge">0 alerts</span>
+          <button class="btn small" id="clearAlerts" hidden>נקה</button>
+          <button class="btn small" id="soundBtn" title="צליל התרעה">🔊</button>
+          <span class="badge" id="alertBadge" hidden>0</span>
         </div>
       </div>
-      <div id="alertsList"><div class="empty">No alerts yet.<br>When a rule fires, it shows up here with a snapshot.</div></div>
+      <div id="alertsList"><div class="empty" dir="rtl">עוד אין התרעות 👌<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div></div>
     </div>
     <div class="file-only">
     <div class="reshead"><b>Search Results</b>
@@ -1385,13 +1387,14 @@ $('timeline').addEventListener('click', e => {
 const live = {
   on: false, stream: null, ws: null, running: false,
   rules: [], progress: {}, alerts: [], last: null,
-  sent: 0, tShown: 0, fps: 0, sound: true, greeted: false,
+  tShown: 0, fps: 0, sound: true, greeted: false,
 };
 const liveVideo = $('liveVideo'), liveCanvas = $('liveCanvas'), grab = document.createElement('canvas');
 const SEND_W = 640;                                   // frames are scaled down to this width
-const KIND_LABEL = { object: 'Object appears', hold: 'Holds object', raise_object: 'Raises object',
-                     hands_up: 'Hands up', person: 'People in frame' };
-const SKELETON = [[5,7],[7,9],[6,8],[8,10],[5,6],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16],[0,1],[0,2],[1,3],[2,4]];
+const SKELETON = [[5,7],[7,9],[6,8],[8,10],[5,6],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+const OBJ_HE = { knife: 'סכין', gun: 'נשק', fire: 'אש', smoke: 'עשן', 'cell phone': 'טלפון',
+                 scissors: 'מספריים', 'baseball bat': 'מחבט', bottle: 'בקבוק', cup: 'כוס' };
+const isHe = t => /[֐-׿]/.test(t);
 
 function setMode(on){
   live.on = on;
@@ -1399,17 +1402,15 @@ function setMode(on){
   $('navLive').classList.toggle('active', on);
   $('navSearch').classList.toggle('active', !on);
   $('liveBtn').classList.toggle('primary', on);
-  $('chatSub').textContent = on ? 'Tell me when to alert you · כתבי מתי להתריע' : 'Your intelligent video assistant';
-  $('queryInput').placeholder = on
-    ? 'When should I alert you? / מתי להתריע? למשל: "מישהו מרים סכין"'
-    : 'Ask anything about your videos… / שאלו כל דבר על הסרטון…';
+  $('chatSub').textContent = on ? 'כתבי לי מתי להתריע · Tell me when to alert you' : 'Your intelligent video assistant';
+  $('queryInput').placeholder = on ? 'מתי להתריע? למשל: מישהו מרים סכין' : 'Ask anything about your videos… / שאלו כל דבר על הסרטון…';
   if (on){
     if (!live.greeted){
       live.greeted = true;
-      botSay('Live mode 📷 Choose a camera, press Start, and tell me when to alert you.\n' +
-             'מצב לייב: בחרי מצלמה, לחצי Start, וכתבי לי מתי להתריע — למשל "תתריעי לי אם מישהו מרים סכין".');
+      botSay('היי! 👋 בחרי מצלמה ולחצי התחל, ואז פשוט כתבי לי מתי להתריע לך.\nלמשל: "מישהו מרים סכין" או "יותר משני אנשים בחדר".');
     }
     listCameras(false);
+    renderRules();
     loadRules();
   } else {
     stopCamera();
@@ -1420,9 +1421,8 @@ function setMode(on){
 async function listCameras(ask){
   const sel = $('camSelect');
   if (!navigator.mediaDevices?.enumerateDevices){
-    sel.innerHTML = '<option value="">Camera not available here</option>';
-    botSay('The browser does not allow the camera on this page. Open the interface from the server: http://localhost:8000\n' +
-           'הדפדפן לא מאפשר מצלמה בדף הזה — צריך לפתוח את הממשק דרך http://localhost:8000');
+    sel.innerHTML = '<option value="">אין גישה למצלמה בדף הזה</option>';
+    botSay('הדפדפן לא מאפשר מצלמה בדף הזה. צריך לפתוח את הממשק דרך הכתובת http://localhost:8000');
     return;
   }
   try {
@@ -1435,14 +1435,12 @@ async function listCameras(ask){
     }
     const prev = sel.value;
     sel.innerHTML = cams.length
-      ? cams.map((c, i) => `<option value="${esc(c.deviceId)}">${esc(c.label || 'Camera ' + (i + 1))}</option>`).join('')
-      : '<option value="">No cameras found</option>';
+      ? cams.map((c, i) => `<option value="${esc(c.deviceId)}">📷 ${esc(c.label || 'מצלמה ' + (i + 1))}</option>`).join('')
+      : '<option value="">לא נמצאו מצלמות</option>';
     if (cams.some(c => c.deviceId === prev)) sel.value = prev;
-    if (ask) botSay(cams.length
-      ? `Found ${cams.length} camera${cams.length > 1 ? 's' : ''}: ${cams.map((c, i) => c.label || 'Camera ' + (i + 1)).join(', ')}`
-      : 'No cameras found. Connect a camera (or your phone as a webcam) and press 🔄 again.');
+    if (ask && !cams.length) botSay('לא מצאתי מצלמות. חברי מצלמה (או את הטלפון כמצלמת רשת) ולחצי שוב 🔄');
   } catch (e){
-    botSay('Could not access the cameras: ' + (e.message || e) + '\nצריך לאשר לדפדפן גישה למצלמה.');
+    botSay('צריך לאשר לדפדפן גישה למצלמה 🙂 (' + (e.message || e) + ')');
   }
 }
 $('camRefresh').onclick = () => listCameras(true);
@@ -1450,14 +1448,14 @@ navigator.mediaDevices?.addEventListener?.('devicechange', () => live.on && list
 $('camSelect').onchange = () => { if (live.running) startCamera(); };
 $('camStart').onclick = () => live.running ? stopCamera() : startCamera();
 
+async function needBackend(){
+  if (state.caps || await backendAlive()) return true;
+  botSay('השרת לא רץ, ובלעדיו אני לא יכולה לצפות במצלמה.\nבחלון cmd, בתיקייה backend:  uvicorn main:app --port 8000\nואז לפתוח את http://localhost:8000');
+  return false;
+}
+
 async function startCamera(){
-  if (!state.caps){
-    if (!(await backendAlive())){
-      botSay('Live mode needs the Python backend. Run it and open http://localhost:8000\n' +
-             'cd backend  →  uvicorn main:app --port 8000\nמצב לייב צריך את השרת — צריך להריץ אותו קודם.');
-      return;
-    }
-  }
+  if (!(await needBackend())) return;
   stopCamera(true);
   try {
     const id = $('camSelect').value;
@@ -1465,17 +1463,16 @@ async function startCamera(){
       video: { ...(id ? { deviceId: { exact: id } } : {}), width: { ideal: 1280 }, height: { ideal: 720 } },
       audio: false });
   } catch (e){
-    botSay('Could not open the camera: ' + (e.message || e) + '\nאולי המצלמה תפוסה ע"י Zoom / Teams, או שלא אושרה גישה.');
+    botSay('לא הצלחתי לפתוח את המצלמה. אולי Zoom / Teams משתמשים בה, או שהגישה לא אושרה.');
     return;
   }
-  const track = live.stream.getVideoTracks()[0];
-  $('camName').textContent = '— ' + (track?.label || 'camera');
   liveVideo.srcObject = live.stream;
   await liveVideo.play().catch(() => {});
   $('livePlaceholder').style.display = 'none';
-  $('camStart').textContent = '■ Stop';
+  $('camStart').textContent = '■ עצור';
   $('liveDot').classList.add('green');
   live.running = true;
+  setStatus('מתחבר…');
   listCameras(false);             // names are visible now that the camera is allowed
   connectWs();
 }
@@ -1485,12 +1482,17 @@ function stopCamera(keepView){
   if (live.ws){ live.ws.onclose = null; live.ws.close(); live.ws = null; }
   if (live.stream){ live.stream.getTracks().forEach(t => t.stop()); live.stream = null; }
   liveVideo.srcObject = null;
-  live.last = null;
+  live.last = null; live.tShown = 0; live.fps = 0;
   drawLive();
-  $('camStart').textContent = '▶ Start';
+  $('camStart').textContent = '▶ התחל';
   $('liveDot').classList.remove('green');
-  $('liveMeta').textContent = '';
-  if (!keepView){ $('livePlaceholder').style.display = 'flex'; $('camName').textContent = '— not started'; }
+  setStatus('');
+  if (!keepView) $('livePlaceholder').style.display = 'flex';
+}
+
+function setStatus(html, title){
+  $('liveMeta').innerHTML = html;
+  $('liveMeta').title = title || '';
 }
 
 /* ---------- frames to the server ---------- */
@@ -1498,16 +1500,16 @@ function connectWs(){
   const ws = new WebSocket(API.replace(/^http/, 'ws') + '/live/ws');
   ws.binaryType = 'arraybuffer';
   live.ws = ws;
-  ws.onopen = () => { $('liveMeta').textContent = 'loading models…'; sendFrame(); };
+  ws.onopen = () => { setStatus('טוען מודלים… (בפעם הראשונה זה לוקח כמה שניות)'); sendFrame(); };
   ws.onmessage = e => {
     let out; try { out = JSON.parse(e.data); } catch { out = { error: 'bad answer' }; }
-    if (out.error){ $('liveMeta').textContent = '⚠ ' + out.error; }
+    if (out.error) setStatus('⚠ שגיאה בשרת', out.error);
     else onResult(out);
     sendFrame();
   };
   ws.onclose = () => {
     if (!live.running) return;
-    $('liveMeta').textContent = 'connection lost — reconnecting…';
+    setStatus('החיבור לשרת נותק, מתחבר מחדש…');
     setTimeout(() => live.running && connectWs(), 2000);
   };
 }
@@ -1532,9 +1534,10 @@ function onResult(out){
   live.tShown = now;
   live.last = out;
   live.progress = out.progress || {};
-  $('liveMeta').innerHTML = `<span class="dot green"></span> ${live.fps.toFixed(1)} fps · ${out.ms} ms · ` +
-    `${out.persons.length} ${out.persons.length === 1 ? 'person' : 'people'}` +
-    (out.objects.length ? ' · ' + out.objects.map(o => o.cls).join(', ') : '');
+  const n = out.persons.length;
+  setStatus(`<span class="dot green"></span> בשידור · ${n === 0 ? 'אין אנשים' : n === 1 ? 'אדם אחד' : n + ' אנשים'}` +
+            (live.fps && live.fps < 3 ? ' · <span style="color:#f5a524">איטי</span>' : ''),
+            `${live.fps.toFixed(1)} fps · ${out.ms} ms per frame`);
   drawLive();
   renderRuleProgress();
   (out.alerts || []).forEach(a => onAlert(a, out));
@@ -1559,38 +1562,34 @@ function drawLive(){
   if (!out || !out.w) return;
   const sx = pw / out.w, sy = ph / out.h;
   const X = x => ox + x * sx, Y = y => oy + y * sy;
-  g.font = '600 11px Segoe UI, system-ui, sans-serif';
-  const hot = new Set((out.alerts || []).map(a => String(a.person)));
+  g.font = '600 12px Segoe UI, system-ui, sans-serif';
 
-  for (const o of out.objects){
-    const [x1, y1, x2, y2] = o.box;
-    g.strokeStyle = '#f0564c'; g.lineWidth = 2;
-    g.strokeRect(X(x1), Y(y1), (x2 - x1) * sx, (y2 - y1) * sy);
-    tagAt(g, `${o.cls} ${Math.round(o.conf * 100)}%`, X(x1), Y(y1), '#f0564c');
-  }
+  // people: a thin, quiet skeleton
+  g.lineWidth = 2; g.lineCap = 'round';
+  g.strokeStyle = 'rgba(61,220,151,.85)';
   out.persons.forEach(p => {
-    const k = p.kpts, color = hot.has(String(p.id)) ? '#f0564c' : '#3ddc97';
-    g.strokeStyle = color; g.lineWidth = 2.5;
+    const k = p.kpts;
+    g.beginPath();
     for (const [a, b] of SKELETON){
       if (k[a][2] < .3 || k[b][2] < .3) continue;
-      g.beginPath(); g.moveTo(X(k[a][0]), Y(k[a][1])); g.lineTo(X(k[b][0]), Y(k[b][1])); g.stroke();
+      g.moveTo(X(k[a][0]), Y(k[a][1])); g.lineTo(X(k[b][0]), Y(k[b][1]));
     }
-    g.fillStyle = color;
-    k.forEach(([x, y, c]) => { if (c >= .3){ g.beginPath(); g.arc(X(x), Y(y), 3, 0, 7); g.fill(); } });
-    for (const w of [9, 10]){                       // wrists: what "holding" is measured with
-      if (k[w][2] < .3) continue;
-      g.strokeStyle = '#4cc9f0'; g.lineWidth = 2;
-      g.beginPath(); g.arc(X(k[w][0]), Y(k[w][1]), 7, 0, 7); g.stroke();
-    }
-    tagAt(g, 'id ' + p.id, X(p.box[0]), Y(p.box[1]), color);
+    g.stroke();
   });
+  // objects: what the alerts are about
+  for (const o of out.objects){
+    const [x1, y1, x2, y2] = o.box;
+    g.strokeStyle = '#f0564c'; g.lineWidth = 2.5;
+    g.strokeRect(X(x1), Y(y1), (x2 - x1) * sx, (y2 - y1) * sy);
+    tagAt(g, OBJ_HE[o.cls] || o.cls, X(x1), Y(y1), '#f0564c');
+  }
 }
 
 function tagAt(g, text, x, y, color){
-  const w = g.measureText(text).width + 8;
-  y = Math.max(y, 16);
-  g.fillStyle = color; g.fillRect(x, y - 16, w, 16);
-  g.fillStyle = '#06121a'; g.fillText(text, x + 4, y - 4);
+  const w = g.measureText(text).width + 10;
+  y = Math.max(y, 18);
+  g.fillStyle = color; g.fillRect(x, y - 18, w, 18);
+  g.fillStyle = '#fff'; g.fillText(text, x + 5, y - 5);
 }
 window.addEventListener('resize', () => live.on && drawLive());
 
@@ -1624,33 +1623,30 @@ function snapshot(a, out){
 }
 
 function onAlert(a, out){
-  const item = { ...a, time: new Date(), img: snapshot(a, out) };
-  live.alerts.unshift(item);
+  live.alerts.unshift({ ...a, time: new Date(), img: snapshot(a, out) });
   beep();
   const wrap = $('liveWrap');
   wrap.classList.remove('alarm'); void wrap.offsetWidth; wrap.classList.add('alarm');
-  addMsg('alert', '🚨 ' + a.description + (a.person != null ? ` (id ${a.person})` : ''));
   renderAlerts();
 }
 
 function renderAlerts(){
-  $('alertBadge').textContent = `${live.alerts.length} alert${live.alerts.length === 1 ? '' : 's'}`;
-  $('alertsList').innerHTML = !live.alerts.length
-    ? '<div class="empty">No alerts yet.<br>When a rule fires, it shows up here with a snapshot.</div>'
+  const n = live.alerts.length;
+  $('alertBadge').textContent = n;
+  $('alertBadge').hidden = !n;
+  $('clearAlerts').hidden = !n;
+  $('alertsList').innerHTML = !n
+    ? '<div class="empty" dir="rtl">עוד אין התרעות 👌<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div>'
     : live.alerts.slice(0, 100).map((a, i) => `
-      <div class="rescard alertcard">
-        <div class="thumb"><img src="${a.img}" alt="alert snapshot"></div>
-        <div class="info"><b>🚨 ${esc(KIND_LABEL[a.kind] || a.kind)}${a.object ? ' · ' + esc(a.object) : ''}</b>
-          <span style="direction:auto;display:block">${esc(a.description)}</span>
-          ${a.time.toLocaleTimeString()}${a.person != null ? ' · person id ' + esc(a.person) : ''}
-          <div class="actions"><button data-i="${i}">⬇ Image</button></div>
-        </div>
+      <div class="alertcard" data-i="${i}" title="לחיצה מורידה את התמונה">
+        <img src="${a.img}" alt="">
+        <div><b>${esc(a.label || a.description)}</b><small>${a.time.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</small></div>
       </div>`).join('');
 }
 $('alertsList').addEventListener('click', e => {
-  const i = e.target.dataset?.i;
-  if (i == null) return;
-  const a = live.alerts[+i], link = document.createElement('a');
+  const card = e.target.closest('.alertcard');
+  if (!card) return;
+  const a = live.alerts[+card.dataset.i], link = document.createElement('a');
   link.href = a.img; link.download = `alert_${a.time.toISOString().replace(/[:.]/g, '-')}.jpg`; link.click();
 });
 $('clearAlerts').onclick = () => { live.alerts = []; renderAlerts(); };
@@ -1669,67 +1665,49 @@ let addingRule = false;
 async function addRule(text){
   if (!text.trim() || addingRule) return;
   addMsg('user', text);
-  if (!state.caps && !(await backendAlive())){
-    botSay('Alerts need the Python backend (uvicorn main:app --port 8000).\nהתרעות צריכות את השרת — צריך להריץ אותו קודם.');
-    return;
-  }
+  if (!(await needBackend())) return;
   addingRule = true;
+  const he = isHe(text);
   try {
     const r = await fetch(API + '/live/rules', { method: 'POST',
       headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
     if (!r.ok) throw new Error('server ' + r.status);
     const out = await r.json();
     if (!out.rule){
-      botSay((out.reason || 'I could not turn that into an alert.') + '\n\n' +
-        'I can alert when: an object appears · someone holds an object · someone raises an object · hands up · N people in the frame.\n' +
-        'אני יודעת להתריע כש: אובייקט מופיע · מישהו מחזיק אובייקט · מישהו מרים אובייקט · ידיים למעלה · מספר אנשים בפריים.');
+      botSay((out.reason || (he ? 'לא הצלחתי להבין על מה להתריע 🤔' : "I couldn't tell what to alert you about 🤔")) + '\n' +
+        (he ? 'אפשר לנסות למשל: "מישהו מרים סכין", "מישהו מחזיק טלפון", "מישהו מרים ידיים", "יותר משני אנשים בחדר"'
+            : 'Try for example: "someone raises a knife", "someone holds a phone", "hands up", "more than 2 people"'));
+      return;
+    }
+    if (out.new === false){
+      botSay(he ? 'אני כבר מתריעה על זה 👍' : "I'm already watching for that 👍");
       return;
     }
     live.rules.push(out.rule);
-    addRuleCard(out.rule, out.source);
-    const he = /[֐-׿]/.test(text);
-    botSay((he ? 'הגדרתי: ' : 'Set: ') + out.rule.description +
-           (live.running ? '' : he ? '\nלחצי ▶ Start כדי להתחיל' : '\nPress ▶ Start to begin watching'));
+    botSay('✅ ' + out.rule.description + (live.running ? '' : he ? '\nלחצי ▶ התחל כדי שאתחיל לצפות.' : '\nPress ▶ to start watching.'));
     renderRules();
   } catch (e){
-    botSay('Could not add the alert: ' + (e.message || e));
+    botSay((he ? 'משהו השתבש, נסי שוב. ' : 'Something went wrong, try again. ') + '(' + (e.message || e) + ')');
   } finally {
     addingRule = false;
   }
 }
 
-function addRuleCard(r, source){
-  const rows = [['Alert', KIND_LABEL[r.kind] || r.kind]];
-  if (r.object) rows.push(['Object', r.object]);
-  if (r.kind === 'person') rows.push(['People', '≥ ' + r.min_people]);
-  rows.push(['Must last', r.duration + ' s'], ['Repeat after', r.cooldown + ' s']);
-  const src = { llm: 'Claude', rules: 'rules (server)' }[source] || source || '';
-  const d = document.createElement('div');
-  d.className = 'parsed';
-  d.innerHTML = `<h4>🔔 Alert Rule ${src ? `<span class="tag">${esc(src)}</span>` : ''}</h4>` +
-    rows.map(x => `<div class="prow"><span>${x[0]}</span><span>${esc(x[1])}</span></div>`).join('');
-  $('messages').appendChild(d);
-  $('messages').scrollTop = 1e9;
-}
-
 function renderRules(){
   $('rulesList').innerHTML = !live.rules.length
-    ? '<div class="empty">No alert rules yet.<br>Write in the chat when you want an alert, e.g. "תתריעי לי אם מישהו מרים סכין".</div>'
+    ? '<span class="rhint">עוד לא הגדרת התרעות. כתבי בצ\'אט מתי להתריע.</span>'
     : live.rules.map(r => `
-      <div class="rule" data-id="${esc(r.id)}">
-        <div class="rinfo">🔔 ${esc(r.description)}
-          <small>${esc(KIND_LABEL[r.kind] || r.kind)}${r.object ? ' · ' + esc(r.object) : ''} · ${r.duration}s · “${esc(r.text)}”</small>
-          <div class="rbar"><i></i></div>
-        </div>
-        <button title="Remove this alert" data-del="${esc(r.id)}">✕</button>
-      </div>`).join('');
+      <span class="rpill" data-id="${esc(r.id)}" title="${esc(r.description)} · “${esc(r.text)}”">
+        🔔 ${esc(r.label || r.description)}<i></i>
+        <button title="להסיר" aria-label="להסיר" data-del="${esc(r.id)}">✕</button>
+      </span>`).join('');
   renderRuleProgress();
 }
 
 function renderRuleProgress(){
-  document.querySelectorAll('#rulesList .rule').forEach(el => {
+  document.querySelectorAll('#rulesList .rpill').forEach(el => {
     const p = live.progress[el.dataset.id] || 0;
-    el.querySelector('.rbar i').style.width = (p * 100) + '%';
+    el.querySelector('i').style.width = (p * 100) + '%';
     el.classList.toggle('hot', p >= 1);
   });
 }
