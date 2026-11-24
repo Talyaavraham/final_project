@@ -1,4 +1,6 @@
-# Video Search Agent — Backend (FastAPI + YOLOv8 + CLIP + Claude)
+# Video Search Agent — Backend (FastAPI + YOLOv8 + CLIP)
+
+הכול רץ מקומית, על המודלים שלנו: לא נשלח שום דבר לשירות חיצוני.
 
 ## התקנה והרצה
 
@@ -26,7 +28,6 @@ uvicorn main:app --reload --port 8000
 | `YOLO_MODEL=yolov8n.pt,game.pt,night.pt` | — | `night.pt` = מודל שאומן על תמונות לילה (ExDark + פריימים שלכן) לסרטוני מצלמות אבטחה חשוכים. איך: [train/README.md](train/README.md), `train/night_dataset.py`, `train/colab_train_night.ipynb` |
 | `YOLO_MODEL=yolov8s-oiv7.pt` | — | Open Images V7, 601 מחלקות (Tree, Window, Footwear…). פחות אמין מ-COCO על אנשים ורכבים, אז לא ברירת מחדל. Man/Woman/Boy/Girl ממופים ל-`person`, חלקי גוף (Human face וכו') מדולגים |
 | `CLIP_RERANK` | `1` | `0` מכבה את CLIP (חיפוש סמנטי בטקסט חופשי + מיזוג זהויות) |
-| `ANTHROPIC_API_KEY` | — | כשמוגדר, השאילתות מפוענחות ע"י Claude (`claude-opus-5-5`) במקום חוקי מילון |
 | `SAMPLE_FPS` | `3` | כמה פריימים לשנייה מנותחים |
 | `CONF_THRESHOLD` | `0.3` | סף ביטחון לזיהוי |
 | `MIN_SCENE` / `SCENE_Z` | `0.2` / `1.5` | חיפוש סצנה (CLIP על הפריים השלם, כל שנייה). `MIN_SCENE` הוא **הסתברות**: softmax של השאילתה (בארבעה ניסוחים) מול פרומפטים של "שום דבר מיוחד" (`search.match_prob`), ולא דמיון קוסינוס גולמי. `SCENE_Z`: כמה סטיות תקן מעל הממוצע של הסרטון. נמדד עם `eval/sweep_scene.py` |
@@ -41,7 +42,7 @@ uvicorn main:app --reload --port 8000
 
 ```bash
 docker build -t video-search backend
-docker run -p 8000:8000 -v $(pwd)/data:/data -e ANTHROPIC_API_KEY=$ANTHROPIC_API_KEY video-search
+docker run -p 8000:8000 -v $(pwd)/data:/data video-search
 ```
 
 ## איך זה מתחבר לפרונטאנד
@@ -49,7 +50,7 @@ docker run -p 8000:8000 -v $(pwd)/data:/data -e ANTHROPIC_API_KEY=$ANTHROPIC_API
 1. מריצים את השרת ופותחים **http://localhost:8000** (השרת מגיש את `index.html`)
 2. מעלים סרטון — הפרונט שולח ל-`POST /index`. השרת מחשב hash של הקובץ:
    סרטון שכבר אונדקס (גם בשם אחר) לא מאונדקס שוב
-3. השאלה נשלחת ל-`POST /parse` (Claude או חוקים) ואז ל-`POST /search`
+3. השאלה נשלחת ל-`POST /parse` (מפענח מקומי) ואז ל-`POST /search`
 4. כל תוצאה ניתנת להורדה כתמונה (`/frame`) או קליפ (`/clip`), וכל התוצאות יחד כ-ZIP (`/export`)
 5. אם השרת לא רץ — הפרונט מזהה בדפדפן (COCO-SSD) ומוריד תמונות דרך canvas
 
@@ -75,7 +76,7 @@ docker run -p 8000:8000 -v $(pwd)/data:/data -e ANTHROPIC_API_KEY=$ANTHROPIC_API
 main.py          API (FastAPI + Pydantic)
 indexer.py       YOLO/YOLO-World + ByteTrack → צבע → כתיבה ל-SQLite במנות → segments → מעבר שני: CLIP (פריימים + מבטים של כל track) → מיזוג זהויות.  `python indexer.py reembed` מריץ מחדש רק את שלב ה-CLIP
 search.py        segments, מהירות/פעולות, קרבה במרחב, דירוג סמנטי, חיפוש סצנה, `run_query` = כל התשובה לשאילתה   (לוגיקה טהורה, נבדקת ביחידה)
-query_parser.py  Claude (structured output) + מפענח חוקים EN/HE כגיבוי
+query_parser.py  מפענח חוקים EN/HE (מקומי)
 embeddings.py    CLIP (transformers), אופציונלי
 export.py        פריימים, קליפים (ffmpeg מובנה דרך imageio-ffmpeg), ZIP
 db.py            סכמת SQLite: videos / detections / segments
@@ -92,7 +93,7 @@ tests/           pytest — 55 בדיקות, כולל end-to-end עם גלאי �
 - **חיפוש סמנטי**: כל track מקבל כמה וקטורי CLIP (החיתוך הטוב ביותר + מבטים עם הקשר לאורך חייו); טקסט חופשי ("a woman pushing a stroller") מדורג לפי דמיון קוסינוס ממוצע
 - **חיפוש סצנה**: וקטור CLIP של הפריים כל שנייה (בפריים רחב, 16:9: כמה ריבועים שמכסים את כולו), מדורג ב-softmax מול פרומפטים ניטרליים
 - **גלאי + CLIP יחד**: למחלקות אירוע (אש, עשן, אקדח, סכין) ה-tracks של הגלאי נשארים כמו שהם ו-CLIP מוסיף את הרגעים שהגלאי פספס. מחלקת אירוע שלא נמצאה בסרטון (או שהסרטון אונדקס בלי `security.pt`) הופכת לשאלת CLIP; מחלקת COCO שלא נמצאה ("כלב") נשארת תשובה ריקה
-- **עברית בלי Claude**: CLIP מבין אנגלית בלבד, אז מפענח החוקים בונה לו משפט אנגלי מהמילים שזוהו ("אדם עם סכין" → "a person with a knife")
+- **עברית**: CLIP מבין אנגלית בלבד, אז מפענח החוקים בונה לו משפט אנגלי מהמילים שזוהו ("אדם עם סכין" → "a person with a knife")
 - **מיזוג זהויות**: tracks מאותה מחלקה עם embedding דומה שלא נראים יחד בזמן → אותו `entity`
 - **סרטונים ארוכים**: הזיהויים נכתבים ל-DB כל 2000 שורות; ה-segments מחושבים פעם אחת באינדוקס, לא בכל חיפוש
 - **מגבלה ידועה**: זיהוי הפעולות מניח מצלמה סטטית. במצלמה נעה, "running" יכול להופיע גם לאובייקטים עומדים

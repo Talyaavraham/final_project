@@ -80,7 +80,7 @@ Project by Maya Lax & Talya Avraham — course 67546.
 |---|---|
 | Detection + tracking | YOLOv8 (all 80 COCO classes) or **YOLO-World** (open vocabulary) + ByteTrack, ~3 frames/s |
 | Attributes | colour of the shirt / object, speed → running / walking / parked, entering / exiting the frame |
-| Query understanding | **Claude** (structured output, Hebrew + English, negation, free text) with a rule-based fallback |
+| Query understanding | local, no outside API: rule-based vocabulary (Hebrew + English) for search; **our own trained model** (`backend/nlu/`) for live alert requests, rules as fallback |
 | Semantic search | **CLIP** embedding of every track; free text like "holding a phone" is ranked by similarity. Whole-frame CLIP every second finds scenes with no object class ("fire") |
 | Multi-object | "person with a dog" = overlap in time **and** proximity in space |
 | Identity | tracks that break (occlusion) are merged back into one entity by appearance |
@@ -108,7 +108,6 @@ Then open **http://localhost:8000** in the browser and upload a video (MP4 / H.2
 Optional:
 
 ```bash
-set ANTHROPIC_API_KEY=sk-ant-...        # Claude query parser (otherwise: rules)
 set YOLO_MODEL=yolov8s-worldv2.pt       # open-vocabulary detection
 set YOLO_MODEL=game.pt                  # a model fine-tuned on your own classes (backend/train/README.md)
 set YOLO_MODEL=yolov8n.pt,game.pt       # several models: the best one is picked per video
@@ -126,4 +125,4 @@ python evaluate.py eval/ground_truth.json      # after labelling a few videos
 ```
 
 > The hosted page (GitHub Pages) shows the interface with in-browser detection only —
-> YOLO, CLIP, Claude and clip export need the backend running locally.
+> YOLO, CLIP and clip export need the backend running locally.

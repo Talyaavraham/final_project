@@ -19,8 +19,10 @@ swung up still counts. A condition must hold for the rule's `duration`
 (short gaps up to GAP are bridged) before an alert fires, and a rule fires
 at most once per `cooldown`.
 
-Pure logic, no models: parse() turns text into a rule, Evaluator.step()
-takes the people / objects of one frame and returns the alerts.
+parse() turns text into a rule with our own language model (nlu/, trained
+on our phrase dataset) combined with a keyword parser; everything runs
+locally, nothing is sent to an outside service. Evaluator.step() takes the
+people / objects of one frame and returns the alerts.
 """
 import json
 import os
@@ -58,7 +60,7 @@ COCO = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "t
 SECURITY = ["gun", "knife", "fire", "smoke"]        # security.pt
 DEFAULT_CLASSES = sorted(set(COCO + SECURITY))
 
-# words -> detector class, for the rule-based parser (Claude handles the rest)
+# words -> detector class, for the keyword parser
 OBJECT_WORDS = {
     "knife": ["knife", "knives", "blade", "סכין", "סכינים", "סכינה"],
     "gun": ["gun", "guns", "pistol", "handgun", "rifle", "weapon", "firearm",
@@ -221,8 +223,9 @@ def parse_rules(text: str, classes=None) -> Optional[dict]:
     classes = set(classes or DEFAULT_CLASSES)
     tokens = tokenize(text)
     obj = ""
-    for cls, words in OBJECT_WORDS.items():
-        if cls in classes and _any(tokens, words):
+    # longest words first: "מחשב נייד" is a laptop, not a phone ("נייד")
+    for cls, w in sorted(((c, w) for c, ws in OBJECT_WORDS.items() for w in ws), key=lambda x: -len(x[1].split())):
+        if cls in classes and _has(tokens, w):
             obj = cls
             break
     if not obj:   # any other detector class named in English ("a red cup" -> cup)
@@ -255,97 +258,72 @@ def parse_rules(text: str, classes=None) -> Optional[dict]:
     return make_rule(text, kind, obj, n_people or 1, duration, source="rules", hands=n_hands)
 
 
-# ------------------------------------------------------------------ Claude
-CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-opus-5-5")
-
-SCHEMA = {
-    "type": "object",
-    "properties": {
-        "kind": {"type": "string", "enum": KINDS + ["unsupported"]},
-        "object": {"type": "string", "description": "Detector class for object / hold / raise_object, else \"\""},
-        "min_people": {"type": "integer", "description": "For kind person: alert at this many people or more; else 1"},
-        "hands": {"type": "integer", "description": "For kind hands_up: 1 = one hand is enough, 2 = both hands; else 0"},
-        "duration": {"type": ["number", "null"], "description": "Seconds the condition must last, if the user said so; else null"},
-        "description": {"type": "string", "description": "Friendly confirmation in the user's language, e.g. \"I'll alert you when someone raises a knife\" / \"אתריע לך כשמישהו מרים סכין\""},
-        "label": {"type": "string", "description": "The event in 2-5 words, in the user's language, e.g. \"Someone raises a knife\" / \"מישהו מרים סכין\""},
-        "reason": {"type": "string", "description": "For unsupported: what cannot be detected, in the user's language; else \"\""},
-    },
-    "required": ["kind", "object", "min_people", "hands", "duration", "description", "label", "reason"],
-    "additionalProperties": False,
-}
-
-SYSTEM = """The user sets up an alert on a live camera, in Hebrew or English.
-Turn the request into ONE rule for a system that sees, in every frame, people
-(a skeleton with wrists and shoulders) and objects from a detector.
-
-Kinds:
-- object: an object is in the frame ("alert if there's a knife").
-- hold: a person holds an object (a wrist on the object).
-- raise_object: a person raises / lifts / swings / brandishes an object
-  above the shoulder ("someone raises a knife", "מישהו מרים סכין").
-- hands_up: a person raises a hand above the shoulder (no object). hands = 1
-  for "a hand" / "יד", 2 for "both hands" / "ידיים" / "hands up".
-- person: at least min_people people in the frame ("more than 2 people" -> 3;
-  "someone enters" -> 1).
-- unsupported: anything else (falls, fights, faces, sounds, zones of the room,
-  objects that are not in the class list). Say why in "reason".
-
-Allowed object classes: {classes}
-Map synonyms to a class: weapon / pistol / נשק / אקדח -> gun, טלפון -> cell phone,
-blade / סכין -> knife, שריפה -> fire.
-"""
+# ------------------------------------------------------------------ our language model
+# How the model (nlu/model.npz) and the keyword parser are combined. Measured
+# on nlu/data (python nlu/evaluate.py): the model is better at the kind of
+# request in free sentences and at "one hand / both hands"; the keywords are
+# better at naming the object. So:
+#   * both agree on the kind        -> that kind; object from the keywords when they found one
+#   * keywords found nothing        -> the model, only if it is sure (MODEL_SURE)
+#   * they disagree                 -> the model if it is very sure (MODEL_OVERRIDE), else the keywords
+# The two thresholds were set by hand before looking at the test sets.
+MODEL_SURE = 0.6
+MODEL_OVERRIDE = 0.8
 
 
-def llm_available() -> bool:
+def _nlu():
     try:
-        import anthropic  # noqa: F401
+        from nlu.model import load
     except ImportError:
-        return False
-    return bool(os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("ANTHROPIC_AUTH_TOKEN"))
-
-
-def parse_llm(text: str, classes) -> Optional[dict]:
-    """The rule from Claude; {"unsupported": reason} when it cannot be detected;
-    None when Claude cannot be used (no key, network, ...)."""
-    try:
-        import anthropic
-        client = anthropic.Anthropic(timeout=20.0, max_retries=1)
-        response = client.messages.create(
-            model=CLAUDE_MODEL, max_tokens=1024,
-            system=SYSTEM.format(classes=", ".join(classes)),
-            messages=[{"role": "user", "content": text}],
-            output_config={"effort": "low", "format": {"type": "json_schema", "schema": SCHEMA}},
-        )
-        if response.stop_reason != "end_turn":
-            return None
-        data = json.loads(next((b.text for b in response.content if b.type == "text"), ""))
-    except Exception:          # no key / network / bad JSON -> keyword parser
         return None
-    kind = data.get("kind")
-    if kind == "unsupported" or kind not in KINDS:
-        return {"unsupported": data.get("reason") or data.get("description") or ""}
-    obj = data.get("object") or ""
-    if kind in NEEDS_OBJECT and obj not in set(classes):
-        return {"unsupported": data.get("reason") or f"'{obj}' is not a class the detector knows"}
-    return make_rule(text, kind, obj, data.get("min_people") or 1, data.get("duration"),
-                     description=data.get("description") or "", source="llm",
-                     label=data.get("label") or "", hands=data.get("hands") or 2)
+    return load()
+
+
+def nlu_info():
+    m = _nlu()
+    return {"model": bool(m), "encoder": m.encoder_name if m else None,
+            "trained_on": m.trained_on if m else None}
+
+
+def understand(text, classes=None):
+    """-> {"kind", "object", "hands", "source", "confidence"}; kind "none" = not understood."""
+    kw = parse_rules(text, classes)
+    k = {"kind": kw["kind"], "object": kw["object"], "hands": kw.get("hands", 0)} if kw else None
+    m = _nlu()
+    if m is None:
+        return {**(k or {"kind": "none", "object": "", "hands": 0}), "source": "rules", "confidence": None}
+    p = m.predict(text)
+    mk = {"kind": p["kind"], "object": p["object"] if p["kind"] in NEEDS_OBJECT else "",
+          "hands": p["hands"] if p["kind"] == "hands_up" else 0}
+    conf = round(p["kind_p"], 2)
+    if k is None:
+        if p["kind_p"] >= MODEL_SURE:
+            return {**mk, "source": "model", "confidence": conf}
+        return {"kind": "none", "object": "", "hands": 0, "source": "model", "confidence": conf}
+    if k["kind"] == mk["kind"] or p["kind_p"] >= MODEL_OVERRIDE:
+        kind = mk["kind"]
+        obj = (k["object"] or mk["object"]) if kind in NEEDS_OBJECT else ""
+        hands = mk["hands"] if kind == "hands_up" else 0
+        return {"kind": kind, "object": obj, "hands": hands,
+                "source": "model+rules" if k["kind"] == mk["kind"] else "model", "confidence": conf}
+    return {**k, "source": "rules", "confidence": conf}
 
 
 def parse(text: str, classes=None) -> dict:
-    """-> {"rule": rule} or {"rule": None, "reason": ...}"""
+    """-> {"rule": rule, "source"} or {"rule": None, "reason", "source"}"""
     classes = list(classes or DEFAULT_CLASSES)
-    if llm_available():
-        r = parse_llm(text, classes)
-        if r is not None:
-            if "unsupported" in r:
-                return {"rule": None, "reason": r["unsupported"], "source": "llm"}
-            return {"rule": r, "source": "llm"}
-    rule = parse_rules(text, classes)
-    if rule is None:
-        return {"rule": None, "source": "rules", "reason":
-                "לא הצלחתי להבין על מה להתריע 🤔" if is_hebrew(text) else "I couldn't tell what to alert you about 🤔"}
-    return {"rule": rule, "source": "rules"}
+    he = is_hebrew(text)
+    u = understand(text, classes)
+    if u["kind"] == "none":
+        return {"rule": None, "source": u["source"], "reason":
+                "את זה אני עוד לא יודעת לזהות, או שלא הבנתי 🤔" if he else "I can't detect that yet, or I didn't understand 🤔"}
+    if u["kind"] in NEEDS_OBJECT and u["object"] not in set(classes):
+        return {"rule": None, "source": u["source"], "reason":
+                f"הגלאי לא מכיר \"{u['object']}\"" if he else f"the detector does not know \"{u['object']}\""}
+    rule = make_rule(text, u["kind"], u["object"], parse_people(text) or 1, parse_duration(text),
+                     source=u["source"], hands=u["hands"] or 2)
+    rule["confidence"] = u["confidence"]
+    return {"rule": rule, "source": u["source"]}
 
 
 # ------------------------------------------------------------------ evaluation

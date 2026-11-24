@@ -35,34 +35,10 @@ def test_unknown_words_become_semantic_query():
     assert p["semantic"] == "a woman with a stroller"
 
 
-def test_parse_falls_back_to_rules_without_llm(monkeypatch):
+def test_parse_runs_locally():
     import query_parser
-    monkeypatch.setattr(query_parser, "llm_available", lambda: False)
     assert parse("a red car")["source"] == "rules"
-
-
-def test_parse_uses_llm_result_when_available(monkeypatch):
-    import query_parser
-    monkeypatch.setattr(query_parser, "llm_available", lambda: True)
-    monkeypatch.setattr(query_parser, "parse_llm",
-                        lambda text, classes: {"objects": ["person"], "colors": [],
-                                               "actions": [], "timeRange": None,
-                                               "semantic": "x", "unknown": [],
-                                               "source": "llm"})
-    assert parse("anything")["source"] == "llm"
-
-
-def test_parse_llm_handles_missing_sdk(monkeypatch):
-    import builtins
-    import query_parser
-    real_import = builtins.__import__
-
-    def fake_import(name, *a, **k):
-        if name == "anthropic":
-            raise ImportError
-        return real_import(name, *a, **k)
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-    assert query_parser.parse_llm("a dog", ["dog"]) is None
+    assert not hasattr(query_parser, "parse_llm")      # no outside API
 
 
 def test_game_classes_hebrew_and_english():

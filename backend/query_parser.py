@@ -1,14 +1,11 @@
 """
 Natural-language query -> structured query.
 
-Two parsers, used in this order:
-  1. Claude (Anthropic SDK)  — handles free Hebrew/English, negation,
-                               "two people", "a woman with a stroller", ...
-                               Needs ANTHROPIC_API_KEY (or `ant auth login`).
-  2. Rule-based vocabulary   — offline fallback, same behaviour as the
-                               original front-end parser.
+Rule-based vocabulary (Hebrew + English), runs locally: nothing is sent to
+an outside service. (An earlier version could call the Claude API; it was
+removed so that the whole system runs on our own models.)
 
-Both return:
+Returns:
   {
     "objects":   ["person", "dog"],      # detector classes, subject first
     "colors":    ["red"],                # of the subject
@@ -16,7 +13,7 @@ Both return:
     "timeRange": [lo, hi] | None,        # seconds, hi may be None (= end)
     "semantic":  "a woman pushing a stroller" | "",   # free text for CLIP
     "unknown":   ["stroller"],           # words we could not map to a class
-    "source":    "llm" | "rules",
+    "source":    "rules",
   }
 """
 
@@ -264,129 +261,7 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     return found
 
 
-# ------------------------------------------------------------- Claude LLM
-MODEL = os.environ.get("CLAUDE_MODEL", "claude-opus-5-5")
-
-SCHEMA = {
-    "type": "object",
-    "properties": {
-        "objects": {"type": "array", "items": {"type": "string"},
-                    "description": "Detector classes to look for, the subject "
-                                   "of the sentence first. Only values from "
-                                   "the allowed class list."},
-        "colors": {"type": "array", "items": {"type": "string", "enum": COLORS},
-                   "description": "Colour of the subject's clothes / body."},
-        "actions": {"type": "array", "items": {"type": "string", "enum": ACTIONS}},
-        "time_start": {"type": ["number", "null"],
-                       "description": "Start of the time window in seconds, "
-                                      "or null"},
-        "time_end": {"type": ["number", "null"],
-                     "description": "End of the time window in seconds, or null"},
-        "semantic": {"type": "string",
-                     "description": "Short English description of the visual "
-                                    "appearance that the class list cannot "
-                                    "express (e.g. 'a woman pushing a "
-                                    "stroller', 'a man wearing a hat'). "
-                                    "Empty string when the classes, colours "
-                                    "and actions already cover the query."},
-        "unknown": {"type": "array", "items": {"type": "string"},
-                    "description": "Query terms that do not map to any class."},
-    },
-    "required": ["objects", "colors", "actions", "time_start", "time_end",
-                 "semantic", "unknown"],
-    "additionalProperties": False,
-}
-
-SYSTEM = """You turn a user's request to search inside a video (Hebrew or English)
-into a structured query for an object detector.
-
-Allowed detector classes: {classes}
-Colours: {colors}
-Actions: {actions}  (running/walking/moving/parked = speed of the object,
-entering/exiting = the object enters or leaves the frame)
-
-Rules:
-- "objects" must only contain allowed classes. Map synonyms (man, woman, kid,
-  pedestrian, איש, ילדה -> person; אוטו, רכב -> car; backpack, suitcase -> bag).
-- The subject of the sentence goes first: "a man in red with a dog" ->
-  objects ["person","dog"], colors ["red"].
-- "riding a bicycle" is person + bicycle.
-- Time expressions in the user's text are video timestamps ("after 1:30",
-  "בין 0:10 ל-2:00"). Convert to seconds. "at 1:30" -> 85 to 95.
-- Put in "semantic" an English phrase describing anything visual that the
-  classes/colours/actions do not capture (clothing items, age, objects that
-  are not in the list, "holding a phone", ...). Otherwise "".
-- Put the words you could not map in "unknown".
-"""
-
-
-def llm_available() -> bool:
-    try:
-        import anthropic  # noqa: F401
-    except ImportError:
-        return False
-    return bool(os.environ.get("ANTHROPIC_API_KEY")
-                or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-                or os.environ.get("ANTHROPIC_PROFILE")
-                or os.path.exists(os.path.expanduser("~/.config/anthropic")))
-
-
-def parse_llm(text: str, classes: list[str]) -> Optional[dict]:
-    """Returns the parsed query, or None when Claude cannot be used."""
-    try:
-        import anthropic
-    except ImportError:
-        return None
-    client = anthropic.Anthropic(timeout=20.0, max_retries=1)
-    try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=1024,
-            system=SYSTEM.format(classes=", ".join(classes),
-                                 colors=", ".join(COLORS),
-                                 actions=", ".join(ACTIONS)),
-            messages=[{"role": "user", "content": text}],
-            output_config={"effort": "low",
-                           "format": {"type": "json_schema", "schema": SCHEMA}},
-        )
-    except anthropic.AuthenticationError:
-        return None
-    except anthropic.RateLimitError:
-        return None
-    except anthropic.APIStatusError:
-        return None
-    except anthropic.APIConnectionError:
-        return None
-    if response.stop_reason != "end_turn":   # refusal / max_tokens -> rules
-        return None
-    raw = next((b.text for b in response.content if b.type == "text"), "")
-    try:
-        data = json.loads(raw)
-    except json.JSONDecodeError:
-        return None
-
-    allowed = set(classes)
-    objects = [o for o in data.get("objects", []) if o in allowed]
-    lo, hi = data.get("time_start"), data.get("time_end")
-    time_range = None
-    if lo is not None or hi is not None:
-        time_range = [float(lo or 0), None if hi is None else float(hi)]
-    return {
-        "objects": objects,
-        "colors": [c for c in data.get("colors", []) if c in COLORS],
-        "actions": [a for a in data.get("actions", []) if a in ACTIONS],
-        "timeRange": time_range,
-        "semantic": (data.get("semantic") or "").strip(),
-        "unknown": list(data.get("unknown") or []),
-        "source": "llm",
-    }
-
-
 def parse(text: str, classes: Optional[list[str]] = None) -> dict:
-    """Claude when available, otherwise the rule-based parser."""
+    """The local rule-based parser."""
     classes = classes or list(VOCAB_OBJECTS)
-    if llm_available():
-        result = parse_llm(text, classes)
-        if result is not None:
-            return result
     return parse_rules(text, classes)

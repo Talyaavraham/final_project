@@ -81,7 +81,7 @@ class LiveEngine:
                     return r, False
             self.rules.append(rule)
         print(f"[live] rule: {rule['label']}  kind={rule['kind']} object={rule['object'] or '-'} "
-              f"hands={rule.get('hands', 0)} duration={rule['duration']}s  <- \"{rule['text']}\"", flush=True)
+              f"hands={rule.get('hands', 0)} duration={rule['duration']}s  by={rule['source']}  <- \"{rule['text']}\"", flush=True)
         return rule, True
 
     def remove_rule(self, rule_id):

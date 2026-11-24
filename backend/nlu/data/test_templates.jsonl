@@ -1,0 +1,1119 @@
+{"text": "אני צריכה לדעת אם שומר שולף ספל", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד אוחז אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מרים סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד עם סמארטפון ליותר משנייה", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו נושא מחבט במשך 2 שניות", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר נושא מספריים", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מחזיק ביד סמארטפון במשך 2 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשמישהו מנופף בסמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו מנופף בתרמיל", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מכוון אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מחזיק בידו סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר מחזיק סכין יפנית ליותר משנייה", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר נושא ספר", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מנופף במחבט במשך 2 שניות", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מסתובב עם סכין יפנית במשך 2 שניות", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר שולף מטריה במשך 2 שניות", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר שולף סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד שולף ספר למשך 3 שניות", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו שולף מספריים ליותר משנייה", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר שולף סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו מגביה תיק", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע ששומר שולף מחשב נייד", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מחזיק בידו סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר עם אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד שולף סמארטפון במשך 2 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד שולף כוס", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשמישהו מגביה סכין יפנית במשך 2 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר שולף כוס ליותר משנייה", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו שולף סמארטפון ליותר משנייה", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שמישהו שולף תרמיל", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מחזיק ביד סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר תופס אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מאיים עם סכין יפנית למשך 3 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו מנופף בספל", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד שולף מטריה במשך 2 שניות", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר לוקח אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר מרים באוויר סכין יפנית במשך 2 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מחזיק סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד שולף מחבט ליותר משנייה", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו שולף ספל", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד עם אקדח צעצוע למשך 3 שניות", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שמישהו מגביה אקדח צעצוע ליותר משנייה", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו מגביה מטריה במשך 2 שניות", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד מרים באוויר אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מגביה תרמיל", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד מגביה כוס ליותר משנייה", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מגביה סמארטפון במשך 2 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מנופף בתיק", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד נושא מספריים", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר אוחז סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר הולך עם סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר שולף תיק ליותר משנייה", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד שולף מחשב נייד", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו מנופף בכוס במשך 2 שניות", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד נושא ספל למשך 3 שניות", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מנופף באלה", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד נושא תיק למשך 3 שניות", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד שולף לפטופ למשך 3 שניות", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מגביה מחשב נייד ליותר משנייה", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד שולף מספריים ליותר משנייה", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מנופף בכוס", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד נושא אלה", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מסתובב עם אקדח צעצוע ליותר משנייה", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו נושא מחשב נייד ליותר משנייה", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד הולך עם סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו נושא כוס", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר שולף מחבט במשך 2 שניות", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד לוקח סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מרים אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מנופף בבקבוק ליותר משנייה", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע ששומר לוקח סמארטפון למשך 3 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו מנופף במטריה", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מרים למעלה סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר לוקח סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר מחזיק אקדח צעצוע ליותר משנייה", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מגביה ספל", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו מגביה בקבוק ליותר משנייה", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מחזיק ביד סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שמישהו שולף מטריה", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו מגביה מספריים", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מנופף במחשב נייד במשך 2 שניות", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו שולף כוס ליותר משנייה", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר מגביה מחבט ליותר משנייה", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מחזיק בידו אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד מניף סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מחזיק בידו סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד הולך עם אקדח צעצוע ליותר משנייה", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו נושא סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר נושא תיק", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מאיים עם אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מרים סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד נושא מחבט", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד מרים למעלה סמארטפון במשך 2 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר נושא בקבוק למשך 3 שניות", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשמישהו מנופף במחשב נייד במשך 2 שניות", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו מגביה סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מגביה ספר", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר אוחז אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מרים באוויר אקדח צעצוע ליותר משנייה", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו מנופף בתיק", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מניף אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו שולף מחבט למשך 3 שניות", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר נושא מחשב נייד", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מכוון סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מגביה אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מגביה מטריה", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר שולף תרמיל", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מחזיק סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו נושא תרמיל", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד תופס סמארטפון למשך 3 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד נושא מטריה למשך 3 שניות", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר מגביה סכין יפנית במשך 2 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו מנופף במחבט", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מרים למעלה סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע ששומר מגביה תיק ליותר משנייה", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו נושא ספל", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מגביה אלה למשך 3 שניות", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו מנופף באלה", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מרים למעלה אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו שולף בקבוק ליותר משנייה", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מגביה ספר", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד שולף בקבוק", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר נושא כוס", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר מנופף בסמארטפון במשך 2 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מסתובב עם סכין יפנית ליותר משנייה", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שמישהו מגביה ספר", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו מנופף במספריים ליותר משנייה", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מגביה תיק", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד שולף סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד נושא תרמיל", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מחזיק בידו סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר שולף לפטופ למשך 3 שניות", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד נושא אקדח צעצוע במשך 2 שניות", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד שולף תרמיל", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מגביה מחשב נייד", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו נושא ספר במשך 2 שניות", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מרים באוויר סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו נושא סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד שולף אלה", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מגביה סמארטפון למשך 3 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר נושא אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד מנופף בתיק", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד מנופף בספר", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד שולף תיק למשך 3 שניות", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מסתובב עם סמארטפון למשך 3 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר מסתובב עם אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו מנופף בסכין יפנית למשך 3 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מנופף בספר ליותר משנייה", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר נושא תרמיל במשך 2 שניות", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מנופף בבקבוק ליותר משנייה", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מאיים עם אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד מגביה לפטופ", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מנופף בלפטופ", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו נושא אלה למשך 3 שניות", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מגביה בקבוק", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד נושא סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר עם סכין יפנית למשך 3 שניות", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר שולף ספר", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו מגביה כוס", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו נושא בקבוק", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד הולך עם סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר שולף אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד מכוון אקדח צעצוע במשך 2 שניות", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו מנופף בספר", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע ששומר מגביה אקדח צעצוע ליותר משנייה", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מנופף בסכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מנופף במספריים ליותר משנייה", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד מנופף באקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד נושא כוס", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מניף אקדח צעצוע למשך 3 שניות", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מנופף במטריה", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מאיים עם סכין יפנית למשך 3 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר נושא ספל", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו מגביה מחבט ליותר משנייה", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד מנופף במחשב נייד ליותר משנייה", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד מחזיק סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מנופף בספל", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מגביה תרמיל", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מנופף בלפטופ ליותר משנייה", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו נושא תיק במשך 2 שניות", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מכוון סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מאיים עם סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד שולף ספל", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד נושא בקבוק", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד נושא מחשב נייד במשך 2 שניות", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מכוון סמארטפון למשך 3 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מגביה מחבט", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר שולף אלה", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד אוחז סכין יפנית במשך 2 שניות", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו שולף אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר מרים אקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר שולף בקבוק", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר נושא סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר מגביה מטריה", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו מנופף בבקבוק במשך 2 שניות", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מגביה לפטופ במשך 2 שניות", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מנופף בסמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר תופס סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מגביה ספל", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד מרים למעלה סכין יפנית למשך 3 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו נושא אקדח צעצוע למשך 3 שניות", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר נושא מטריה", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר נושא לפטופ", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מרים סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מרים באוויר סמארטפון במשך 2 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם מישהו שולף תיק", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מנופף באקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו מגביה תרמיל", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד תופס סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר עם סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר נושא סמארטפון במשך 2 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד תופס אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד מגביה מספריים במשך 2 שניות", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מחזיק ביד אקדח צעצוע במשך 2 שניות", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מחזיק ביד סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מרים למעלה אקדח צעצוע במשך 2 שניות", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שילד נושא ספר במשך 2 שניות", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם מישהו נושא מספריים", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם ילד מנופף בתרמיל ליותר משנייה", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו שולף סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד נושא סמארטפון ליותר משנייה", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד נושא לפטופ", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד שולף אקדח צעצוע ליותר משנייה", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר הולך עם סמארטפון ליותר משנייה", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד לוקח אקדח צעצוע למשך 3 שניות", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו נושא לפטופ למשך 3 שניות", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר מאיים עם סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע ששומר שולף מספריים", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר הולך עם אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו מגביה מחשב נייד ליותר משנייה", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מנופף בספל למשך 3 שניות", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר תופס סמארטפון במשך 2 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שמישהו מגביה ספל", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מחזיק ביד אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מגביה מספריים ליותר משנייה", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד עם סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם שומר מנופף בתרמיל במשך 2 שניות", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו שולף לפטופ", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מגביה כוס", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מנופף באלה במשך 2 שניות", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו מגביה אלה", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם שומר מכוון סכין יפנית למשך 3 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו מנופף בלפטופ למשך 3 שניות", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כששומר מניף סמארטפון ליותר משנייה", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מרים סמארטפון למשך 3 שניות", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר נושא אלה", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מנופף במחבט למשך 3 שניות", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו מגביה לפטופ", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מגביה סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם ילד מנופף בסכין יפנית למשך 3 שניות", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תעדכן אותי אם מישהו שולף מחשב נייד", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כששומר מסתובב עם סמארטפון", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מחזיק בידו אקדח צעצוע", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר מרים באוויר סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע ששומר מנופף בכוס למשך 3 שניות", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "בבקשה תתריע ברגע שמישהו שולף ספר", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "אני צריכה לדעת אם ילד מחזיק אקדח צעצוע במשך 2 שניות", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע שילד לוקח סכין יפנית ליותר משנייה", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם מישהו נושא מטריה", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשמישהו מנופף באקדח צעצוע", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשמישהו שולף אלה", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר מניף סכין יפנית", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם שומר מגביה בקבוק", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מניף סמארטפון", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד אוחז סמארטפון במשך 2 שניות", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תעדכן אותי אם שומר נושא מחבט במשך 2 שניות", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "בבקשה תתריע ברגע ששומר אוחז סכין יפנית", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "he:hold"}
+{"text": "תודיעי לי כשילד מנופף במספריים", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "תודיעי לי כשילד מגביה אלה", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "אני צריכה לדעת אם ילד מנופף במטריה", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:raise_object"}
+{"text": "give me a heads up if the guard with a cup", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard pulls out a scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard brandishes an umbrella for more than a second", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid with a handgun for 3 seconds", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard pulls out a box cutter for 2 seconds", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard brandishes a scissors for 2 seconds", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid hoists a laptop for 2 seconds", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid is gripping a box cutter for more than a second", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard hoists a pair of scissors for 3 seconds", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if the guard hoists a cup", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid pulls out a smartphone for 3 seconds", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid brandishes a bag for 2 seconds", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard hoists an umbrella", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard brandishes a bottle", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid pulls out a baseball bat", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid brandishes a scissors", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid with a backpack for 2 seconds", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid is gripping a backpack for 3 seconds", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard brandishes a backpack", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard is gripping a bottle for 3 seconds", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid with a laptop for 3 seconds", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard brandishes a bat for 2 seconds", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard hoists a scissors", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if the guard pulls out a baseball bat", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid hoists a smartphone for more than a second", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard with an umbrella for 3 seconds", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard brandishes a laptop for 3 seconds", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard is gripping a pair of scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard pulls out an umbrella for 3 seconds", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard is gripping a cup for 3 seconds", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid pulls out a laptop", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid pulls out a scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard is gripping a bat for 2 seconds", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid brandishes a handgun for more than a second", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid brandishes a baseball bat for 2 seconds", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid is gripping a handgun", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid is gripping a cup for 3 seconds", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid brandishes a mug for more than a second", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard with a box cutter", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard with a book", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard brandishes a book for 3 seconds", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid hoists a pair of scissors", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid brandishes a smartphone", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid pulls out a bag", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid with a baseball bat", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid pulls out a cup for 3 seconds", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid hoists a bag for more than a second", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard with a bat for 3 seconds", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid hoists a handgun", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard with a bag", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid hoists a bottle", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid pulls out an umbrella", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard hoists a handgun for 3 seconds", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if a kid is gripping a baseball bat for 2 seconds", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard with a bottle for more than a second", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard pulls out a bat for 2 seconds", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid with a cup", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid pulls out a backpack for 2 seconds", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard is gripping a smartphone for more than a second", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid with a bottle", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid with a scissors for more than a second", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid hoists a box cutter for more than a second", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard is gripping a book for 2 seconds", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid brandishes a bat for 2 seconds", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard is gripping a box cutter for 2 seconds", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard with a pair of scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid with a pair of scissors for 3 seconds", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid hoists a mug", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard hoists a box cutter for 3 seconds", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard is gripping a mug for 3 seconds", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid pulls out a box cutter", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid pulls out a pair of scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid is gripping a bag", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard with a backpack", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid pulls out a bottle for 2 seconds", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid brandishes a backpack", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid with a mug for 2 seconds", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard pulls out a handgun for more than a second", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard brandishes a bag for more than a second", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid is gripping a pair of scissors for more than a second", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid brandishes a laptop", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if the guard pulls out a cup", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard pulls out a bottle for 3 seconds", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid pulls out a book", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid brandishes an umbrella for more than a second", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid hoists an umbrella for more than a second", "kind": "raise_object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if the guard brandishes a pair of scissors for 3 seconds", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard pulls out a pair of scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard hoists a bag for 3 seconds", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard brandishes a mug for more than a second", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if the guard is gripping a bag", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard with a laptop for 2 seconds", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid is gripping a laptop", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard hoists a backpack", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard is gripping a scissors", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid is gripping a bat", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard is gripping a baseball bat", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid brandishes a box cutter", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid with a box cutter", "kind": "hold", "object": "knife", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard brandishes a handgun for more than a second", "kind": "raise_object", "object": "gun", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard hoists a bat", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard is gripping a handgun", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard pulls out a mug", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid is gripping a bottle", "kind": "hold", "object": "bottle", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid brandishes a pair of scissors for 2 seconds", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if a kid hoists a scissors", "kind": "raise_object", "object": "scissors", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard hoists a book for 3 seconds", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if a kid with a bag for 3 seconds", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid pulls out a handgun", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid is gripping a book for more than a second", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard with a scissors for more than a second", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid is gripping a smartphone for 2 seconds", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid with an umbrella for 2 seconds", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if a kid hoists a backpack for more than a second", "kind": "raise_object", "object": "backpack", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid with a smartphone", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid is gripping an umbrella", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid pulls out a bat for 3 seconds", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard pulls out a book", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard hoists a mug", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid is gripping a scissors for more than a second", "kind": "hold", "object": "scissors", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid is gripping a mug", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard pulls out a bag for 2 seconds", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as the guard brandishes a cup for 2 seconds", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard pulls out a smartphone for 2 seconds", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard hoists a baseball bat for 3 seconds", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard brandishes a baseball bat", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard with a handgun", "kind": "hold", "object": "gun", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard brandishes a smartphone", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid hoists a cup for 3 seconds", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard brandishes a box cutter for 3 seconds", "kind": "raise_object", "object": "knife", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid with a book for 3 seconds", "kind": "hold", "object": "book", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard hoists a bottle", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever a kid brandishes a bottle for 2 seconds", "kind": "raise_object", "object": "bottle", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard pulls out a backpack", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard with a baseball bat for more than a second", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever the guard with a smartphone", "kind": "hold", "object": "cell phone", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid hoists a bat for more than a second", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard pulls out a laptop for 3 seconds", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid hoists a baseball bat", "kind": "raise_object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as a kid with a bat for 3 seconds", "kind": "hold", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid brandishes a cup for 3 seconds", "kind": "raise_object", "object": "cup", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard is gripping an umbrella for more than a second", "kind": "hold", "object": "umbrella", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "could you alert me whenever a kid brandishes a book", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard hoists a laptop", "kind": "raise_object", "object": "laptop", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "ping me as soon as the guard hoists a smartphone", "kind": "raise_object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "give me a heads up if a kid pulls out a mug for more than a second", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "ping me as soon as a kid hoists a book", "kind": "raise_object", "object": "book", "hands": 0, "split": "test", "template": "en:raise_object"}
+{"text": "could you alert me whenever the guard is gripping a backpack", "kind": "hold", "object": "backpack", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard is gripping a laptop for 2 seconds", "kind": "hold", "object": "laptop", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "give me a heads up if the guard with a mug for 3 seconds", "kind": "hold", "object": "cup", "hands": 0, "split": "test", "template": "en:hold"}
+{"text": "אני צריכה לדעת אם פתאום יש מטריה ליותר משנייה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a cup shows up on camera", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה מספריים במצלמה", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a book shows up on camera for more than a second", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש ספר במשך 2 שניות", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any flames for more than a second", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש תיק ליותר משנייה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any cat for 2 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה ספר במצלמה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any pair of scissors", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש כלב", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a box cutter shows up on camera for more than a second", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש עשן", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a box cutter shows up on camera for more than a second", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה סכין יפנית במצלמה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a bottle shows up on camera", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה חתול במצלמה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a dog shows up on camera", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש ספר ליותר משנייה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a mug shows up on camera", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה תיק במצלמה ליותר משנייה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a cat shows up on camera for 2 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש חתול ליותר משנייה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any scissors", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מחשב נייד למשך 3 שניות", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a baseball bat shows up on camera", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה כלב במצלמה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a smoke shows up on camera for 3 seconds", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה כלב במצלמה ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a bottle shows up on camera for 2 seconds", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה מספריים במצלמה במשך 2 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any laptop", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש סכין יפנית ליותר משנייה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a baseball bat shows up on camera for 2 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש עשן במשך 2 שניות", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any baseball bat for 2 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש סמארטפון", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a scissors shows up on camera", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה תרמיל במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any bat for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה להבות במצלמה", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a bat shows up on camera for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה סמארטפון במצלמה", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any backpack", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש חתול למשך 3 שניות", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any dog", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש מטריה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any box cutter", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש להבות", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any flames", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה עשן במצלמה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a baseball bat shows up on camera", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה ספל במצלמה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any fire", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה ספר במצלמה ליותר משנייה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any box cutter for more than a second", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה סכין יפנית במצלמה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a handgun shows up on camera for 3 seconds", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה מספריים במצלמה למשך 3 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any smartphone", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה עשן במצלמה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a cat shows up on camera for 3 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש תיק", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a dog shows up on camera", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה סמארטפון במצלמה ליותר משנייה", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any smartphone for 2 seconds", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש כלב ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any pair of scissors", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any baseball bat", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה תרמיל במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם פתאום יש מספריים", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a cup shows up on camera for 2 seconds", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any book for 2 seconds", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש ספל ליותר משנייה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any bottle for 3 seconds", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש אש", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any cat", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש מטריה במשך 2 שניות", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a dog shows up on camera for 2 seconds", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה מחבט במצלמה ליותר משנייה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a pair of scissors shows up on camera", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה מטריה במצלמה ליותר משנייה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a book shows up on camera for 3 seconds", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש אקדח צעצוע", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a flames shows up on camera", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה סמארטפון במצלמה", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a cat shows up on camera", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה תרמיל במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any box cutter", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש כלב", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a smartphone shows up on camera for 3 seconds", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה מחבט במצלמה למשך 3 שניות", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם פתאום יש מספריים במשך 2 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a cup shows up on camera", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any fire for 3 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מספריים במשך 2 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any cat", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש אקדח צעצוע", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any mug", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש כלב במשך 2 שניות", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any dog", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש תרמיל במשך 2 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a laptop shows up on camera", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה תיק במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a fire shows up on camera", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש בקבוק ליותר משנייה", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any cup", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה סכין יפנית במצלמה למשך 3 שניות", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a box cutter shows up on camera for more than a second", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה ספר במצלמה ליותר משנייה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a smoke shows up on camera", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש תיק במשך 2 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a book shows up on camera", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה ספר במצלמה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any bag", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה חתול במצלמה ליותר משנייה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם נראה כלב במצלמה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a fire shows up on camera for 3 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש כלב", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any smoke for more than a second", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה עשן במצלמה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם נראה סכין יפנית במצלמה למשך 3 שניות", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a bat shows up on camera", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש לפטופ", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a cat shows up on camera for more than a second", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש סמארטפון למשך 3 שניות", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a cat shows up on camera for 2 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה כוס במצלמה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם נראה אש במצלמה ליותר משנייה", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any handgun for more than a second", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה חתול במצלמה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a cup shows up on camera for more than a second", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה מספריים במצלמה", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any umbrella", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש סמארטפון במשך 2 שניות", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a scissors shows up on camera for 2 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש עשן למשך 3 שניות", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any dog for 2 seconds", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a bag shows up on camera", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מטריה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a smartphone shows up on camera for 3 seconds", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה ספל במצלמה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם נראה חתול במצלמה במשך 2 שניות", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any dog for 3 seconds", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה ספל במצלמה ליותר משנייה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a bag shows up on camera", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש עשן", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any mug for 3 seconds", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש כלב למשך 3 שניות", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a book shows up on camera for 3 seconds", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה לפטופ במצלמה", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any smoke", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as a bat shows up on camera for 2 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever any scissors", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה תיק במצלמה ליותר משנייה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any umbrella for 3 seconds", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever a pair of scissors shows up on camera", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש אקדח צעצוע למשך 3 שניות", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any cat for more than a second", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה אקדח צעצוע במצלמה ליותר משנייה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a box cutter shows up on camera for 3 seconds", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה סכין יפנית במצלמה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a cat shows up on camera for 3 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש כלב ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש כוס למשך 3 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה מספריים במצלמה ליותר משנייה", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש ספר ליותר משנייה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם נראה סמארטפון במצלמה", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a cat shows up on camera for more than a second", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה חתול במצלמה במשך 2 שניות", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any bottle for more than a second", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה תיק במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש עשן למשך 3 שניות", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a umbrella shows up on camera", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש בקבוק", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any bat for more than a second", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a laptop shows up on camera for 3 seconds", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה מספריים במצלמה במשך 2 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any cat", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה כלב במצלמה במשך 2 שניות", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any bottle for 2 seconds", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה מחשב נייד במצלמה", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a umbrella shows up on camera for 2 seconds", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש עשן ליותר משנייה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש כוס ליותר משנייה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a bag shows up on camera for 2 seconds", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever any bag", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש מספריים במשך 2 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה כלב במצלמה במשך 2 שניות", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a cup shows up on camera", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש עשן ליותר משנייה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a smartphone shows up on camera for 3 seconds", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש מספריים", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a mug shows up on camera for 3 seconds", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה חתול במצלמה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש סמארטפון", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a umbrella shows up on camera", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה לפטופ במצלמה במשך 2 שניות", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש תיק למשך 3 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a book shows up on camera for more than a second", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה כלב במצלמה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש ספר", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a scissors shows up on camera for 2 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any umbrella for more than a second", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה אלה במצלמה ליותר משנייה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a smartphone shows up on camera for 2 seconds", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש בקבוק במשך 2 שניות", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any baseball bat for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מחשב נייד במשך 2 שניות", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה כוס במצלמה במשך 2 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a scissors shows up on camera for more than a second", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש כוס במשך 2 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any laptop", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה מטריה במצלמה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a handgun shows up on camera for 3 seconds", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any fire for 3 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a cat shows up on camera", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any flames", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה תרמיל במצלמה במשך 2 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a handgun shows up on camera", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש ספר למשך 3 שניות", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any book", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה מחבט במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a book shows up on camera for 3 seconds", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש עשן ליותר משנייה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any baseball bat for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever any smoke", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה ספל במצלמה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a dog shows up on camera", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש להבות", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a mug shows up on camera", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש אש", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש כלב ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a dog shows up on camera for 2 seconds", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה ספר במצלמה למשך 3 שניות", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any umbrella for 2 seconds", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה ספר במצלמה במשך 2 שניות", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any bottle for more than a second", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש כלב ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any scissors for more than a second", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a dog shows up on camera for more than a second", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any book for more than a second", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש מספריים ליותר משנייה", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a smoke shows up on camera for more than a second", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש מטריה ליותר משנייה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any fire for more than a second", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה עשן במצלמה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a backpack shows up on camera", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש מטריה במשך 2 שניות", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם פתאום יש עשן", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a umbrella shows up on camera for more than a second", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as a bag shows up on camera for 3 seconds", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש חתול", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש מספריים למשך 3 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a bottle shows up on camera for 2 seconds", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any bottle for 2 seconds", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as a cat shows up on camera", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה ספר במצלמה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any smoke for 2 seconds", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a laptop shows up on camera for more than a second", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש בקבוק במשך 2 שניות", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any backpack for 2 seconds", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה סכין יפנית במצלמה במשך 2 שניות", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש אקדח צעצוע במשך 2 שניות", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש מטריה למשך 3 שניות", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any cup for 3 seconds", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש אקדח צעצוע ליותר משנייה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any smartphone", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה תרמיל במצלמה ליותר משנייה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם פתאום יש בקבוק", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a bat shows up on camera for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה סמארטפון במצלמה במשך 2 שניות", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any cup for 2 seconds", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש בקבוק", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a smartphone shows up on camera for 2 seconds", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any scissors for 3 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש כוס למשך 3 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any laptop for 3 seconds", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה תיק במצלמה למשך 3 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any dog for 2 seconds", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש מחשב נייד ליותר משנייה", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש מטריה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any cup for more than a second", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה אקדח צעצוע במצלמה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any smartphone", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה מספריים במצלמה", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a bottle shows up on camera for 3 seconds", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש מחשב נייד", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any bat for 2 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה בקבוק במצלמה במשך 2 שניות", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a baseball bat shows up on camera for 2 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה חתול במצלמה למשך 3 שניות", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש כוס במשך 2 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a bat shows up on camera for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש אקדח צעצוע ליותר משנייה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any bottle", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מספריים", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a smoke shows up on camera", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש ספר ליותר משנייה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה אלה במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש סכין יפנית", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם פתאום יש ספל במשך 2 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a box cutter shows up on camera for 2 seconds", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה עשן במצלמה במשך 2 שניות", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשנראה מטריה במצלמה במשך 2 שניות", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a backpack shows up on camera for 2 seconds", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any mug for more than a second", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש ספל ליותר משנייה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם נראה מטריה במצלמה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any umbrella", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש חתול", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any pair of scissors for 3 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה מחבט במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a bottle shows up on camera", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as a flames shows up on camera for more than a second", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה לפטופ במצלמה", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any flames for 3 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any cup for 2 seconds", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה סכין יפנית במצלמה ליותר משנייה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם נראה סכין יפנית במצלמה ליותר משנייה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any baseball bat", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה אש במצלמה למשך 3 שניות", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש לפטופ ליותר משנייה", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם נראה כוס במצלמה למשך 3 שניות", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any flames for 2 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש בקבוק ליותר משנייה", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any handgun", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה אלה במצלמה במשך 2 שניות", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a bag shows up on camera for more than a second", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה תיק במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a smoke shows up on camera for 2 seconds", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש ספר במשך 2 שניות", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any bat", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מחשב נייד", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש אלה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a box cutter shows up on camera for 3 seconds", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש מחבט", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any laptop", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה מחבט במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any handgun", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה סמארטפון במצלמה ליותר משנייה", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a box cutter shows up on camera", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה סכין יפנית במצלמה למשך 3 שניות", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any bat", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה כלב במצלמה ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a backpack shows up on camera", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה שריפה במצלמה ליותר משנייה", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any smoke for 3 seconds", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה תיק במצלמה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a baseball bat shows up on camera for more than a second", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as a handgun shows up on camera for 3 seconds", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any laptop for 2 seconds", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה סמארטפון במצלמה למשך 3 שניות", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any box cutter for 3 seconds", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה אלה במצלמה במשך 2 שניות", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any pair of scissors for 3 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any cat for 3 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה סמארטפון במצלמה למשך 3 שניות", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a umbrella shows up on camera for 2 seconds", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה עשן במצלמה ליותר משנייה", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a umbrella shows up on camera for 3 seconds", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever any handgun for more than a second", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a umbrella shows up on camera for more than a second", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever a fire shows up on camera for 3 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any scissors for 3 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה ספר במצלמה ליותר משנייה", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a box cutter shows up on camera", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה כלב במצלמה ליותר משנייה", "kind": "object", "object": "dog", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a book shows up on camera", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה אקדח צעצוע במצלמה ליותר משנייה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a baseball bat shows up on camera for 3 seconds", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה מחשב נייד במצלמה למשך 3 שניות", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any bat", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "ping me as soon as any box cutter for 3 seconds", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש ספר במשך 2 שניות", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a fire shows up on camera for more than a second", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשפתאום יש תיק למשך 3 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a flames shows up on camera for 2 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה לפטופ במצלמה ליותר משנייה", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any book", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה אלה במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a pair of scissors shows up on camera for 2 seconds", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה כוס במצלמה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any handgun", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה אלה במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש עשן", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש סמארטפון במשך 2 שניות", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a backpack shows up on camera", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה בקבוק במצלמה", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a cat shows up on camera for 3 seconds", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש ספר", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תעדכן אותי אם נראה תיק במצלמה למשך 3 שניות", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש סמארטפון ליותר משנייה", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any bag for 2 seconds", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה מחבט במצלמה", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשפתאום יש שריפה ליותר משנייה", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a handgun shows up on camera for more than a second", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה מספריים במצלמה למשך 3 שניות", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if a smoke shows up on camera for more than a second", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever any flames for 2 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם נראה לפטופ במצלמה למשך 3 שניות", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever any umbrella for 3 seconds", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever a book shows up on camera for 2 seconds", "kind": "object", "object": "book", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if any bag", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש עשן במשך 2 שניות", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשנראה חתול במצלמה ליותר משנייה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a smartphone shows up on camera", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש ספל", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as a box cutter shows up on camera", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש מחשב נייד למשך 3 שניות", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any bag for more than a second", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש סמארטפון", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה אקדח צעצוע במצלמה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה חתול במצלמה", "kind": "object", "object": "cat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a mug shows up on camera", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "give me a heads up if a smoke shows up on camera", "kind": "object", "object": "smoke", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "בבקשה תתריע ברגע שנראה אלה במצלמה במשך 2 שניות", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשנראה אלה במצלמה למשך 3 שניות", "kind": "object", "object": "baseball bat", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שפתאום יש ספל ליותר משנייה", "kind": "object", "object": "cup", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any laptop for more than a second", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "could you alert me whenever any bottle", "kind": "object", "object": "bottle", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תעדכן אותי אם פתאום יש סמארטפון", "kind": "object", "object": "cell phone", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "could you alert me whenever a laptop shows up on camera for 2 seconds", "kind": "object", "object": "laptop", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "תודיעי לי כשנראה מטריה במצלמה", "kind": "object", "object": "umbrella", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "אני צריכה לדעת אם פתאום יש להבות", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "בבקשה תתריע ברגע שנראה אש במצלמה", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשנראה אקדח צעצוע במצלמה", "kind": "object", "object": "gun", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "ping me as soon as any pair of scissors", "kind": "object", "object": "scissors", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם נראה סכין יפנית במצלמה ליותר משנייה", "kind": "object", "object": "knife", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "give me a heads up if any fire for 2 seconds", "kind": "object", "object": "fire", "hands": 0, "split": "test", "template": "en:object"}
+{"text": "אני צריכה לדעת אם פתאום יש תרמיל ליותר משנייה", "kind": "object", "object": "backpack", "hands": 0, "split": "test", "template": "he:object"}
+{"text": "תודיעי לי כשילד מכוון את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever the guard sticks a hand up for more than a second", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כששתי הידיים למעלה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid sticks a hand up for more than a second", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששתי הידיים למעלה במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard throws both hands in the air for 2 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מכוון את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid sticks a hand up for 3 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם שומר מאיים עם את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard throws both hands in the air for more than a second", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם שתי הידיים למעלה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid sticks a hand up", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם שתי הידיים למעלה למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever the guard throws both hands in the air", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם שתי הידיים למעלה במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid throws both hands in the air for 2 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם שתי הידיים למעלה ליותר משנייה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid throws both hands in the air", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מניף את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard sticks a hand up", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששתי הידיים למעלה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if the guard throws both hands in the air for more than a second", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "give me a heads up if the guard throws both hands in the air for 3 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים באוויר את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard throws both hands in the air for 3 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם ילד מניף את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as a kid sticks a hand up for 3 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "ping me as soon as a kid sticks a hand up", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "ping me as soon as a kid sticks a hand up for 2 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כשילד מניף את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever the guard sticks a hand up for 3 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים למעלה את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid sticks a hand up", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "could you alert me whenever the guard sticks a hand up for 2 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם שתי הידיים למעלה ליותר משנייה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard throws both hands in the air", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever the guard throws both hands in the air for more than a second", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "give me a heads up if a kid sticks a hand up for 2 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מכוון את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard sticks a hand up for more than a second", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כששתי הידיים למעלה במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever the guard throws both hands in the air for 2 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים באוויר את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid throws both hands in the air", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "could you alert me whenever the guard throws both hands in the air for 3 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם שתי הידיים למעלה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מרים את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard sticks a hand up for 3 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כששומר מרים באוויר את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים למעלה את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever the guard sticks a hand up", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מניף את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מרים באוויר את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מאיים עם את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים באוויר את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מרים למעלה את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מניף את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid throws both hands in the air for 3 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כשילד מרים את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים באוויר את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מרים למעלה את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if the guard sticks a hand up for 2 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "give me a heads up if the guard sticks a hand up for 3 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מאיים עם את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if the guard sticks a hand up", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מניף את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים למעלה את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid sticks a hand up for more than a second", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם ילד מרים למעלה את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מכוון את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם ילד מאיים עם את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים באוויר את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מאיים עם את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים למעלה את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מניף את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים באוויר את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מרים באוויר את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as a kid sticks a hand up for more than a second", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מניף את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as the guard sticks a hand up for 2 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כששתי הידיים למעלה ליותר משנייה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if the guard sticks a hand up for more than a second", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם ילד מכוון את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid sticks a hand up for 3 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם שתי הידיים למעלה למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as a kid throws both hands in the air", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים באוויר את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid sticks a hand up for 2 seconds", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם ילד מאיים עם את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים באוויר את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מכוון את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מאיים עם את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מאיים עם את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שתי הידיים למעלה במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if the guard throws both hands in the air", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כשילד מכוון את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as a kid throws both hands in the air for 3 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע ששתי הידיים למעלה למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מניף את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם ילד מרים את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as a kid throws both hands in the air for more than a second", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מכוון את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "ping me as soon as a kid throws both hands in the air for 2 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מאיים עם את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מכוון את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע ששתי הידיים למעלה ליותר משנייה", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "could you alert me whenever a kid throws both hands in the air for more than a second", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מכוון את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מרים למעלה את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מכוון את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מכוון את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid throws both hands in the air for more than a second", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם ילד מאיים עם את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששתי הידיים למעלה למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מכוון את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים למעלה את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid throws both hands in the air for 2 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מרים את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if a kid throws both hands in the air for 3 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מניף את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מאיים עם את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מאיים עם את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים באוויר את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מניף את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מניף את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מכוון את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים למעלה את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מרים באוויר את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם ילד מניף את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מרים באוויר את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מרים באוויר את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים למעלה את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם ילד מרים למעלה את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מכוון את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים למעלה את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים למעלה את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מרים את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מניף את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים באוויר את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מרים את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "give me a heads up if the guard throws both hands in the air for 2 seconds", "kind": "hands_up", "object": "", "hands": 2, "split": "test", "template": "en:hands_up"}
+{"text": "תודיעי לי כששומר מכוון את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מניף את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מכוון את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מכוון את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מניף את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מרים באוויר את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע שילד מאיים עם את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מרים באוויר את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "בבקשה תתריע ברגע ששומר מאיים עם את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תעדכן אותי אם שומר מרים באוויר את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מרים למעלה את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם ילד מרים באוויר את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מרים באוויר את היד הימנית", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מכוון את היד הימנית ליותר משנייה", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כששומר מכוון את היד הימנית במשך 2 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "תודיעי לי כשילד מרים למעלה את היד הימנית למשך 3 שניות", "kind": "hands_up", "object": "", "hands": 1, "split": "test", "template": "he:hands_up"}
+{"text": "אני צריכה לדעת אם שומר מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "could you alert me whenever the guard shows up", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "בבקשה תתריע ברגע שילד מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "give me a heads up if 2 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "תודיעי לי כש2 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "ping me as soon as the guard shows up", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "אני צריכה לדעת אם שלושה אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "give me a heads up if 4 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "תודיעי לי כששני אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "ping me as soon as 4 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "ping me as soon as a kid shows up", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "תודיעי לי כששלושה אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "אני צריכה לדעת אם ילד מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "ping me as soon as two or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "בבקשה תתריע ברגע ששלושה אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "give me a heads up if a kid shows up", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "אני צריכה לדעת אם 2 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תודיעי לי כששומר מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תודיעי לי כשילד מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "give me a heads up if the guard shows up", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "אני צריכה לדעת אם 4 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "בבקשה תתריע ברגע ששומר מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "ping me as soon as 3 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "תעדכן אותי אם שלושה אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "give me a heads up if two or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "could you alert me whenever 4 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "give me a heads up if 3 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "ping me as soon as three or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "could you alert me whenever two or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "give me a heads up if three or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "בבקשה תתריע ברגע ש4 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תעדכן אותי אם שומר מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "בבקשה תתריע ברגע ש3 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תעדכן אותי אם ילד מגיע", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תודיעי לי כש3 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תודיעי לי כש4 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "could you alert me whenever 2 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "בבקשה תתריע ברגע ששני אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "could you alert me whenever a kid shows up", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "תעדכן אותי אם שני אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "could you alert me whenever three or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "תעדכן אותי אם 4 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "could you alert me whenever 3 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "בבקשה תתריע ברגע ש2 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תעדכן אותי אם 2 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תעדכן אותי אם 3 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "אני צריכה לדעת אם 3 אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "ping me as soon as 2 or more people", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "en:person"}
+{"text": "אני צריכה לדעת אם שני אנשים או יותר", "kind": "person", "object": "", "hands": 0, "split": "test", "template": "he:person"}
+{"text": "תעדכן אותי אם יש פה ריב", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "ping me as soon as what's up", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "שומר מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "what's up", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תעדכן אותי אם ילד מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "could you alert me whenever a kid faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "give me a heads up if two people are arguing", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תעדכן אותי אם ילד מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "the guard faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תודיעי לי כשיש פה ריב", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "two people are arguing", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "שומר מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "a kid slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "מה נשמע", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "ping me as soon as the guard faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "ping me as soon as a kid slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "ping me as soon as two people are arguing", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "יש פה ריב", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "בבקשה תתריע ברגע שילד מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "תודיעי לי כששומר מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "the guard slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תעדכן אותי אם שומר מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "בבקשה תתריע ברגע ששומר מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "give me a heads up if the guard faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "give me a heads up if what's up", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "ילד מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "could you alert me whenever two people are arguing", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "בבקשה תתריע ברגע שילד מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "תודיעי לי כשמה נשמע", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "בבקשה תתריע ברגע ששומר מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "could you alert me whenever a kid slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תודיעי לי כששומר מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "could you alert me whenever what's up", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "ילד מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "אני צריכה לדעת אם מה נשמע", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "אני צריכה לדעת אם שומר מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "תעדכן אותי אם שומר מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "אני צריכה לדעת אם יש פה ריב", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "אני צריכה לדעת אם ילד מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "תעדכן אותי אם מה נשמע", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "a kid faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תודיעי לי כשילד מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "give me a heads up if the guard slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "בבקשה תתריע ברגע שיש פה ריב", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "אני צריכה לדעת אם שומר מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "give me a heads up if a kid slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "ping me as soon as the guard slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "בבקשה תתריע ברגע שמה נשמע", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "give me a heads up if a kid faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "אני צריכה לדעת אם ילד מחליק", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "could you alert me whenever the guard faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "תודיעי לי כשילד מתעלף", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "he:none"}
+{"text": "could you alert me whenever the guard slips", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}
+{"text": "ping me as soon as a kid faints", "kind": "none", "object": "", "hands": 0, "split": "test", "template": "en:none"}

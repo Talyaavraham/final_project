@@ -4,17 +4,17 @@ Video Search Agent — Backend
 FastAPI server:
   POST /index              upload a video -> index in the background
   GET  /                   the web interface (index.html)
-  GET  /api                server capabilities (model, CLIP, Claude, ffmpeg)
+  GET  /api                server capabilities (model, CLIP, language model, ffmpeg)
   GET  /status?video=      indexing progress
   GET  /videos             indexed videos
   GET  /classes?video=     which classes were found (for the UI / parser)
-  POST /parse              natural language -> structured query (Claude / rules)
+  POST /parse              natural language -> structured query (local rules)
   POST /search             structured (+ free text) query -> matches
   GET  /frame              one frame as JPEG, with the match box drawn
   GET  /clip               a clip as MP4 (optionally with tracked boxes)
   POST /export             ZIP with frames + clips + results.json/csv
   DELETE /videos/{name}    remove a video and its index
-  POST /live/rules         live mode: a sentence -> an alert rule (Claude / rules)
+  POST /live/rules         live mode: a sentence -> an alert rule (our language model / rules)
   GET  /live/rules, DELETE /live/rules/{id}
   WS   /live/ws            live mode: JPEG frames in -> people, objects, alerts out
 
@@ -26,7 +26,7 @@ Env:
     YOLO_MODEL=yolov8s.pt | yolov8m.pt | yolov8s-worldv2.pt (open vocabulary)
     YOLO_MODEL=yolov8n.pt,game.pt   several: the best one per video is chosen
     CLIP_RERANK=0          disable CLIP (semantic search + entity merge)
-    ANTHROPIC_API_KEY=...  enable the Claude query parser
+Everything runs locally: no outside API is called.
 """
 
 import hashlib
@@ -149,10 +149,9 @@ def capabilities():
         "open_vocab": "world" in indexer.MODEL_NAME.lower(),
         "clip": embeddings.available(),
         "clip_error": embeddings.error(),
-        "llm_parser": query_parser.llm_available(),
+        "nlu": alert_rules.nlu_info(),
         "ffmpeg": export.ffmpeg_exe() is not None,
         "live": live.info(),
-        "live_llm": alert_rules.llm_available(),
     }
 
 

@@ -1,0 +1,13 @@
+python nlu/evaluate.py  —  2026-11-24, encoder=hash, 8469 training sentences (templates)
+test_handwritten = 60 free sentences written by Claude (not from templates), NOT real users
+
+test set                 parser      n    kind  object   hands   exact
+test_templates.jsonl     keywords 1119   63.0%   97.2%   69.7%   63.0%
+test_templates.jsonl     model    1119   56.3%   73.3%   97.6%   55.9%
+test_templates.jsonl     combined 1119   71.4%   94.4%  100.0%   71.3%
+test_handwritten.jsonl   keywords   60   83.3%  100.0%   87.5%   83.3%
+test_handwritten.jsonl   model      60   90.0%   87.5%   87.5%   88.3%
+test_handwritten.jsonl   combined   60   88.3%   96.9%   87.5%   86.7%
+test_people.jsonl        (empty: add sentences people wrote)
+
+kind/object/hands = accuracy of each part; exact = the whole rule right

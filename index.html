@@ -559,9 +559,9 @@ function parseQuery(text){
   return found;
 }
 
-// The backend parser understands free text (Claude when an API key is set,
-// otherwise the same vocabulary rules as parseQuery). Local parsing is the
-// fallback when the backend is not running.
+// The backend parser (local vocabulary rules, Hebrew + English, knows the
+// classes found in this video). Parsing in the browser is the fallback when
+// the backend is not running. Nothing is sent to an outside service.
 async function parseAny(text){
   const local = parseQuery(text);
   if (state.engine !== 'backend') return { ...local, semantic: '', unknown: [], source: 'local' };
@@ -609,7 +609,7 @@ function renderCaps(){
   const c = state.caps;
   $('caps').innerHTML = !c ? '' : [
     ['YOLO', true], ['open-vocab', c.open_vocab], ['CLIP', c.clip],
-    ['Claude', c.llm_parser], ['ffmpeg', c.ffmpeg],
+    ['מודל שפה', c.nlu?.model], ['ffmpeg', c.ffmpeg],
   ].map(([n, on]) => `<span class="${on ? 'on' : ''}" title="${on ? 'פעיל' : 'כבוי'}">${n}</span>`).join('');
 }
 const engineLabel = () => state.caps ? (state.caps.model || 'YOLO').replace('.pt', '') : 'YOLOv8';

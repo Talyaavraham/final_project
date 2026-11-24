@@ -124,3 +124,16 @@ def test_slow_computer_phone_hold():
     r = rule("מישהו מחזיק טלפון")
     phone = [{"cls": "cell phone", "conf": 0.5, "box": [70, 240, 90, 260]}]
     assert run(ar.Evaluator(), r, [([person(250)], phone)] * 5, dt=1.2)[0] == 1
+
+
+def test_multiword_object_wins():
+    assert rule("מישהו מחזיק מחשב נייד")["object"] == "laptop"
+    assert rule("מישהו מחזיק נייד")["object"] == "cell phone"
+
+
+def test_combined_parser_runs_locally():
+    out = ar.parse("תתריעי לי אם מישהו מרים סכין")
+    assert out["rule"]["kind"] == "raise_object" and out["rule"]["object"] == "knife"
+    assert out["source"] in ("rules", "model", "model+rules")
+    assert ar.parse("מה השעה")["rule"] is None
+    assert not hasattr(ar, "parse_llm")
