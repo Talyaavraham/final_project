@@ -1,0 +1,15 @@
+===== conf 0.25
+scenario     method           videos  hours events caught  recall alerts  false  false/h   delay
+fire         fire seen            38   2.97     44     18   40.9%     79     43     14.5    2.7s
+fire         smoke seen           38   2.97     44     10   22.7%    118     94     31.7    2.3s
+fire         fire or smoke seen     38   2.97     44     22   50.0%    174    124     41.8    1.6s
+fire         ignites (fire)       38   2.97     44     15   34.1%     69     37     12.5    2.9s
+fire         ignites (fire/smoke)     38   2.97     44     19   43.2%    154    110     37.1    1.7s
+
+===== conf 0.4
+scenario     method           videos  hours events caught  recall alerts  false  false/h   delay
+fire         fire seen            38   2.97     44     15   34.1%     51     19      6.4    2.7s
+fire         smoke seen           38   2.97     44      9   20.5%     54     36     12.1    4.4s
+fire         fire or smoke seen     38   2.97     44     20   45.5%     94     49     16.5    2.5s
+fire         ignites (fire)       38   2.97     44     13   29.5%     45     16      5.4    2.9s
+fire         ignites (fire/smoke)     38   2.97     44     18   40.9%     82     42     14.2    2.8s
