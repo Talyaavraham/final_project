@@ -14,6 +14,9 @@ FastAPI server:
   GET  /clip               a clip as MP4 (optionally with tracked boxes)
   POST /export             ZIP with frames + clips + results.json/csv
   DELETE /videos/{name}    remove a video and its index
+  POST /live/rules         live mode: a sentence -> an alert rule (Claude / rules)
+  GET  /live/rules, DELETE /live/rules/{id}
+  WS   /live/ws            live mode: JPEG frames in -> people, objects, alerts out
 
 Run:
     pip install -r requirements.txt
@@ -33,7 +36,8 @@ import threading
 import time
 from typing import Optional
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
@@ -42,7 +46,9 @@ import db as database
 import embeddings
 import export
 import indexer
+import alert_rules
 import query_parser
+from live_engine import engine as live
 from search import run_query
 
 app = FastAPI(title="Video Search Agent API", version="2.0")
@@ -145,6 +151,8 @@ def capabilities():
         "clip_error": embeddings.error(),
         "llm_parser": query_parser.llm_available(),
         "ffmpeg": export.ffmpeg_exe() is not None,
+        "live": live.info(),
+        "live_llm": alert_rules.llm_available(),
     }
 
 
@@ -339,6 +347,52 @@ def export_zip(req: ExportRequest):
     fname = f"{os.path.splitext(req.video)[0]}_results_{int(time.time())}.zip"
     return Response(data, media_type="application/zip",
                     headers={"Content-Disposition": f'attachment; filename="{fname}"'})
+
+
+# ---------------------------------------------------------------- live mode
+class RuleRequest(BaseModel):
+    text: str
+
+
+@app.post("/live/rules")
+def add_live_rule(req: RuleRequest):
+    """A sentence -> an alert rule. {rule, source} or {rule: null, reason}."""
+    if not req.text.strip():
+        raise HTTPException(400, "empty text")
+    out = alert_rules.parse(req.text, live.classes())
+    if out.get("rule"):
+        live.add_rule(out["rule"])
+    return out
+
+
+@app.get("/live/rules")
+def list_live_rules():
+    return {"rules": live.list_rules()}
+
+
+@app.delete("/live/rules/{rule_id}")
+def delete_live_rule(rule_id: str):
+    if not live.remove_rule(rule_id):
+        raise HTTPException(404, "no such rule")
+    return {"ok": True}
+
+
+@app.websocket("/live/ws")
+async def live_ws(ws: WebSocket):
+    """The browser sends one JPEG (binary message) and waits for the JSON answer."""
+    await ws.accept()
+    await run_in_threadpool(live.start_stream)
+    try:
+        while True:
+            data = await ws.receive_bytes()
+            try:
+                out = await run_in_threadpool(live.process, data)
+            except Exception as e:  # noqa: BLE001  (model download failed, ...)
+                live.error = str(e)
+                out = {"error": str(e)}
+            await ws.send_json(out)
+    except WebSocketDisconnect:
+        pass
 
 
 # cleanup of old rendered clips (older than a day) at start-up

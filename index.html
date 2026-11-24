@@ -87,7 +87,7 @@ body{
 .chathead b{font-size:.95rem}
 .chathead small{color:var(--text-dim);font-size:.75rem;display:block}
 .messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-.msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.87rem;line-height:1.45;white-space:pre-wrap}
+.msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.87rem;line-height:1.45;white-space:pre-wrap;unicode-bidi:plaintext;text-align:start}
 .msg.bot{background:var(--card);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
 .msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;direction:auto}
 .msg time{display:block;font-size:.65rem;opacity:.6;margin-top:5px}
@@ -209,6 +209,34 @@ video{width:100%;height:100%;display:block}
 .summary .row span:last-child{color:var(--text)}
 .empty{color:var(--text-dim);font-size:.8rem;text-align:center;padding:30px 10px;line-height:1.6}
 
+/* ---------- live mode ---------- */
+body:not(.live) .live-only{display:none!important}
+body.live .file-only{display:none!important}
+.camrow{display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.camrow select{
+  flex:1;min-width:180px;background:var(--panel-2);border:1px solid var(--border);color:var(--text);
+  border-radius:10px;padding:8px 10px;font-size:.82rem;
+}
+.camrow select:focus{outline:none;border-color:var(--accent)}
+#liveVideo{object-fit:contain;background:#000}
+#liveCanvas{width:100%;height:100%}
+.videowrap.alarm{box-shadow:0 0 0 4px var(--danger),0 0 28px rgba(240,86,76,.6);animation:alarm .5s 3}
+@keyframes alarm{50%{box-shadow:0 0 0 4px transparent}}
+.livestat{display:flex;gap:6px;align-items:center}
+.rule{background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:9px 11px;margin-bottom:8px;font-size:.8rem;display:flex;gap:10px;align-items:center}
+.rule .rinfo{flex:1;direction:auto}
+.rule .rinfo small{display:block;color:var(--text-dim);font-size:.68rem;margin-top:2px;direction:auto}
+.rule .rbar{height:4px;border-radius:3px;background:#0e1124;margin-top:6px;overflow:hidden}
+.rule .rbar i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .2s}
+.rule.hot{border-color:var(--danger)}
+.rule.hot .rbar i{background:var(--danger)}
+.rule button{border:none;background:transparent;color:var(--text-dim);cursor:pointer;font-size:1rem}
+.rule button:hover{color:var(--danger)}
+.alertcard{border-color:rgba(240,86,76,.5)}
+.alertcard .thumb img{width:100%;height:100%;object-fit:cover}
+.alertcard .info b{color:var(--danger)}
+.msg.alert{background:rgba(240,86,76,.14);border:1px solid rgba(240,86,76,.5);align-self:flex-start;direction:auto}
+
 ::-webkit-scrollbar{width:9px}
 ::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
 @media (max-width:1100px){
@@ -241,7 +269,7 @@ video{width:100%;height:100%;display:block}
     </div>
     <div class="spacer"></div>
     <button class="btn primary" id="uploadBtn">⬆ Upload Video</button>
-    <button class="btn soon" disabled title="Coming soon · בקרוב"><span class="dot" id="liveDot"></span> Live Stream <i>soon</i></button>
+    <button class="btn" id="liveBtn" title="Live camera + alerts · מצלמה חיה והתרעות"><span class="dot" id="liveDot"></span> Live Stream</button>
     <button class="btn soon" disabled title="Coming soon · בקרוב" aria-label="Settings, coming soon">⚙</button>
     <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
   </div>
@@ -250,9 +278,9 @@ video{width:100%;height:100%;display:block}
   <aside class="sidebar">
     <nav class="nav">
       <a href="#" class="soon" title="Coming soon · בקרוב">🏠 <span>Home</span><i>soon</i></a>
-      <a href="#" class="active">💬 <span>Chat Search</span></a>
+      <a href="#" class="active" id="navSearch">💬 <span>Chat Search</span></a>
       <a href="#" class="soon" title="Coming soon · בקרוב">🎞 <span>Videos</span><i>soon</i></a>
-      <a href="#" class="soon" title="Coming soon · בקרוב">🔔 <span>Alerts</span><i>soon</i></a>
+      <a href="#" id="navLive">🔔 <span>Live Alerts</span></a>
       <a href="#" class="soon" title="Coming soon · בקרוב">🔖 <span>Bookmarks</span><i>soon</i></a>
       <a href="#" class="soon" title="Coming soon · בקרוב">📷 <span>Cameras</span><i>soon</i></a>
       <a href="#" class="soon" title="Coming soon · בקרוב">⚙ <span>Settings</span><i>soon</i></a>
@@ -270,19 +298,26 @@ video{width:100%;height:100%;display:block}
   <section class="chatpane">
     <div class="chathead">
       <div class="bot">🤖</div>
-      <div><b>AI Video Search Agent</b><small>Your intelligent video assistant</small></div>
+      <div><b>AI Video Search Agent</b><small id="chatSub">Your intelligent video assistant</small></div>
     </div>
     <div class="messages" id="messages">
       <div class="msg bot">Hello! I can help you find anything in your videos. Upload a video, then describe what you are looking for — in English or Hebrew.
 אפשר לכתוב גם בעברית, למשל: "מצא איש שרץ עם כלב"<time id="nowTime"></time></div>
     </div>
-    <div class="chips" id="chips">
+    <div class="chips file-only" id="chips">
       <button class="chip">Show me all white cars</button>
       <button class="chip">Find a person riding a bicycle</button>
       <button class="chip">Find people entering the frame</button>
       <button class="chip">מצא איש שרץ עם כלב</button>
       <button class="chip">Find a person wearing a red shirt between 0:10 and 1:30</button>
       <button class="chip">a woman pushing a stroller</button>
+    </div>
+    <div class="chips live-only" id="liveChips">
+      <button class="chip">תתריעי לי אם מישהו מרים סכין</button>
+      <button class="chip">Alert me if someone holds a phone</button>
+      <button class="chip">מישהו מרים ידיים</button>
+      <button class="chip">יותר משני אנשים בחדר</button>
+      <button class="chip">Alert if there is fire</button>
     </div>
     <div class="inputrow">
       <input id="queryInput" placeholder="Ask anything about your videos… / שאלו כל דבר על הסרטון…">
@@ -292,11 +327,41 @@ video{width:100%;height:100%;display:block}
 
   <!-- ===== MAIN PANE ===== -->
   <section class="mainpane">
-    <div class="demo-banner" id="demoBanner">
+    <div class="demo-banner live-only" id="liveBanner">
+      <div>📷 Pick a camera and press <b>Start</b>. Then tell the agent in the chat <b>when</b> to alert you — in English or Hebrew.</div>
+      <div dir="rtl" style="margin-top:4px">בחרי מצלמה ולחצי Start, ואז כתבי בצ'אט מתי להתריע. טלפון שמחובר כמצלמת רשת יופיע ברשימה אחרי לחיצה על 🔄.</div>
+    </div>
+
+    <div class="panel live-only">
+      <div class="videohead">
+        <h3>Live Camera <small id="camName">— not started</small></h3>
+        <div class="meta livestat" id="liveMeta"></div>
+      </div>
+      <div class="camrow">
+        <select id="camSelect" aria-label="Camera"><option value="">No cameras found yet</option></select>
+        <button class="btn small" id="camRefresh">🔄 Find cameras</button>
+        <button class="btn small primary" id="camStart">▶ Start</button>
+      </div>
+      <div class="videowrap" id="liveWrap">
+        <video id="liveVideo" autoplay muted playsinline></video>
+        <canvas class="overlay" id="liveCanvas"></canvas>
+        <div class="dropzone" id="livePlaceholder" style="cursor:default">
+          <div class="big">📷</div>
+          <div><b>Choose a camera and press Start</b><br>בחרי מצלמה ולחצי Start</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel live-only">
+      <h3>Alert Rules <small>(what I am watching for)</small></h3>
+      <div id="rulesList"><div class="empty">No alert rules yet.<br>Write in the chat when you want an alert, e.g. "תתריעי לי אם מישהו מרים סכין".</div></div>
+    </div>
+
+    <div class="demo-banner file-only" id="demoBanner">
       🧠 Upload a video — objects are detected <b>right in your browser</b> (TensorFlow.js COCO-SSD). Run the Python backend for YOLOv8 + ByteTrack, CLIP semantic search, the Claude query parser and clip export.
     </div>
 
-    <div class="panel">
+    <div class="panel file-only">
       <div class="videohead">
         <h3>Current Video <small id="videoName">— no video loaded</small></h3>
         <div class="meta" id="videoMeta"></div>
@@ -312,7 +377,7 @@ video{width:100%;height:100%;display:block}
       </div>
     </div>
 
-    <div class="panel">
+    <div class="panel file-only">
       <h3>Timeline</h3>
       <div class="timeline" id="timeline">
         <div class="tl-marks" id="tlMarks"></div>
@@ -321,7 +386,7 @@ video{width:100%;height:100%;display:block}
       <div class="tl-labels" id="tlLabels"><span>00:00</span><span>—</span></div>
     </div>
 
-    <div class="panel">
+    <div class="panel file-only">
       <h3>Detected Objects <small id="objScope">(whole video)</small></h3>
       <div class="objects" id="objects"></div>
     </div>
@@ -329,6 +394,17 @@ video{width:100%;height:100%;display:block}
 
   <!-- ===== RESULTS PANE ===== -->
   <aside class="resultspane">
+    <div class="live-only">
+      <div class="reshead"><b>Alerts</b>
+        <div class="tools">
+          <button class="btn small" id="soundBtn" title="Alert sound on / off">🔊</button>
+          <button class="btn small" id="clearAlerts" title="Clear the list">Clear</button>
+          <span class="badge" id="alertBadge">0 alerts</span>
+        </div>
+      </div>
+      <div id="alertsList"><div class="empty">No alerts yet.<br>When a rule fires, it shows up here with a snapshot.</div></div>
+    </div>
+    <div class="file-only">
     <div class="reshead"><b>Search Results</b>
       <div class="tools">
         <button class="btn small" id="exportBtn" hidden title="Download all matches: frames + clips + results.json/csv">⬇ Export ZIP</button>
@@ -342,6 +418,7 @@ video{width:100%;height:100%;display:block}
       <div class="row"><span>Time Range Searched</span><span id="sumRange">—</span></div>
       <div class="row"><span>Searched Video</span><span id="sumVideo">—</span></div>
       <div class="row"><span>Total Duration</span><span id="sumDur">—</span></div>
+    </div>
     </div>
   </aside>
 </div>
@@ -381,7 +458,7 @@ document.getElementById('nowTime').textContent =
   new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
 /* ---------- 1. VIDEO INPUT MODULE ---------- */
-$('uploadBtn').onclick = () => $('fileInput').click();
+$('uploadBtn').onclick = () => { setMode(false); $('fileInput').click(); };
 $('dropzone').onclick  = () => $('fileInput').click();
 $('fileInput').onchange = e => e.target.files[0] && loadVideo(e.target.files[0]);
 
@@ -1008,9 +1085,13 @@ async function loadMore(){
   renderResults(state.parsed);
 }
 
-$('sendBtn').onclick = () => { runSearch($('queryInput').value); $('queryInput').value=''; };
+const submitChat = text => live.on ? addRule(text) : runSearch(text);
+$('sendBtn').onclick = () => { submitChat($('queryInput').value); $('queryInput').value=''; };
 $('queryInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter'){ runSearch(e.target.value); e.target.value=''; }
+  if (e.key === 'Enter'){ submitChat(e.target.value); e.target.value=''; }
+});
+$('liveChips').addEventListener('click', e => {
+  if (e.target.classList.contains('chip')) addRule(e.target.textContent);
 });
 $('chips').addEventListener('click', e => {
   if (e.target.classList.contains('chip')) runSearch(e.target.textContent);
@@ -1291,6 +1372,379 @@ $('timeline').addEventListener('click', e => {
   const r = e.currentTarget.getBoundingClientRect();
   seekTo((e.clientX - r.left) / r.width * state.duration);
 });
+
+/* =====================================================================
+   LIVE MODE — a camera of this computer (or a phone connected as a webcam)
+   ---------------------------------------------------------------------
+   The browser opens the camera, sends one JPEG at a time to the backend
+   (WebSocket /live/ws) and waits for the answer before sending the next, so
+   the view never falls behind the camera. The backend returns the people
+   (pose skeleton), the objects (knife / gun / ...) and the alerts of the
+   rules the user wrote in the chat (POST /live/rules).
+   ===================================================================== */
+const live = {
+  on: false, stream: null, ws: null, running: false,
+  rules: [], progress: {}, alerts: [], last: null,
+  sent: 0, tShown: 0, fps: 0, sound: true, greeted: false,
+};
+const liveVideo = $('liveVideo'), liveCanvas = $('liveCanvas'), grab = document.createElement('canvas');
+const SEND_W = 640;                                   // frames are scaled down to this width
+const KIND_LABEL = { object: 'Object appears', hold: 'Holds object', raise_object: 'Raises object',
+                     hands_up: 'Hands up', person: 'People in frame' };
+const SKELETON = [[5,7],[7,9],[6,8],[8,10],[5,6],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16],[0,1],[0,2],[1,3],[2,4]];
+
+function setMode(on){
+  live.on = on;
+  document.body.classList.toggle('live', on);
+  $('navLive').classList.toggle('active', on);
+  $('navSearch').classList.toggle('active', !on);
+  $('liveBtn').classList.toggle('primary', on);
+  $('chatSub').textContent = on ? 'Tell me when to alert you · כתבי מתי להתריע' : 'Your intelligent video assistant';
+  $('queryInput').placeholder = on
+    ? 'When should I alert you? / מתי להתריע? למשל: "מישהו מרים סכין"'
+    : 'Ask anything about your videos… / שאלו כל דבר על הסרטון…';
+  if (on){
+    if (!live.greeted){
+      live.greeted = true;
+      botSay('Live mode 📷 Choose a camera, press Start, and tell me when to alert you.\n' +
+             'מצב לייב: בחרי מצלמה, לחצי Start, וכתבי לי מתי להתריע — למשל "תתריעי לי אם מישהו מרים סכין".');
+    }
+    listCameras(false);
+    loadRules();
+  } else {
+    stopCamera();
+  }
+}
+
+/* ---------- cameras ---------- */
+async function listCameras(ask){
+  const sel = $('camSelect');
+  if (!navigator.mediaDevices?.enumerateDevices){
+    sel.innerHTML = '<option value="">Camera not available here</option>';
+    botSay('The browser does not allow the camera on this page. Open the interface from the server: http://localhost:8000\n' +
+           'הדפדפן לא מאפשר מצלמה בדף הזה — צריך לפתוח את הממשק דרך http://localhost:8000');
+    return;
+  }
+  try {
+    let cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    // camera names stay hidden until the user allows the camera once
+    if (ask && (!cams.length || !cams[0].label)){
+      const s = await navigator.mediaDevices.getUserMedia({ video: true });
+      s.getTracks().forEach(t => t.stop());
+      cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    }
+    const prev = sel.value;
+    sel.innerHTML = cams.length
+      ? cams.map((c, i) => `<option value="${esc(c.deviceId)}">${esc(c.label || 'Camera ' + (i + 1))}</option>`).join('')
+      : '<option value="">No cameras found</option>';
+    if (cams.some(c => c.deviceId === prev)) sel.value = prev;
+    if (ask) botSay(cams.length
+      ? `Found ${cams.length} camera${cams.length > 1 ? 's' : ''}: ${cams.map((c, i) => c.label || 'Camera ' + (i + 1)).join(', ')}`
+      : 'No cameras found. Connect a camera (or your phone as a webcam) and press 🔄 again.');
+  } catch (e){
+    botSay('Could not access the cameras: ' + (e.message || e) + '\nצריך לאשר לדפדפן גישה למצלמה.');
+  }
+}
+$('camRefresh').onclick = () => listCameras(true);
+navigator.mediaDevices?.addEventListener?.('devicechange', () => live.on && listCameras(false));
+$('camSelect').onchange = () => { if (live.running) startCamera(); };
+$('camStart').onclick = () => live.running ? stopCamera() : startCamera();
+
+async function startCamera(){
+  if (!state.caps){
+    if (!(await backendAlive())){
+      botSay('Live mode needs the Python backend. Run it and open http://localhost:8000\n' +
+             'cd backend  →  uvicorn main:app --port 8000\nמצב לייב צריך את השרת — צריך להריץ אותו קודם.');
+      return;
+    }
+  }
+  stopCamera(true);
+  try {
+    const id = $('camSelect').value;
+    live.stream = await navigator.mediaDevices.getUserMedia({
+      video: { ...(id ? { deviceId: { exact: id } } : {}), width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false });
+  } catch (e){
+    botSay('Could not open the camera: ' + (e.message || e) + '\nאולי המצלמה תפוסה ע"י Zoom / Teams, או שלא אושרה גישה.');
+    return;
+  }
+  const track = live.stream.getVideoTracks()[0];
+  $('camName').textContent = '— ' + (track?.label || 'camera');
+  liveVideo.srcObject = live.stream;
+  await liveVideo.play().catch(() => {});
+  $('livePlaceholder').style.display = 'none';
+  $('camStart').textContent = '■ Stop';
+  $('liveDot').classList.add('green');
+  live.running = true;
+  listCameras(false);             // names are visible now that the camera is allowed
+  connectWs();
+}
+
+function stopCamera(keepView){
+  live.running = false;
+  if (live.ws){ live.ws.onclose = null; live.ws.close(); live.ws = null; }
+  if (live.stream){ live.stream.getTracks().forEach(t => t.stop()); live.stream = null; }
+  liveVideo.srcObject = null;
+  live.last = null;
+  drawLive();
+  $('camStart').textContent = '▶ Start';
+  $('liveDot').classList.remove('green');
+  $('liveMeta').textContent = '';
+  if (!keepView){ $('livePlaceholder').style.display = 'flex'; $('camName').textContent = '— not started'; }
+}
+
+/* ---------- frames to the server ---------- */
+function connectWs(){
+  const ws = new WebSocket(API.replace(/^http/, 'ws') + '/live/ws');
+  ws.binaryType = 'arraybuffer';
+  live.ws = ws;
+  ws.onopen = () => { $('liveMeta').textContent = 'loading models…'; sendFrame(); };
+  ws.onmessage = e => {
+    let out; try { out = JSON.parse(e.data); } catch { out = { error: 'bad answer' }; }
+    if (out.error){ $('liveMeta').textContent = '⚠ ' + out.error; }
+    else onResult(out);
+    sendFrame();
+  };
+  ws.onclose = () => {
+    if (!live.running) return;
+    $('liveMeta').textContent = 'connection lost — reconnecting…';
+    setTimeout(() => live.running && connectWs(), 2000);
+  };
+}
+
+function sendFrame(){
+  const ws = live.ws;
+  if (!live.running || !ws || ws.readyState !== 1) return;
+  const v = liveVideo;
+  if (!v.videoWidth){ setTimeout(sendFrame, 100); return; }
+  const sc = Math.min(1, SEND_W / v.videoWidth);
+  grab.width = Math.round(v.videoWidth * sc); grab.height = Math.round(v.videoHeight * sc);
+  grab.getContext('2d').drawImage(v, 0, 0, grab.width, grab.height);
+  grab.toBlob(b => {
+    if (b && live.ws === ws && ws.readyState === 1) ws.send(b);
+    else if (live.running) setTimeout(sendFrame, 100);
+  }, 'image/jpeg', 0.75);
+}
+
+function onResult(out){
+  const now = performance.now();
+  if (live.tShown) live.fps = live.fps ? 0.85 * live.fps + 0.15 * 1000 / (now - live.tShown) : 1000 / (now - live.tShown);
+  live.tShown = now;
+  live.last = out;
+  live.progress = out.progress || {};
+  $('liveMeta').innerHTML = `<span class="dot green"></span> ${live.fps.toFixed(1)} fps · ${out.ms} ms · ` +
+    `${out.persons.length} ${out.persons.length === 1 ? 'person' : 'people'}` +
+    (out.objects.length ? ' · ' + out.objects.map(o => o.cls).join(', ') : '');
+  drawLive();
+  renderRuleProgress();
+  (out.alerts || []).forEach(a => onAlert(a, out));
+}
+
+/* ---------- drawing ---------- */
+function pictureRect(){
+  const fw = liveCanvas.clientWidth, fh = liveCanvas.clientHeight;
+  const ar = (liveVideo.videoWidth / liveVideo.videoHeight) || 16/9;
+  const pw = Math.min(fw, fh * ar), ph = Math.min(fh, fw / ar);
+  return { fw, fh, ox: (fw - pw) / 2, oy: (fh - ph) / 2, pw, ph };
+}
+
+function drawLive(){
+  const dpr = window.devicePixelRatio || 1;
+  const { fw, fh, ox, oy, pw, ph } = pictureRect();
+  liveCanvas.width = fw * dpr; liveCanvas.height = fh * dpr;
+  const g = liveCanvas.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, fw, fh);
+  const out = live.last;
+  if (!out || !out.w) return;
+  const sx = pw / out.w, sy = ph / out.h;
+  const X = x => ox + x * sx, Y = y => oy + y * sy;
+  g.font = '600 11px Segoe UI, system-ui, sans-serif';
+  const hot = new Set((out.alerts || []).map(a => String(a.person)));
+
+  for (const o of out.objects){
+    const [x1, y1, x2, y2] = o.box;
+    g.strokeStyle = '#f0564c'; g.lineWidth = 2;
+    g.strokeRect(X(x1), Y(y1), (x2 - x1) * sx, (y2 - y1) * sy);
+    tagAt(g, `${o.cls} ${Math.round(o.conf * 100)}%`, X(x1), Y(y1), '#f0564c');
+  }
+  out.persons.forEach(p => {
+    const k = p.kpts, color = hot.has(String(p.id)) ? '#f0564c' : '#3ddc97';
+    g.strokeStyle = color; g.lineWidth = 2.5;
+    for (const [a, b] of SKELETON){
+      if (k[a][2] < .3 || k[b][2] < .3) continue;
+      g.beginPath(); g.moveTo(X(k[a][0]), Y(k[a][1])); g.lineTo(X(k[b][0]), Y(k[b][1])); g.stroke();
+    }
+    g.fillStyle = color;
+    k.forEach(([x, y, c]) => { if (c >= .3){ g.beginPath(); g.arc(X(x), Y(y), 3, 0, 7); g.fill(); } });
+    for (const w of [9, 10]){                       // wrists: what "holding" is measured with
+      if (k[w][2] < .3) continue;
+      g.strokeStyle = '#4cc9f0'; g.lineWidth = 2;
+      g.beginPath(); g.arc(X(k[w][0]), Y(k[w][1]), 7, 0, 7); g.stroke();
+    }
+    tagAt(g, 'id ' + p.id, X(p.box[0]), Y(p.box[1]), color);
+  });
+}
+
+function tagAt(g, text, x, y, color){
+  const w = g.measureText(text).width + 8;
+  y = Math.max(y, 16);
+  g.fillStyle = color; g.fillRect(x, y - 16, w, 16);
+  g.fillStyle = '#06121a'; g.fillText(text, x + 4, y - 4);
+}
+window.addEventListener('resize', () => live.on && drawLive());
+
+/* ---------- alerts ---------- */
+let audioCtx = null;
+function beep(){
+  if (!live.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    [0, .22].forEach(dt => {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      o.frequency.value = 880; o.type = 'square'; gn.gain.value = .06;
+      o.connect(gn); gn.connect(audioCtx.destination);
+      o.start(audioCtx.currentTime + dt); o.stop(audioCtx.currentTime + dt + .15);
+    });
+  } catch { /* no audio */ }
+}
+
+function snapshot(a, out){
+  // the frame that was sent (grab still holds it) with the alert's box on it
+  const c = document.createElement('canvas');
+  c.width = grab.width; c.height = grab.height;
+  const g = c.getContext('2d');
+  g.drawImage(grab, 0, 0);
+  if (a.box){
+    const s = c.width / out.w, [x1, y1, x2, y2] = a.box;
+    g.strokeStyle = '#f0564c'; g.lineWidth = 3;
+    g.strokeRect(x1 * s, y1 * s, (x2 - x1) * s, (y2 - y1) * s);
+  }
+  return c.toDataURL('image/jpeg', 0.8);
+}
+
+function onAlert(a, out){
+  const item = { ...a, time: new Date(), img: snapshot(a, out) };
+  live.alerts.unshift(item);
+  beep();
+  const wrap = $('liveWrap');
+  wrap.classList.remove('alarm'); void wrap.offsetWidth; wrap.classList.add('alarm');
+  addMsg('alert', '🚨 ' + a.description + (a.person != null ? ` (id ${a.person})` : ''));
+  renderAlerts();
+}
+
+function renderAlerts(){
+  $('alertBadge').textContent = `${live.alerts.length} alert${live.alerts.length === 1 ? '' : 's'}`;
+  $('alertsList').innerHTML = !live.alerts.length
+    ? '<div class="empty">No alerts yet.<br>When a rule fires, it shows up here with a snapshot.</div>'
+    : live.alerts.slice(0, 100).map((a, i) => `
+      <div class="rescard alertcard">
+        <div class="thumb"><img src="${a.img}" alt="alert snapshot"></div>
+        <div class="info"><b>🚨 ${esc(KIND_LABEL[a.kind] || a.kind)}${a.object ? ' · ' + esc(a.object) : ''}</b>
+          <span style="direction:auto;display:block">${esc(a.description)}</span>
+          ${a.time.toLocaleTimeString()}${a.person != null ? ' · person id ' + esc(a.person) : ''}
+          <div class="actions"><button data-i="${i}">⬇ Image</button></div>
+        </div>
+      </div>`).join('');
+}
+$('alertsList').addEventListener('click', e => {
+  const i = e.target.dataset?.i;
+  if (i == null) return;
+  const a = live.alerts[+i], link = document.createElement('a');
+  link.href = a.img; link.download = `alert_${a.time.toISOString().replace(/[:.]/g, '-')}.jpg`; link.click();
+});
+$('clearAlerts').onclick = () => { live.alerts = []; renderAlerts(); };
+$('soundBtn').onclick = () => { live.sound = !live.sound; $('soundBtn').textContent = live.sound ? '🔊' : '🔇'; };
+
+/* ---------- rules from the chat ---------- */
+async function loadRules(){
+  if (!state.caps && !(await backendAlive())) return;
+  try {
+    live.rules = (await (await fetch(API + '/live/rules')).json()).rules || [];
+    renderRules();
+  } catch { /* server without live mode */ }
+}
+
+let addingRule = false;
+async function addRule(text){
+  if (!text.trim() || addingRule) return;
+  addMsg('user', text);
+  if (!state.caps && !(await backendAlive())){
+    botSay('Alerts need the Python backend (uvicorn main:app --port 8000).\nהתרעות צריכות את השרת — צריך להריץ אותו קודם.');
+    return;
+  }
+  addingRule = true;
+  try {
+    const r = await fetch(API + '/live/rules', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    if (!r.ok) throw new Error('server ' + r.status);
+    const out = await r.json();
+    if (!out.rule){
+      botSay((out.reason || 'I could not turn that into an alert.') + '\n\n' +
+        'I can alert when: an object appears · someone holds an object · someone raises an object · hands up · N people in the frame.\n' +
+        'אני יודעת להתריע כש: אובייקט מופיע · מישהו מחזיק אובייקט · מישהו מרים אובייקט · ידיים למעלה · מספר אנשים בפריים.');
+      return;
+    }
+    live.rules.push(out.rule);
+    addRuleCard(out.rule, out.source);
+    const he = /[֐-׿]/.test(text);
+    botSay((he ? 'הגדרתי: ' : 'Set: ') + out.rule.description +
+           (live.running ? '' : he ? '\nלחצי ▶ Start כדי להתחיל' : '\nPress ▶ Start to begin watching'));
+    renderRules();
+  } catch (e){
+    botSay('Could not add the alert: ' + (e.message || e));
+  } finally {
+    addingRule = false;
+  }
+}
+
+function addRuleCard(r, source){
+  const rows = [['Alert', KIND_LABEL[r.kind] || r.kind]];
+  if (r.object) rows.push(['Object', r.object]);
+  if (r.kind === 'person') rows.push(['People', '≥ ' + r.min_people]);
+  rows.push(['Must last', r.duration + ' s'], ['Repeat after', r.cooldown + ' s']);
+  const src = { llm: 'Claude', rules: 'rules (server)' }[source] || source || '';
+  const d = document.createElement('div');
+  d.className = 'parsed';
+  d.innerHTML = `<h4>🔔 Alert Rule ${src ? `<span class="tag">${esc(src)}</span>` : ''}</h4>` +
+    rows.map(x => `<div class="prow"><span>${x[0]}</span><span>${esc(x[1])}</span></div>`).join('');
+  $('messages').appendChild(d);
+  $('messages').scrollTop = 1e9;
+}
+
+function renderRules(){
+  $('rulesList').innerHTML = !live.rules.length
+    ? '<div class="empty">No alert rules yet.<br>Write in the chat when you want an alert, e.g. "תתריעי לי אם מישהו מרים סכין".</div>'
+    : live.rules.map(r => `
+      <div class="rule" data-id="${esc(r.id)}">
+        <div class="rinfo">🔔 ${esc(r.description)}
+          <small>${esc(KIND_LABEL[r.kind] || r.kind)}${r.object ? ' · ' + esc(r.object) : ''} · ${r.duration}s · “${esc(r.text)}”</small>
+          <div class="rbar"><i></i></div>
+        </div>
+        <button title="Remove this alert" data-del="${esc(r.id)}">✕</button>
+      </div>`).join('');
+  renderRuleProgress();
+}
+
+function renderRuleProgress(){
+  document.querySelectorAll('#rulesList .rule').forEach(el => {
+    const p = live.progress[el.dataset.id] || 0;
+    el.querySelector('.rbar i').style.width = (p * 100) + '%';
+    el.classList.toggle('hot', p >= 1);
+  });
+}
+
+$('rulesList').addEventListener('click', async e => {
+  const id = e.target.dataset?.del;
+  if (!id) return;
+  try { await fetch(`${API}/live/rules/${encodeURIComponent(id)}`, { method: 'DELETE' }); } catch {}
+  live.rules = live.rules.filter(r => r.id !== id);
+  renderRules();
+});
+
+$('navSearch').onclick = () => setMode(false);
+$('navLive').onclick = () => setMode(true);
+$('liveBtn').onclick = () => setMode(!live.on);
 
 // the side menu has no pages yet: keep "#" links from jumping to the top
 document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
