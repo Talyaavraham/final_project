@@ -74,7 +74,7 @@ class LiveEngine:
     # ------------------------------------------------------------ rules
     def add_rule(self, rule):
         """-> the rule kept: an existing one when the same alert is already set."""
-        key = lambda r: (r["kind"], r["object"], r["min_people"], r.get("hands", 0))
+        key = lambda r: (r["kind"], r["object"], r["min_people"], r.get("hands", 0))   # same alert = same rule
         with self.rules_lock:
             for r in self.rules:
                 if key(r) == key(rule):
@@ -132,7 +132,8 @@ class LiveEngine:
         t0 = time.time()
         with self.lock:
             rules = self.list_rules()
-            persons, objects = self.perceive(frame, {x["object"] for x in rules if x["object"]})
+            wanted = set().union(*(alert_rules.rule_objects(x) for x in rules)) if rules else set()
+            persons, objects = self.perceive(frame, wanted)
             alerts, progress = self.evaluator.step(rules, persons, objects, time.monotonic())
         for a in alerts:   # visible in the server window, for debugging
             print(f"[live] ALERT: {a['label']}  (rule {a['rule']}, person {a['person']})", flush=True)

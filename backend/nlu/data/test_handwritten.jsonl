@@ -58,3 +58,11 @@
 {"text": "אם מישהו לוקח תיק", "kind": "hold", "object": "bag", "hands": 0}
 {"text": "someone grabs a bag", "kind": "hold", "object": "bag", "hands": 0}
 {"text": "מישהי פותחת מטריה", "kind": "hold", "object": "umbrella", "hands": 0}
+{"text": "אם מישהו מדליק אש ליד הדלת", "kind": "ignite", "object": "", "hands": 0}
+{"text": "someone setting the trash on fire", "kind": "ignite", "object": "", "hands": 0}
+{"text": "תתריעי אם מישהו מנסה לשרוף משהו", "kind": "ignite", "object": "", "hands": 0}
+{"text": "alert me about arson", "kind": "ignite", "object": "", "hands": 0}
+{"text": "אם מישהו לוקח לי את התיק", "kind": "snatch", "object": "bag", "hands": 0}
+{"text": "someone grabs a purse and runs", "kind": "snatch", "object": "bag", "hands": 0}
+{"text": "תתריעי אם גונבים לי את הטלפון", "kind": "snatch", "object": "cell phone", "hands": 0}
+{"text": "if someone steals the laptop from the table", "kind": "snatch", "object": "laptop", "hands": 0}

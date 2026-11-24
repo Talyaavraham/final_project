@@ -308,8 +308,9 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
     </div>
     <div class="chips live-only" id="liveChips">
       <button class="chip">מישהו מרים יד</button>
-      <button class="chip">מישהו מחזיק טלפון</button>
       <button class="chip">מישהו מרים סכין</button>
+      <button class="chip">מישהו מצית אש</button>
+      <button class="chip">מישהו חוטף תיק</button>
       <button class="chip">יותר משני אנשים בחדר</button>
     </div>
     <div class="inputrow">
@@ -1718,8 +1719,8 @@ async function addRule(text){
     const out = await r.json();
     if (!out.rule){
       botSay((out.reason || (he ? 'לא הצלחתי להבין על מה להתריע 🤔' : "I couldn't tell what to alert you about 🤔")) + '\n' +
-        (he ? 'אפשר לנסות למשל: "מישהו מרים סכין", "מישהו מחזיק טלפון", "מישהו מרים יד", "יותר משני אנשים בחדר"'
-            : 'Try for example: "someone raises a knife", "someone holds a phone", "hands up", "more than 2 people"'));
+        (he ? 'אפשר לנסות למשל: "מישהו מרים סכין", "מישהו מצית אש", "מישהו חוטף תיק", "מישהו מרים יד", "יותר משני אנשים בחדר"'
+            : 'Try for example: "someone raises a knife", "someone starts a fire", "someone snatches a bag", "hands up"'));
       return;
     }
     if (out.new === false){

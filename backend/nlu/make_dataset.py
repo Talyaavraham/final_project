@@ -2,7 +2,7 @@
 Builds the phrase dataset for our alert-request model from templates.
 
 Every example: {"text", "kind", "object", "hands", "split", "template"}
-  kind    object / hold / raise_object / hands_up / person / none
+  kind    object / hold / raise_object / hands_up / person / ignite / snatch / none
           (none = something we cannot detect, or not an alert request at all)
   object  detector class for object / hold / raise_object, else ""
   hands   1 or 2 for hands_up, else 0
@@ -69,6 +69,13 @@ HE_NONE = ["{s} נופל", "{s} נפל", "{s} רץ", "{s} צועק", "{s} גונ
            "יש תאונה", "{s} מתווכח", "מה מזג האוויר", "ספרי לי בדיחה", "שלום", "תודה רבה", "אוקיי", "מה קורה",
            "מה עשית היום", "איך קוראים לך", "מישהו נפגע", "{s} מטפס על הגדר", "{s} פורץ לרכב", "{s} מתנהג מוזר"]
 HE_NONE_TEST = ["{s} מחליק", "{s} מתעלף", "יש פה ריב", "מה נשמע"]
+HE_IGNITE = ["{s} מצית אש", "{s} מדליק אש", "{s} מצית את הפח", "{s} שורף משהו", "{s} מצית שריפה",
+             "יש הצתה", "{s} מדליק משהו עם מצית", "{s} מנסה להצית", "{s} מצית את הרכב", "{s} שורף את הדלת"]
+HE_IGNITE_F = ["{s} מציתה אש", "{s} מדליקה אש", "{s} שורפת משהו"]
+HE_IGNITE_TEST = ["{s} מבעיר את המקום", "{s} מעלה באש את החנות"]
+HE_SNATCH_M = ["חוטף", "גונב", "סוחב", "בורח עם", "לוקח בלי רשות", "חוטף ובורח עם"]
+HE_SNATCH_F = ["חוטפת", "גונבת", "סוחבת", "בורחת עם"]
+HE_SNATCH_TEST = ["שודד", "מעלים"]
 HE_NUM = ["שני", "שלושה", "2", "3", "4"]
 HE_DUR = ["", "", "", " במשך 2 שניות", " ליותר משנייה", " למשך 3 שניות"]
 
@@ -119,6 +126,13 @@ EN_NONE = ["{s} falls", "{s} falls down", "a fight breaks out", "{s} is running"
            "{s} argues", "what's the weather", "tell me a joke", "hi", "thank you", "ok", "how are you",
            "what's your name", "{s} gets hurt", "{s} climbs the fence", "{s} breaks into a car", "{s} acts weird"]
 EN_NONE_TEST = ["{s} slips", "{s} faints", "two people are arguing", "what's up"]
+EN_IGNITE = ["{s} sets fire to the bin", "{s} starts a fire", "{s} lights a fire", "{s} sets something on fire",
+             "{s} is setting fire to the car", "arson", "{s} ignites something", "{s} burns the door",
+             "{s} tries to start a fire"]
+EN_IGNITE_TEST = ["{s} torches the shop", "{s} sets the place ablaze"]
+EN_SNATCH = ["snatches", "steals", "runs off with", "grabs and runs with", "takes away", "is stealing",
+             "robs someone of"]
+EN_SNATCH_TEST = ["makes off with", "swipes"]
 EN_NUM = ["2", "3", "4", "two", "three"]
 EN_DUR = ["", "", "", " for 2 seconds", " for more than a second", " for 3 seconds"]
 
@@ -223,6 +237,35 @@ def build(seed=0, per_kind=900):
             pat = rnd.choice(EN_PERSON_TEST if test else EN_PERSON)
             add(split, "en", "person", "", pat.format(s=rnd.choice(subj), n=rnd.choice(EN_NUM)),
                 wraps=EN_WRAP_TEST if test else EN_WRAP, dur=[""])
+        # -------- ignite
+        for _ in range(n):
+            if test:
+                body = rnd.choice(HE_IGNITE_TEST).format(s=rnd.choice(HE_SUBJ_TEST))
+            elif rnd.random() < 0.3:
+                body = rnd.choice(HE_IGNITE_F).format(s=rnd.choice(HE_SUBJ_F))
+            else:
+                body = rnd.choice(HE_IGNITE).format(s=rnd.choice(HE_SUBJ_M))
+            add(split, "he", "ignite", "", body, wraps=HE_WRAP_TEST if test else HE_WRAP)
+            body = rnd.choice(EN_IGNITE_TEST if test else EN_IGNITE).format(s=rnd.choice(subj))
+            add(split, "en", "ignite", "", body, wraps=EN_WRAP_TEST if test else EN_WRAP)
+        # -------- snatch (an object that is not theirs)
+        sn_objs = {c: w for c, w in HE_OBJ.items() if c in ("bag", "cell phone", "laptop", "umbrella", "book", "bottle")}
+        en_sn = {c: w for c, w in EN_OBJ.items() if c in sn_objs}
+        for _ in range(n):
+            cls = rnd.choice(list(sn_objs))
+            word = rnd.choice(sn_objs[cls] + (HE_OBJ_TEST.get(cls, []) if test else []))
+            if test:
+                body = f"{rnd.choice(HE_SUBJ_TEST + HE_SUBJ_M[:1])} {_join(rnd.choice(HE_SNATCH_TEST), word)}"
+            elif rnd.random() < 0.3:
+                body = f"{rnd.choice(HE_SUBJ_F)} {_join(rnd.choice(HE_SNATCH_F), word)}"
+            else:
+                body = f"{rnd.choice(HE_SUBJ_M)} {_join(rnd.choice(HE_SNATCH_M), word)}"
+            add(split, "he", "snatch", cls, body, wraps=HE_WRAP_TEST if test else HE_WRAP)
+            cls = rnd.choice(list(en_sn))
+            word = rnd.choice(en_sn[cls] + (EN_OBJ_TEST.get(cls, []) if test else []))
+            verb = rnd.choice(EN_SNATCH_TEST if test else EN_SNATCH)
+            poss = rnd.choice(["a", "my", "someone's", "the"])
+            add(split, "en", "snatch", cls, f"{rnd.choice(subj)} {verb} {poss} {word}", wraps=EN_WRAP_TEST if test else EN_WRAP)
         # -------- none: not detectable / not an alert request
         for _ in range(n):
             pat = rnd.choice(HE_NONE_TEST if test else HE_NONE)

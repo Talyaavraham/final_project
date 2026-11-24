@@ -137,3 +137,90 @@ def test_combined_parser_runs_locally():
     assert out["source"] in ("rules", "model", "model+rules")
     assert ar.parse("מה השעה")["rule"] is None
     assert not hasattr(ar, "parse_llm")
+
+
+# ------------------------------------------------ ignite / snatch: positives and look-alikes
+def walker(pid, x, wrist=None):
+    """a person standing at x (box 100 wide, 320 tall); the right wrist at `wrist` if given."""
+    k = [[x + 50.0, 120.0, 0.9] for _ in range(17)]
+    k[ar.L_SHOULDER], k[ar.R_SHOULDER] = [x + 40, 150, .9], [x + 60, 150, .9]
+    k[ar.L_WRIST] = [x + 30, 260, .9]
+    k[ar.R_WRIST] = list(wrist) + [.9] if wrist else [x + 70, 260, .9]
+    return {"id": pid, "box": [x, 80, x + 100, 400], "kpts": k}
+
+
+def obj(cls, cx, cy, size=40, conf=0.6):
+    return {"cls": cls, "conf": conf, "box": [cx - size / 2, cy - size / 2, cx + size / 2, cy + size / 2]}
+
+
+def play(r, frames, dt=1 / 3):
+    ev, t, fired = ar.Evaluator(), 0.0, 0
+    for persons, objects in frames:
+        t += dt
+        fired += len(ev.step([r], persons, objects, t)[0])
+    return fired
+
+
+def test_parse_ignite_and_snatch():
+    assert rule("מישהו מצית אש")["kind"] == "ignite"
+    assert rule("someone sets fire to the bin")["kind"] == "ignite"
+    assert rule("יש שריפה")["kind"] == "object"                 # fire alone: the object rule
+    sn = rule("מישהו חוטף תיק")
+    assert (sn["kind"], sn["object"]) == ("snatch", "bag")
+    assert rule("someone runs off with a laptop")["object"] == "laptop"
+    assert ar.parse_rules("מישהו גונב") is None                 # steals what? not understood
+
+
+def test_ignite_fire_appears_where_someone_stood():
+    r = rule("מישהו מצית אש")
+    before = [([walker(1, 100)], [])] * 15                       # 5 s, a person at x=100
+    fire = [([walker(1, 100)], [obj("fire", 190, 380)])] * 6     # fire appears at their feet
+    assert play(r, before + fire) == 1
+
+
+def test_ignite_person_left_before_the_fire():
+    r = rule("מישהו מצית אש")
+    frames = [([walker(1, 100)], [])] * 12 + [([], [])] * 9 + [([], [obj("fire", 190, 380)])] * 6
+    assert play(r, frames) == 1                                  # was there 3 s before: within PRESENCE_BEFORE
+
+
+def test_ignite_not_for_fire_that_was_already_burning():
+    r = rule("מישהו מצית אש")
+    frames = [([walker(1, 100)], [obj("fire", 190, 380)])] * 30   # fire from the first frame
+    assert play(r, frames) == 0
+
+
+def test_ignite_not_for_fire_far_from_anyone():
+    r = rule("מישהו מצית אש")
+    frames = [([walker(1, 100)], [])] * 15 + [([walker(1, 100)], [obj("fire", 900, 380)])] * 6
+    assert play(r, frames) == 0
+
+
+def test_snatch_someone_takes_anothers_bag():
+    r = rule("מישהו חוטף תיק")
+    own = [([walker(1, 100)], [obj("bag", 160, 330)])] * 9                         # A next to their bag, 3 s
+    grab = [([walker(1, 100), walker(2, 220, wrist=(165, 330))], [obj("bag", 160, 330)])] * 2
+    run = [([walker(1, 100), walker(2, 220 + 40 * i, wrist=(165 + 40 * i, 330))], [obj("bag", 160 + 40 * i, 330)])
+           for i in range(1, 8)]                                                  # B carries it away
+    assert play(r, own + grab + run) == 1
+
+
+def test_snatch_not_when_the_owner_takes_their_own_bag():
+    r = rule("מישהו חוטף תיק")
+    own = [([walker(1, 100, wrist=(160, 330))], [obj("bag", 160, 330)])] * 9
+    leave = [([walker(1, 100 + 40 * i, wrist=(160 + 40 * i, 330))], [obj("bag", 160 + 40 * i, 330)]) for i in range(1, 8)]
+    assert play(r, own + leave) == 0
+
+
+def test_snatch_a_bag_that_was_left_alone():
+    r = rule("מישהו חוטף תיק")
+    alone = [([], [obj("bag", 500, 330)])] * 9                                     # a bag on its own, 3 s
+    take = [([walker(2, 400 + 40 * i, wrist=(500 + 40 * i, 330))], [obj("bag", 500 + 40 * i, 330)]) for i in range(8)]
+    assert play(r, alone + take) == 1
+
+
+def test_snatch_not_when_someone_only_touches_it():
+    r = rule("מישהו חוטף תיק")
+    own = [([walker(1, 100)], [obj("bag", 160, 330)])] * 9
+    touch = [([walker(1, 100), walker(2, 220, wrist=(165, 330))], [obj("bag", 160, 330)])] * 12
+    assert play(r, own + touch) == 0
