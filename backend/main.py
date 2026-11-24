@@ -17,6 +17,9 @@ FastAPI server:
   POST /live/rules         live mode: a sentence -> an alert rule (our language model / rules)
   GET  /live/rules, DELETE /live/rules/{id}
   WS   /live/ws            live mode: JPEG frames in -> people, objects, alerts out
+  POST /events             search a recorded video for an ACTION ("someone snatches a bag"): the
+                           live perception runs over the video once (cached), then the alert rule
+  GET  /events/status?video=
   GET/POST /labels, DELETE /labels/{video}, POST /labels/video
                            labelling mode: events marked in our own videos (live/data/labels.json)
 
@@ -394,6 +397,104 @@ async def live_ws(ws: WebSocket):
             await ws.send_json(out)
     except WebSocketDisconnect:
         pass
+
+
+# ---------------------------------------------------- actions in recorded videos
+# The same alert rules as the live camera, on an uploaded video: "מישהו חוטף
+# תיק" in the search chat. The live perception (pose + detectors) runs over
+# the video once at EVENT_FPS and is cached in live/data/perception (the same
+# cache live/eval_alerts.py uses); then any action rule is answered in seconds.
+EVENT_FPS = float(os.environ.get("EVENT_FPS", "3"))
+EVENT_KINDS = {"hold", "raise_object", "hands_up", "ignite", "snatch"}
+EVENT_STATUS: dict[str, dict] = {}
+_offline = {"engine": None}
+_offline_lock = threading.Lock()
+
+
+class EventRequest(BaseModel):
+    video: str
+    text: str
+
+
+def _perception_path(video):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "live", "data", "perception", video + ".jsonl")
+
+
+def _perceive_bg(video, path, out):
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "live"))
+    from perceive import perceive_video
+    from live_engine import LiveEngine
+    st = EVENT_STATUS[video]
+    try:
+        with _offline_lock:            # one video at a time; its own engine, so the live camera is not disturbed
+            if _offline["engine"] is None:
+                _offline["engine"] = LiveEngine()
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            perceive_video(_offline["engine"], path, out, EVENT_FPS, progress=lambda p: st.update(progress=p))
+        st.update(status="ready", progress=1.0)
+    except Exception as e:  # noqa: BLE001
+        st.update(status="error", error=str(e))
+
+
+def _cached_fps(out):
+    import json
+    try:
+        with open(out, encoding="utf-8") as f:
+            return json.loads(f.readline()).get("fps")
+    except (OSError, ValueError):
+        return None
+
+
+@app.get("/events/status")
+def events_status(video: str):
+    out = _perception_path(safe_name(video))
+    if _cached_fps(out) == EVENT_FPS:
+        return {"status": "ready", "progress": 1.0}
+    return EVENT_STATUS.get(safe_name(video), {"status": "none", "progress": 0.0})
+
+
+@app.post("/events")
+def search_events(req: EventRequest):
+    """{"event": false} when the sentence is not an action (the normal search answers it);
+    {"event": true, "status": "perceiving", "progress"} while the video is analysed;
+    {"event": true, "status": "ready", "rule", "results"} with the moments it happens."""
+    import json
+    parsed = alert_rules.parse(req.text, live.classes())
+    rule = parsed.get("rule")
+    if not rule or rule["kind"] not in EVENT_KINDS:
+        return {"event": False}
+    video = safe_name(req.video)
+    path = video_path(video)
+    out = _perception_path(video)
+    if _cached_fps(out) != EVENT_FPS:
+        st = EVENT_STATUS.get(video)
+        if not st or st.get("status") in ("error", "ready"):
+            EVENT_STATUS[video] = {"status": "perceiving", "progress": 0.0}
+            threading.Thread(target=_perceive_bg, args=(video, path, out), daemon=True).start()
+        return {"event": True, "status": EVENT_STATUS[video]["status"], "progress": EVENT_STATUS[video]["progress"],
+                "error": EVENT_STATUS[video].get("error"), "rule": rule}
+    with open(out, encoding="utf-8") as f:
+        head = json.loads(f.readline())
+        frames = [json.loads(l) for l in f if l.strip()]
+    W, H = max(1, head.get("w") or 1), max(1, head.get("h") or 1)
+    rule["cooldown"] = 3.0                     # a recorded video: list every separate moment
+    ev, results = alert_rules.Evaluator(), []
+    for fr in frames:
+        objs = [o for o in fr["objects"] if o["conf"] >= live_conf()]
+        for a in ev.step([rule], fr["persons"], objs, fr["t"])[0]:
+            b = a.get("box")
+            box = ({"x": 100 * b[0] / W, "y": 100 * b[1] / H, "w": 100 * (b[2] - b[0]) / W, "h": 100 * (b[3] - b[1]) / H}
+                   if b else {"x": 0, "y": 0, "w": 100, "h": 100})
+            t = fr["t"]
+            results.append({"t": max(0.0, t - 2.0), "dur": 4.0, "best_t": t, "label": rule["label"],
+                            "cls": "event" if b else "scene", "conf": 1.0, "box": box})
+    return {"event": True, "status": "ready", "rule": rule, "results": results, "total": len(results)}
+
+
+def live_conf():
+    import live_engine
+    return live_engine.CONF
 
 
 # ------------------------------------------------------------- labelling

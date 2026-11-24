@@ -63,7 +63,8 @@ def videos_from(args):
     return paths
 
 
-def perceive_video(engine, path, out_path, fps):
+def perceive_video(engine, path, out_path, fps, progress=None):
+    """progress(fraction) is called now and then (for the server's status)."""
     cap = cv2.VideoCapture(path)
     if not cap.isOpened():
         print(f"  cannot open {path}")
@@ -94,8 +95,12 @@ def perceive_video(engine, path, out_path, fps):
                 persons, objects = engine.perceive(frame, wanted=KEEP, conf=KEEP_CONF)
             f.write(json.dumps({"t": round(t, 3), "persons": persons, "objects": objects}) + "\n")
             kept += 1
+            if progress and n and kept % 5 == 0:
+                progress(min(0.99, i / n))
     cap.release()
     os.replace(tmp, out_path)
+    if progress:
+        progress(1.0)
     print(f"  {kept} frames in {time.time() - t0:.0f}s")
     return True
 

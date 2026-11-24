@@ -1086,6 +1086,9 @@ async function runSearch(text){
     await state.indexing;
     if (id !== state.loadId) return;
 
+    // an action ("מישהו חוטף תיק")? the alert rules of the live mode answer it
+    if (state.engine === 'backend' && await searchEvents(text, id)) return;
+
     const parsed = await parseAny(text);
     addParsedCard(parsed);
     if (!parsed.objects.length && !parsed.colors.length && !parsed.actions.length && !parsed.semantic){
@@ -1108,6 +1111,39 @@ async function runSearch(text){
   } finally {
     searching = false;
   }
+}
+
+/* actions in a recorded video: the server runs the live perception over the
+   video once (cached), then the same alert rule as the camera. -> true when
+   the sentence was an action and has been answered here. */
+async function searchEvents(text, id){
+  let out;
+  const ask = async () => (await fetch(API + '/events', { method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ video: state.videoName, text }) })).json();
+  try { out = await ask(); } catch { return false; }
+  if (!out || !out.event) return false;
+  const d = document.createElement('div');
+  d.className = 'understood';
+  d.innerHTML = `🎬 מחפשת פעולה: <span>${esc(out.rule.label)}</span>`;
+  $('messages').appendChild(d); $('messages').scrollTop = 1e9;
+  if (out.status !== 'ready'){
+    botSay('כדי למצוא פעולות אני עוברת על הסרטון עם מודל השלד. זה קורה פעם אחת לכל סרטון, ואחר כך כל פעולה נמצאת מיד.');
+    while (out.status !== 'ready' && id === state.loadId){
+      if (out.status === 'error'){ botSay('הניתוח נכשל: ' + (out.error || '')); return true; }
+      setBanner(`⏳ מנתחת תנועות בסרטון… ${Math.round((out.progress || 0) * 100)}%`, 'wait');
+      await new Promise(r => setTimeout(r, 1500));
+      try { out = await ask(); } catch { return true; }
+    }
+    if (id !== state.loadId) return true;
+    setBanner('✅ הסרטון מוכן לחיפוש, כולל פעולות', 'ok');
+  }
+  state.matches = out.results; state.total = out.total;
+  state.parsed = { objects: [], colors: [], actions: [], timeRange: null }; state.rawQuery = text;
+  botSay(out.total
+    ? `מצאתי ${out.total === 1 ? 'רגע אחד' : out.total + ' רגעים'} שבהם ${out.rule.label}. לחיצה על תוצאה קופצת אליה.`
+    : `לא מצאתי בסרטון רגע שבו ${out.rule.label}.`);
+  renderResults(state.parsed);
+  return true;
 }
 
 async function loadMore(){
@@ -1134,7 +1170,8 @@ $('chips').addEventListener('click', e => {
 
 /* ---------- 5. RESULT VISUALIZATION ---------- */
 const ICONS = { person:['🧍','אנשים'], car:['🚗','מכוניות'], bus:['🚌','אוטובוסים'], truck:['🚚','משאיות'],
-  bicycle:['🚲','אופניים'], motorcycle:['🏍','אופנועים'], dog:['🐕','כלבים'], cat:['🐈','חתולים'], bag:['🎒','תיקים'] };
+  bicycle:['🚲','אופניים'], motorcycle:['🏍','אופנועים'], dog:['🐕','כלבים'], cat:['🐈','חתולים'], bag:['🎒','תיקים'],
+  event:['🎬','פעולות'], scene:['🎞','סצנות'] };
 
 const iconOf = k => ICONS[k] || ['🔹', k.charAt(0).toUpperCase() + k.slice(1)];
 
