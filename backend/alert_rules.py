@@ -8,7 +8,8 @@ A rule is one of five kinds:
     hold          a person holds an object               "מישהו מחזיק טלפון"
     raise_object  a person raises an object above the    "תתריעי אם מישהו מרים סכין"
                   shoulder (the hand that held it)
-    hands_up      a person raises both hands             "hands up"
+    hands_up      a person raises a hand (hands=1) or     "מישהו מרים יד" / "hands up"
+                  both hands (hands=2) above the shoulders
     person        at least N people in the frame         "יותר משני אנשים בחדר"
 
 "Holds" = a wrist keypoint is on (near) the object's box. Detectors flicker
@@ -79,7 +80,8 @@ RAISE_WORDS = ["raise", "raises", "raising", "raised", "lift", "lifts", "lifting
 HOLD_WORDS = ["hold", "holds", "holding", "grab", "grabs", "grabbing", "carry", "carries", "carrying",
               "pick", "picks", "has", "with", "מחזיק", "מחזיקה", "מחזיקים", "אוחז", "אוחזת", "תופס",
               "תופסת", "לוקח", "לוקחת", "עם"]
-HAND_WORDS = ["hands", "hand", "arms", "ידיים", "ידים", "יד", "הידיים"]
+HAND_WORDS = ["hands", "hand", "arms", "arm", "ידיים", "ידים", "יד", "זרוע", "זרועות"]
+BOTH_HANDS = ["hands", "arms", "both", "ידיים", "ידים", "זרועות", "שתי", "שני"]   # plural -> both hands
 UP_WORDS = ["up", "למעלה", "מעל"]
 PEOPLE_WORDS = ["person", "people", "persons", "someone", "somebody", "anyone", "man", "woman",
                 "אדם", "אנשים", "מישהו", "מישהי", "איש", "אישה", "בנאדם"]
@@ -158,7 +160,7 @@ def parse_people(text: str) -> Optional[int]:
 
 
 def make_rule(text, kind, obj="", min_people=1, duration=None, cooldown=None,
-              description="", source="rules", label=""):
+              description="", source="rules", label="", hands=2):
     kind = kind if kind in KINDS else None
     if kind is None:
         return None
@@ -166,6 +168,7 @@ def make_rule(text, kind, obj="", min_people=1, duration=None, cooldown=None,
         "id": uuid.uuid4().hex[:8], "text": text, "kind": kind,
         "object": obj if kind in NEEDS_OBJECT else "",
         "min_people": max(1, int(min_people or 1)) if kind == "person" else 1,
+        "hands": (1 if int(hands or 2) == 1 else 2) if kind == "hands_up" else 0,
         "duration": float(duration) if duration is not None else DEFAULT_DURATION[kind],
         "cooldown": float(cooldown) if cooldown is not None else DEFAULT_COOLDOWN,
         "source": source,
@@ -186,14 +189,14 @@ def _what(rule, hebrew):
             "object": f"רואים {o}",
             "hold": f"מישהו מחזיק {o}",
             "raise_object": f"מישהו מרים {o}",
-            "hands_up": "מישהו מרים ידיים",
+            "hands_up": "מישהו מרים יד" if rule.get("hands") == 1 else "מישהו מרים את שתי הידיים",
             "person": "מישהו בפריים" if n == 1 else f"{n} אנשים או יותר בפריים",
         }[k]
     return {
         "object": f"a {o} is in view",
         "hold": f"someone holds a {o}",
         "raise_object": f"someone raises a {o}",
-        "hands_up": "someone raises both hands",
+        "hands_up": "someone raises a hand" if rule.get("hands") == 1 else "someone raises both hands",
         "person": "someone is in view" if n == 1 else f"{n} or more people in view",
     }[k]
 
@@ -244,7 +247,8 @@ def parse_rules(text: str, classes=None) -> Optional[dict]:
         kind = "person"
     else:
         return None
-    return make_rule(text, kind, obj, n_people or 1, duration, source="rules")
+    n_hands = 2 if _any(tokens, BOTH_HANDS) or "hands up" in text.lower() else 1
+    return make_rule(text, kind, obj, n_people or 1, duration, source="rules", hands=n_hands)
 
 
 # ------------------------------------------------------------------ Claude
@@ -256,12 +260,13 @@ SCHEMA = {
         "kind": {"type": "string", "enum": KINDS + ["unsupported"]},
         "object": {"type": "string", "description": "Detector class for object / hold / raise_object, else \"\""},
         "min_people": {"type": "integer", "description": "For kind person: alert at this many people or more; else 1"},
+        "hands": {"type": "integer", "description": "For kind hands_up: 1 = one hand is enough, 2 = both hands; else 0"},
         "duration": {"type": ["number", "null"], "description": "Seconds the condition must last, if the user said so; else null"},
         "description": {"type": "string", "description": "Friendly confirmation in the user's language, e.g. \"I'll alert you when someone raises a knife\" / \"אתריע לך כשמישהו מרים סכין\""},
         "label": {"type": "string", "description": "The event in 2-5 words, in the user's language, e.g. \"Someone raises a knife\" / \"מישהו מרים סכין\""},
         "reason": {"type": "string", "description": "For unsupported: what cannot be detected, in the user's language; else \"\""},
     },
-    "required": ["kind", "object", "min_people", "duration", "description", "label", "reason"],
+    "required": ["kind", "object", "min_people", "hands", "duration", "description", "label", "reason"],
     "additionalProperties": False,
 }
 
@@ -274,7 +279,8 @@ Kinds:
 - hold: a person holds an object (a wrist on the object).
 - raise_object: a person raises / lifts / swings / brandishes an object
   above the shoulder ("someone raises a knife", "מישהו מרים סכין").
-- hands_up: a person raises both hands (no object).
+- hands_up: a person raises a hand above the shoulder (no object). hands = 1
+  for "a hand" / "יד", 2 for "both hands" / "ידיים" / "hands up".
 - person: at least min_people people in the frame ("more than 2 people" -> 3;
   "someone enters" -> 1).
 - unsupported: anything else (falls, fights, faces, sounds, zones of the room,
@@ -319,7 +325,7 @@ def parse_llm(text: str, classes) -> Optional[dict]:
         return {"unsupported": data.get("reason") or f"'{obj}' is not a class the detector knows"}
     return make_rule(text, kind, obj, data.get("min_people") or 1, data.get("duration"),
                      description=data.get("description") or "", source="llm",
-                     label=data.get("label") or "")
+                     label=data.get("label") or "", hands=data.get("hands") or 2)
 
 
 def parse(text: str, classes=None) -> dict:
@@ -402,8 +408,8 @@ class Evaluator:
                 on = any(self._held(pid, w, cls, now) for w in (L_WRIST, R_WRIST))
             elif k == "raise_object":
                 on = any(self._held(pid, w, cls, now) and _raised(p, w) for w in (L_WRIST, R_WRIST))
-            else:   # hands_up
-                on = _raised(p, L_WRIST) and _raised(p, R_WRIST)
+            else:   # hands_up: one or both wrists above the shoulders
+                on = _raised(p, L_WRIST) + _raised(p, R_WRIST) >= (rule.get("hands") or 2)
             if on:
                 out[pid] = p["box"]
         return out

@@ -51,6 +51,16 @@ body{
 .btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--danger);display:inline-block}
+/* the two modes, always visible at the top: search a recorded video / watch a live camera */
+.modeswitch{display:flex;background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:3px;gap:3px}
+.modeswitch button{
+  border:none;background:transparent;color:var(--text-dim);padding:7px 14px;border-radius:9px;cursor:pointer;
+  font-size:.85rem;display:inline-flex;align-items:center;gap:7px;transition:.15s;
+}
+.modeswitch button small{font-size:.7rem;opacity:.75}
+.modeswitch button:hover{color:var(--text)}
+.modeswitch button.on{background:var(--accent);color:#fff}
+.modeswitch button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .dot.green{background:var(--ok)}
 
 /* ---------- grid rows ---------- */
@@ -280,8 +290,11 @@ body.live .sidebar{display:none}
       <div>Video Search Agent<small>Ask anything. Find in your videos.</small></div>
     </div>
     <div class="spacer"></div>
-    <button class="btn primary" id="uploadBtn">⬆ Upload Video</button>
-    <button class="btn" id="liveBtn" title="Live camera + alerts · מצלמה חיה והתרעות"><span class="dot" id="liveDot"></span> Live Stream</button>
+    <div class="modeswitch" role="tablist" aria-label="Mode">
+      <button role="tab" id="modeSearch" class="on" aria-selected="true">🔍 Video Search <small>חיפוש בסרטון</small></button>
+      <button role="tab" id="modeLive" aria-selected="false"><span class="dot" id="liveDot"></span> Live Camera <small>מצלמה חיה</small></button>
+    </div>
+    <button class="btn primary file-only" id="uploadBtn">⬆ Upload Video</button>
     <button class="btn soon" disabled title="Coming soon · בקרוב" aria-label="Settings, coming soon">⚙</button>
     <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
   </div>
@@ -326,7 +339,7 @@ body.live .sidebar{display:none}
     </div>
     <div class="chips live-only" id="liveChips" dir="rtl">
       <button class="chip">מישהו מרים סכין</button>
-      <button class="chip">מישהו מרים ידיים</button>
+      <button class="chip">מישהו מרים יד</button>
       <button class="chip">יותר משני אנשים בחדר</button>
       <button class="chip">someone holds a phone</button>
     </div>
@@ -460,7 +473,7 @@ document.getElementById('nowTime').textContent =
   new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
 /* ---------- 1. VIDEO INPUT MODULE ---------- */
-$('uploadBtn').onclick = () => { setMode(false); $('fileInput').click(); };
+$('uploadBtn').onclick = () => $('fileInput').click();
 $('dropzone').onclick  = () => $('fileInput').click();
 $('fileInput').onchange = e => e.target.files[0] && loadVideo(e.target.files[0]);
 
@@ -1401,13 +1414,16 @@ function setMode(on){
   document.body.classList.toggle('live', on);
   $('navLive').classList.toggle('active', on);
   $('navSearch').classList.toggle('active', !on);
-  $('liveBtn').classList.toggle('primary', on);
+  $('modeLive').classList.toggle('on', on);
+  $('modeSearch').classList.toggle('on', !on);
+  $('modeLive').setAttribute('aria-selected', on);
+  $('modeSearch').setAttribute('aria-selected', !on);
   $('chatSub').textContent = on ? 'כתבי לי מתי להתריע · Tell me when to alert you' : 'Your intelligent video assistant';
   $('queryInput').placeholder = on ? 'מתי להתריע? למשל: מישהו מרים סכין' : 'Ask anything about your videos… / שאלו כל דבר על הסרטון…';
   if (on){
     if (!live.greeted){
       live.greeted = true;
-      botSay('היי! 👋 בחרי מצלמה ולחצי התחל, ואז פשוט כתבי לי מתי להתריע לך.\nלמשל: "מישהו מרים סכין" או "יותר משני אנשים בחדר".');
+      botSay('היי! 👋 בחרי מצלמה ולחצי התחל, ואז פשוט כתבי לי מתי להתריע לך.\nלמשל: "מישהו מרים יד", "מישהו מרים סכין" או "יותר משני אנשים בחדר".');
     }
     listCameras(false);
     renderRules();
@@ -1675,7 +1691,7 @@ async function addRule(text){
     const out = await r.json();
     if (!out.rule){
       botSay((out.reason || (he ? 'לא הצלחתי להבין על מה להתריע 🤔' : "I couldn't tell what to alert you about 🤔")) + '\n' +
-        (he ? 'אפשר לנסות למשל: "מישהו מרים סכין", "מישהו מחזיק טלפון", "מישהו מרים ידיים", "יותר משני אנשים בחדר"'
+        (he ? 'אפשר לנסות למשל: "מישהו מרים סכין", "מישהו מחזיק טלפון", "מישהו מרים יד", "יותר משני אנשים בחדר"'
             : 'Try for example: "someone raises a knife", "someone holds a phone", "hands up", "more than 2 people"'));
       return;
     }
@@ -1722,7 +1738,8 @@ $('rulesList').addEventListener('click', async e => {
 
 $('navSearch').onclick = () => setMode(false);
 $('navLive').onclick = () => setMode(true);
-$('liveBtn').onclick = () => setMode(!live.on);
+$('modeSearch').onclick = () => setMode(false);
+$('modeLive').onclick = () => setMode(true);
 
 // the side menu has no pages yet: keep "#" links from jumping to the top
 document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => e.preventDefault()));

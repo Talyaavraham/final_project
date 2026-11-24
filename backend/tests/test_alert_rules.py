@@ -100,3 +100,13 @@ def test_friendly_text_in_the_users_language():
     assert r["label"] == "מישהו מרים סכין"
     assert r["description"] == "אתריע לך כשמישהו מרים סכין"
     assert rule("someone holding a phone")["description"] == "I'll alert you when someone holds a phone"
+
+
+def test_one_hand_or_both():
+    one, both = rule("תתריעי כשמישהו מרים את היד"), rule("מישהו מרים ידיים")
+    assert (one["kind"], one["hands"], both["hands"]) == ("hands_up", 1, 2)
+    assert rule("hands up")["hands"] == 2
+    assert rule("someone raises a hand")["hands"] == 1
+    raised_left = [([person(120)], [])] * 15            # only the left wrist above the shoulder
+    assert run(ar.Evaluator(), one, raised_left)[0] == 1
+    assert run(ar.Evaluator(), both, raised_left)[0] == 0
