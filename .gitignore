@@ -29,3 +29,7 @@ backend/eval/*.txt
 backend/eval/redo.txt
 backend/eval/benchmark.db
 backend/eval/benchmark_videos/
+
+# live mode: our own videos and the perception cache (big, local); labels.json and results are kept
+backend/live/data/videos/
+backend/live/data/perception/

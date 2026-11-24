@@ -49,7 +49,7 @@ HE_OBJ = {
     "baseball bat": ["מחבט", "אלה"],
     "laptop": ["מחשב נייד", "לפטופ"],
     "book": ["ספר"],
-    "backpack": ["תיק", "תרמיל"],
+    "bag": ["תיק", "תרמיל", "ארנק", "תיק יד"],
     "umbrella": ["מטריה"],
 }
 HE_OBJ_TEST = {"knife": ["סכין יפנית"], "gun": ["אקדח צעצוע"], "cell phone": ["סמארטפון"]}
@@ -95,7 +95,7 @@ EN_OBJ = {
     "baseball bat": ["bat", "baseball bat"],
     "laptop": ["laptop"],
     "book": ["book"],
-    "backpack": ["bag", "backpack"],
+    "bag": ["bag", "backpack", "purse", "handbag"],
     "umbrella": ["umbrella"],
 }
 EN_OBJ_TEST = {"knife": ["box cutter"], "gun": ["handgun"], "cell phone": ["smartphone"]}

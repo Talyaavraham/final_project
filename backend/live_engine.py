@@ -64,7 +64,7 @@ class LiveEngine:
             return alert_rules.DEFAULT_CLASSES
         names = {"person"}
         for d in self.detectors:
-            names |= {str(n).lower() for n in d.names.values()}
+            names |= {alert_rules.RENAME.get(str(n).lower(), str(n).lower()) for n in d.names.values()}
         return sorted(names)
 
     def info(self):
@@ -103,27 +103,36 @@ class LiveEngine:
                     tracker.reset()
             self.evaluator.reset()
 
+    def perceive(self, frame, wanted=None, conf=None):
+        """One frame -> (persons, objects). The pose model tracks people across
+        calls. `wanted`: object classes to detect (a detector that knows none
+        of them is skipped); None = every class except person. Call with the
+        lock held. Shared by the live server and live/perceive.py."""
+        self.load()
+        r = self.pose.track(frame, persist=True, tracker="bytetrack.yaml", imgsz=IMGSZ,
+                            device=DEVICE, verbose=False)[0]
+        persons = _people(r)
+        objects = []
+        for d in self.detectors:
+            names = {str(n).lower() for n in d.names.values()}
+            if wanted is not None and not wanted & {alert_rules.RENAME.get(n, n) for n in names}:
+                continue
+            res = d.predict(frame, conf=CONF if conf is None else conf, imgsz=IMGSZ, device=DEVICE, verbose=False)[0]
+            for box, c, sc in zip(res.boxes.xyxy.tolist(), res.boxes.cls.tolist(), res.boxes.conf.tolist()):
+                name = str(d.names[int(c)]).lower()
+                name = alert_rules.RENAME.get(name, name)
+                if name != "person" and (wanted is None or name in wanted):
+                    objects.append({"cls": name, "conf": round(sc, 3), "box": [round(v, 1) for v in box]})
+        return persons, objects
+
     def process(self, jpeg: bytes) -> dict:
         frame = cv2.imdecode(np.frombuffer(jpeg, np.uint8), cv2.IMREAD_COLOR)
         if frame is None:
             return {"error": "bad frame"}
         t0 = time.time()
         with self.lock:
-            self.load()
-            r = self.pose.track(frame, persist=True, tracker="bytetrack.yaml", imgsz=IMGSZ,
-                                device=DEVICE, verbose=False)[0]
-            persons = _people(r)
             rules = self.list_rules()
-            wanted = {x["object"] for x in rules if x["object"]}
-            objects = []
-            for d in self.detectors:
-                if not wanted & {str(n).lower() for n in d.names.values()}:
-                    continue
-                res = d.predict(frame, conf=CONF, imgsz=IMGSZ, device=DEVICE, verbose=False)[0]
-                for box, c, s in zip(res.boxes.xyxy.tolist(), res.boxes.cls.tolist(), res.boxes.conf.tolist()):
-                    name = str(d.names[int(c)]).lower()
-                    if name in wanted and name != "person":
-                        objects.append({"cls": name, "conf": round(s, 3), "box": [round(v, 1) for v in box]})
+            persons, objects = self.perceive(frame, {x["object"] for x in rules if x["object"]})
             alerts, progress = self.evaluator.step(rules, persons, objects, time.monotonic())
         for a in alerts:   # visible in the server window, for debugging
             print(f"[live] ALERT: {a['label']}  (rule {a['rule']}, person {a['person']})", flush=True)

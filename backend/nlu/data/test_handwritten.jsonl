@@ -55,6 +55,6 @@
 {"text": "מישהו מניף מחבט", "kind": "raise_object", "object": "baseball bat", "hands": 0}
 {"text": "תתריעי אם מישהו עם מספריים", "kind": "hold", "object": "scissors", "hands": 0}
 {"text": "someone holding scissors", "kind": "hold", "object": "scissors", "hands": 0}
-{"text": "אם מישהו לוקח תיק", "kind": "hold", "object": "backpack", "hands": 0}
-{"text": "someone grabs a bag", "kind": "hold", "object": "backpack", "hands": 0}
+{"text": "אם מישהו לוקח תיק", "kind": "hold", "object": "bag", "hands": 0}
+{"text": "someone grabs a bag", "kind": "hold", "object": "bag", "hands": 0}
 {"text": "מישהי פותחת מטריה", "kind": "hold", "object": "umbrella", "hands": 0}

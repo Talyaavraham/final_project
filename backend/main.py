@@ -17,6 +17,8 @@ FastAPI server:
   POST /live/rules         live mode: a sentence -> an alert rule (our language model / rules)
   GET  /live/rules, DELETE /live/rules/{id}
   WS   /live/ws            live mode: JPEG frames in -> people, objects, alerts out
+  GET/POST /labels, DELETE /labels/{video}, POST /labels/video
+                           labelling mode: events marked in our own videos (live/data/labels.json)
 
 Run:
     pip install -r requirements.txt
@@ -392,6 +394,104 @@ async def live_ws(ws: WebSocket):
             await ws.send_json(out)
     except WebSocketDisconnect:
         pass
+
+
+# ------------------------------------------------------------- labelling
+# Our own videos, labelled in the UI ("תיוג"): for every video, every
+# scenario of live/scenarios.json gets its list of [start, end] windows, so a
+# scenario that was not marked counts as "did not happen" (false alarms are
+# measured too). Same format as eval/ground_truth_uca.json, so
+# live/eval_alerts.py reads both.
+LIVE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "live")
+LABELS = os.path.join(LIVE_DIR, "data", "labels.json")
+LABEL_VIDEOS = os.path.join(LIVE_DIR, "data", "videos")
+LABELS_LOCK = threading.Lock()
+
+
+def _scenario_names():
+    import json
+    with open(os.path.join(LIVE_DIR, "scenarios.json"), encoding="utf-8") as f:
+        cfg = json.load(f)
+    return {k: v.get("name", k) for k, v in cfg.items() if not k.startswith("_")}
+
+
+def _read_labels():
+    import json
+    if not os.path.isfile(LABELS):
+        return {"videos": {}}
+    with open(LABELS, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _write_labels(data):
+    import json
+    os.makedirs(os.path.dirname(LABELS), exist_ok=True)
+    tmp = LABELS + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, LABELS)
+
+
+class LabelEvent(BaseModel):
+    scenario: str
+    start: float = Field(..., ge=0)
+    end: float = Field(..., ge=0)
+
+
+class LabelRequest(BaseModel):
+    video: str
+    duration: float = 0
+    events: list[LabelEvent] = []
+
+
+@app.get("/labels")
+def get_labels():
+    data = _read_labels()
+    have = set(os.listdir(LABEL_VIDEOS)) if os.path.isdir(LABEL_VIDEOS) else set()
+    for name, v in data["videos"].items():
+        v["file_copied"] = name in have
+    return {"scenarios": _scenario_names(), "videos": data["videos"]}
+
+
+@app.post("/labels")
+def save_labels(req: LabelRequest):
+    names = _scenario_names()
+    bad = sorted({e.scenario for e in req.events} - set(names))
+    if bad:
+        raise HTTPException(400, f"unknown scenario: {', '.join(bad)}")
+    if any(e.end <= e.start for e in req.events):
+        raise HTTPException(400, "an event ends before it starts")
+    video = safe_name(req.video)
+    queries = []
+    for sc, title in names.items():
+        wins = sorted([round(e.start, 2), round(e.end, 2)] for e in req.events if e.scenario == sc)
+        queries.append({"scenario": sc, "text": title, "expected": wins})
+    with LABELS_LOCK:
+        data = _read_labels()
+        data["videos"][video] = {"category": "own", "duration": round(req.duration, 2),
+                                 "labelled_at": time.strftime("%Y-%m-%d %H:%M"), "queries": queries}
+        _write_labels(data)
+    return {"ok": True, "video": video, "events": len(req.events)}
+
+
+@app.delete("/labels/{video}")
+def delete_labels(video: str):
+    with LABELS_LOCK:
+        data = _read_labels()
+        if data["videos"].pop(video, None) is None:
+            raise HTTPException(404, "no labels for this video")
+        _write_labels(data)
+    return {"ok": True}
+
+
+@app.post("/labels/video")
+def upload_label_video(file: UploadFile = File(...)):
+    """a copy of the labelled video in live/data/videos, where live/perceive.py looks."""
+    os.makedirs(LABEL_VIDEOS, exist_ok=True)
+    name = safe_name(file.filename or "video.mp4")
+    with open(os.path.join(LABEL_VIDEOS, name), "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"ok": True, "video": name}
 
 
 # cleanup of old rendered clips (older than a day) at start-up

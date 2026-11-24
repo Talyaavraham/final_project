@@ -58,7 +58,10 @@ COCO = ["person", "bicycle", "car", "motorcycle", "airplane", "bus", "train", "t
         "microwave", "oven", "toaster", "sink", "refrigerator", "book", "clock", "vase", "scissors",
         "teddy bear", "hair drier", "toothbrush"]
 SECURITY = ["gun", "knife", "fire", "smoke"]        # security.pt
-DEFAULT_CLASSES = sorted(set(COCO + SECURITY))
+# COCO's three bag classes are one class for us (as in indexer.RENAME)
+BAG_CLASSES = {"backpack", "handbag", "suitcase"}
+RENAME = {c: "bag" for c in BAG_CLASSES}
+DEFAULT_CLASSES = sorted({RENAME.get(c, c) for c in COCO + SECURITY})
 
 # words -> detector class, for the keyword parser
 OBJECT_WORDS = {
@@ -74,7 +77,7 @@ OBJECT_WORDS = {
     "baseball bat": ["bat", "baseball bat", "מחבט", "אלה"],
     "laptop": ["laptop", "מחשב נייד", "לפטופ"],
     "book": ["book", "ספר"],
-    "backpack": ["backpack", "bag", "תיק", "תרמיל"],
+    "bag": ["backpack", "bag", "handbag", "purse", "suitcase", "תיק", "תרמיל", "ארנק", "מזוודה", "תיק יד"],
     "umbrella": ["umbrella", "מטריה", "מטרייה"],
     "dog": ["dog", "כלב"],
     "cat": ["cat", "חתול"],
@@ -100,7 +103,7 @@ UNSUPPORTED_WORDS = ["fall", "falls", "falling", "fell", "fight", "fights", "fig
                      "מרביץ", "מרביצה", "בועט", "צועק", "צועקת", "רץ", "רצה", "גונב", "גונבת", "מתקוטטים"]
 HE_NAMES = {"knife": "סכין", "gun": "נשק", "fire": "אש", "smoke": "עשן", "cell phone": "טלפון",
             "scissors": "מספריים", "bottle": "בקבוק", "cup": "כוס", "baseball bat": "מחבט",
-            "laptop": "מחשב נייד", "book": "ספר", "backpack": "תיק", "umbrella": "מטריה",
+            "laptop": "מחשב נייד", "book": "ספר", "bag": "תיק", "umbrella": "מטריה",
             "dog": "כלב", "cat": "חתול"}
 EN_NAMES = {"cell phone": "phone", "baseball bat": "bat"}
 HEB_NUM = {"אחד": 1, "אחת": 1, "שני": 2, "שתי": 2, "שניים": 2, "שתיים": 2, "שלושה": 3, "שלוש": 3,

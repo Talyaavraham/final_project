@@ -194,9 +194,35 @@ details.tech .row{display:flex;justify-content:space-between}
 .empty{color:var(--text-dim);font-size:.85rem;text-align:center;padding:34px 12px;line-height:1.7}
 .empty .big{font-size:30px;display:block;margin-bottom:6px;opacity:.8}
 
-/* ---------- live mode ---------- */
+/* ---------- modes: search (default) / live / label ---------- */
 body:not(.live) .live-only{display:none!important}
 body.live .file-only{display:none!important}
+body:not(.label) .label-only{display:none!important}
+body.label .file-only,body.label .live-only{display:none!important}
+body.label .chatpane{display:none}
+body.label .app{grid-template-columns:84px 1fr 320px}
+/* labelling */
+.lblbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.lblkinds{display:flex;flex-wrap:wrap;gap:6px}
+.kind{border:1px solid var(--border-2);background:transparent;color:var(--text-dim);border-radius:20px;padding:6px 12px;font-size:.8rem;cursor:pointer;transition:.15s}
+.kind:hover{color:var(--text);border-color:var(--c)}
+.kind.on{background:var(--c);border-color:var(--c);color:#14161f;font-weight:600}
+.lblbtns{display:flex;gap:6px}
+kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4px;padding:0 5px;color:var(--text-dim)}
+.lblev{display:flex;align-items:center;gap:10px;background:var(--panel-2);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:.86rem}
+.lblev .sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.lblev .tm{color:var(--text-dim);direction:ltr;margin-inline-start:auto;font-size:.8rem}
+.lblev button,.lblsaved button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:.85rem;padding:0 4px}
+.lblev button:hover{color:var(--accent)}
+.lblsaved button:hover{color:var(--danger)}
+.lblnote{color:var(--text-dim);font-size:.8rem;margin:12px 0}
+.lblsave{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--text-dim)}
+.lblsave label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.lblsaved{display:flex;gap:8px;align-items:center;background:var(--panel-2);border-radius:12px;padding:9px 12px;margin-bottom:8px}
+.lblsaved div{flex:1;min-width:0}
+.lblsaved b{display:block;font-size:.82rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
+.lblsaved small{color:var(--text-dim);font-size:.72rem}
+@media (max-width:1200px){ body.label .app{grid-template-columns:72px 1fr 270px} }
 .camrow{display:flex;gap:8px;align-items:center;margin-bottom:14px}
 .camrow select{
   flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
@@ -259,6 +285,7 @@ body.live .file-only{display:none!important}
     <div class="brand" title="Video Search Agent">🤖</div>
     <button class="railbtn active" id="navSearch" title="חיפוש בתוך סרטון מוקלט"><span class="ri">🔍</span><span>חיפוש<br>בסרטון</span></button>
     <button class="railbtn" id="navLive" title="מצלמה חיה והתרעות"><span class="ri">📷<span class="dot" id="liveDot"></span></span><span>מצלמה<br>חיה</span></button>
+    <button class="railbtn" id="navLabel" title="תיוג סרטונים למדידת ההתרעות"><span class="ri">🏷</span><span>תיוג<br>סרטונים</span></button>
     <div class="railfoot"><div class="srv" id="backendState" title="השרת (Python)"><span class="dot"></span>בודק…</div></div>
   </nav>
 
@@ -356,6 +383,40 @@ body.live .file-only{display:none!important}
       <div class="ruleshead">מתריעה כש…</div>
       <div id="rulesList"></div>
     </div>
+
+    <div class="pagehead label-only">
+      <div><h1>תיוג סרטונים</h1><p>מסמנים מתי קרה כל אירוע, כדי למדוד כמה טוב ההתרעות עובדות</p></div>
+      <button class="btn primary" id="lblOpen">📂 בחירת סרטון</button>
+      <input type="file" id="lblFile" accept="video/*,.mkv,.avi,.mov" hidden>
+    </div>
+    <div class="card label-only">
+      <div class="videohead"><b id="lblName">עוד לא נבחר סרטון</b><span class="meta" id="lblMeta"></span></div>
+      <div class="videowrap">
+        <video id="lblVideo" controls></video>
+        <div class="dropzone" id="lblDrop">
+          <div class="big">🏷</div>
+          <div><b>בחרי סרטון לתיוג</b><br>למשל סרטון שצילמת: הרמת סכין, הצתה, חטיפת תיק, או פעולות שרק נראות דומות</div>
+        </div>
+      </div>
+      <div class="timeline" id="lblTimeline"><div class="tl-marks" id="lblMarks"></div><div class="playhead" id="lblHead" data-t="00:00" style="left:0"></div></div>
+      <div class="lblbar">
+        <div class="lblkinds" id="lblKinds"></div>
+        <div class="lblbtns">
+          <button class="btn" id="lblStart">⏺ התחלה <kbd>S</kbd></button>
+          <button class="btn" id="lblEnd" disabled>⏹ סוף <kbd>E</kbd></button>
+        </div>
+      </div>
+      <div class="status" id="lblStatus">בחרי סרטון כדי להתחיל.</div>
+    </div>
+    <div class="card label-only">
+      <h3>האירועים בסרטון</h3>
+      <div id="lblEvents"><div class="rhint">עוד לא סימנת אירועים.</div></div>
+      <p class="lblnote">כל סוג אירוע שלא סימנת נחשב "לא קרה בסרטון הזה". כך המדידה סופרת גם התרעות שווא, ולכן חשוב לתייג את כל האירועים שבסרטון, לא רק חלק.</p>
+      <div class="lblsave">
+        <label><input type="checkbox" id="lblCopy" checked> להעתיק את הסרטון לתיקיית המדידה (backend/live/data/videos)</label>
+        <button class="btn primary" id="lblSave" disabled>💾 שמירת התיוג</button>
+      </div>
+    </div>
   </section>
 
   <!-- ===== RESULTS / ALERTS ===== -->
@@ -369,6 +430,15 @@ body.live .file-only{display:none!important}
         </div>
       </div>
       <div id="alertsList"><div class="empty"><span class="big">🔔</span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div></div>
+    </div>
+    <div class="label-only">
+      <div class="reshead"><b>סרטונים מתויגים</b><span class="badge" id="lblBadge" hidden>0</span></div>
+      <div id="lblSaved"></div>
+      <details class="tech" style="margin-top:14px"><summary>איך מודדים?</summary>
+        <div class="techbody" style="direction:ltr;text-align:left;font-family:monospace;font-size:.72rem">
+          cd backend<br>python live/perceive.py --videos live/data/videos<br>python live/eval_alerts.py --gt live/data/labels.json
+        </div>
+      </details>
     </div>
     <div class="file-only">
       <div class="reshead"><b>תוצאות</b>
@@ -1204,11 +1274,11 @@ function saveBlob(blob, name){
 const stem = () => (state.videoName || 'video').replace(/\.[^.]+$/, '');
 const tstamp = t => fmt(t).replace(/:/g, '-');
 
-async function withBusy(btn, label, fn){
+async function withBusy(btn, label, fn, onError){
   const old = btn.textContent;
   btn.disabled = true; btn.textContent = label;
   try { await fn(); }
-  catch (e) { botSay('ההורדה נכשלה: ' + (e.message || e)); }
+  catch (e) { (onError || (m => botSay('ההורדה נכשלה: ' + m)))(e.message || e); }
   finally { btn.disabled = false; btn.textContent = old; }
 }
 
@@ -1357,20 +1427,28 @@ const OBJ_HE = { knife: 'סכין', gun: 'נשק', fire: 'אש', smoke: 'עשן'
                  scissors: 'מספריים', 'baseball bat': 'מחבט', bottle: 'בקבוק', cup: 'כוס' };
 const isHe = t => /[֐-׿]/.test(t);
 
-// each mode keeps its own conversation
+// modes: 'search' | 'live' | 'label'. Search and live each keep their own conversation.
+let mode = 'search';
 const chats = { search: null, live: null };
-function setMode(on){
-  if (on === live.on && chats[on ? 'live' : 'search'] === null && document.body.classList.contains('live') === on) return;
-  chats[live.on ? 'live' : 'search'] = $('messages').innerHTML;
-  $('messages').innerHTML = chats[on ? 'live' : 'search'] || '';
-  $('messages').scrollTop = 1e9;
-  live.on = on;
-  document.body.classList.toggle('live', on);
-  $('navLive').classList.toggle('active', on);
-  $('navSearch').classList.toggle('active', !on);
-  $('chatSub').textContent = on ? 'כתבי לי מתי להתריע' : 'כתבי מה לחפש בסרטון';
-  $('queryInput').placeholder = on ? 'מתי להתריע? למשל: מישהו מרים יד' : 'מה לחפש? למשל: איש עם חולצה אדומה';
-  if (on){
+function setMode(m){
+  if (m === true) m = 'live';
+  if (m === false) m = 'search';
+  if (m === mode) return;
+  const was = mode;
+  if (was in chats) chats[was] = $('messages').innerHTML;
+  if (m in chats){ $('messages').innerHTML = chats[m] || ''; $('messages').scrollTop = 1e9; }
+  mode = m;
+  live.on = m === 'live';
+  document.body.classList.toggle('live', m === 'live');
+  document.body.classList.toggle('label', m === 'label');
+  $('navSearch').classList.toggle('active', m === 'search');
+  $('navLive').classList.toggle('active', m === 'live');
+  $('navLabel').classList.toggle('active', m === 'label');
+  $('chatSub').textContent = m === 'live' ? 'כתבי לי מתי להתריע' : 'כתבי מה לחפש בסרטון';
+  $('queryInput').placeholder = m === 'live' ? 'מתי להתריע? למשל: מישהו מרים יד' : 'מה לחפש? למשל: איש עם חולצה אדומה';
+  if (was === 'live') stopCamera();
+  if (was === 'label' && !lblVideo.paused) lblVideo.pause();
+  if (m === 'live'){
     if (!live.greeted){
       live.greeted = true;
       botSay('היי! 👋 בחרי מצלמה ולחצי התחל, ואז פשוט כתבי לי מתי להתריע לך.\nלמשל: "מישהו מרים יד", "מישהו מרים סכין" או "יותר משני אנשים בחדר".');
@@ -1378,9 +1456,8 @@ function setMode(on){
     listCameras(false);
     renderRules();
     loadRules();
-  } else {
-    stopCamera();
   }
+  if (m === 'label') labelOpen();
 }
 
 /* ---------- cameras ---------- */
@@ -1686,8 +1763,167 @@ $('rulesList').addEventListener('click', async e => {
   renderRules();
 });
 
-$('navSearch').onclick = () => setMode(false);
-$('navLive').onclick = () => setMode(true);
+/* =====================================================================
+   LABELLING MODE — mark when each event happens in our own videos, so the
+   live alerts can be measured (live/perceive.py + live/eval_alerts.py).
+   The video stays in the browser; only the labels go to the server
+   (and, if asked, a copy of the video into backend/live/data/videos).
+   ===================================================================== */
+const lbl = { file: null, name: null, duration: 0, kind: null, pending: null, events: [], scen: {}, saved: {} };
+const lblVideo = $('lblVideo');
+const LBL_COLORS = ['#ef6f6c', '#8f86f2', '#62c7dd', '#e8b45a', '#5ccf9e', '#d77fd0', '#9aa0b4'];
+const scenColor = s => LBL_COLORS[Object.keys(lbl.scen).indexOf(s) % LBL_COLORS.length];
+
+async function labelOpen(){
+  if (!(await backendAlive())){
+    lblStatus('התיוג נשמר בשרת, וצריך שהשרת ירוץ (uvicorn main:app --port 8000).', 'demo');
+    return;
+  }
+  try {
+    const d = await (await fetch(API + '/labels')).json();
+    lbl.scen = d.scenarios || {}; lbl.saved = d.videos || {};
+  } catch { lblStatus('לא הצלחתי לקרוא את התיוגים מהשרת', 'demo'); return; }
+  if (!lbl.kind || !(lbl.kind in lbl.scen)) lbl.kind = Object.keys(lbl.scen)[0];
+  renderKinds(); renderSaved();
+}
+
+function lblStatus(html, kind){ const b = $('lblStatus'); b.innerHTML = html; b.className = 'status ' + (kind || ''); }
+
+function renderKinds(){
+  $('lblKinds').innerHTML = Object.entries(lbl.scen).map(([k, name]) =>
+    `<button class="kind ${k === lbl.kind ? 'on' : ''}" data-k="${esc(k)}" style="--c:${scenColor(k)}">${esc(name)}</button>`).join('');
+}
+$('lblKinds').addEventListener('click', e => {
+  const k = e.target.closest('.kind')?.dataset.k;
+  if (!k) return;
+  lbl.kind = k; renderKinds();
+  if (lbl.pending){ lbl.pending.scenario = k; lblStatus(`מסמנת <b>${esc(lbl.scen[k])}</b> מ-${fmt(lbl.pending.start)}… לחצי סוף (E)`, 'wait'); }
+});
+
+$('lblOpen').onclick = () => $('lblFile').click();
+$('lblDrop').onclick = () => $('lblFile').click();
+$('lblFile').onchange = e => e.target.files[0] && lblLoad(e.target.files[0]);
+function lblLoad(file){
+  if (lblVideo.src) URL.revokeObjectURL(lblVideo.src);
+  lbl.file = file; lbl.name = file.name; lbl.pending = null;
+  const prev = lbl.saved[file.name];
+  lbl.events = prev ? prev.queries.flatMap(q => q.expected.map(([s, e]) => ({ scenario: q.scenario, start: s, end: e }))) : [];
+  lblVideo.src = URL.createObjectURL(file);
+  $('lblDrop').style.display = 'none';
+  $('lblName').textContent = file.name;
+  lblVideo.onloadedmetadata = () => {
+    lbl.duration = lblVideo.duration;
+    $('lblMeta').textContent = fmt(lbl.duration);
+    renderEvents();
+    lblStatus(prev ? `לסרטון הזה כבר יש תיוג (${lbl.events.length} אירועים). אפשר להוסיף, למחוק ולשמור שוב.`
+                   : 'בחרי סוג אירוע, הריצי את הסרטון, ולחצי <b>התחלה</b> כשהאירוע מתחיל ו<b>סוף</b> כשהוא נגמר.');
+  };
+  lblVideo.onerror = () => lblStatus('הדפדפן לא מצליח לנגן את הסרטון. צריך להמיר ל-MP4 (H.264).', 'demo');
+  $('lblSave').disabled = false;
+}
+
+function lblMarkStart(){
+  if (!lbl.duration || !lbl.kind) return;
+  lbl.pending = { scenario: lbl.kind, start: lblVideo.currentTime };
+  $('lblEnd').disabled = false;
+  lblStatus(`מסמנת <b>${esc(lbl.scen[lbl.kind])}</b> מ-${fmt(lbl.pending.start)}… לחצי סוף (E) כשהאירוע נגמר`, 'wait');
+}
+function lblMarkEnd(){
+  const p = lbl.pending;
+  if (!p) return;
+  const t = lblVideo.currentTime;
+  if (t <= p.start + 0.1){ lblStatus('הסוף חייב להיות אחרי ההתחלה. הריצי את הסרטון קדימה ולחצי שוב.', 'demo'); return; }
+  lbl.events.push({ ...p, end: t });
+  lbl.pending = null; $('lblEnd').disabled = true;
+  lblStatus(`✓ נוסף: ${esc(lbl.scen[p.scenario])} ${fmt(p.start)}–${fmt(t)}. אל תשכחי לשמור.`, 'ok');
+  renderEvents();
+}
+$('lblStart').onclick = lblMarkStart;
+$('lblEnd').onclick = lblMarkEnd;
+document.addEventListener('keydown', e => {
+  if (mode !== 'label' || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if (e.key === 's' || e.key === 'S' || e.key === 'ד'){ e.preventDefault(); lblMarkStart(); }
+  if (e.key === 'e' || e.key === 'E' || e.key === 'ק'){ e.preventDefault(); lblMarkEnd(); }
+  if (e.key === ' ' && lbl.duration){ e.preventDefault(); lblVideo.paused ? lblVideo.play() : lblVideo.pause(); }
+});
+
+function renderEvents(){
+  const ev = [...lbl.events].map((e, i) => ({ ...e, i })).sort((a, b) => a.start - b.start);
+  $('lblEvents').innerHTML = !ev.length
+    ? '<div class="rhint">עוד לא סימנת אירועים. אם לא קורה כלום בסרטון, זה גם תיוג תקין: שמרי אותו כך, והוא ימדוד התרעות שווא.</div>'
+    : ev.map(e => `
+      <div class="lblev" data-i="${e.i}">
+        <span class="sw" style="background:${scenColor(e.scenario)}"></span>
+        <b>${esc(lbl.scen[e.scenario] || e.scenario)}</b>
+        <span class="tm">${fmt(e.start)} – ${fmt(e.end)}</span>
+        <button data-seek="${e.start}" title="קפיצה לאירוע">▶</button>
+        <button data-del="${e.i}" title="מחיקה">✕</button>
+      </div>`).join('');
+  $('lblMarks').innerHTML = lbl.duration ? lbl.events.map(e =>
+    `<div class="tl-match" style="left:${e.start / lbl.duration * 100}%;width:${(e.end - e.start) / lbl.duration * 100}%;background:${scenColor(e.scenario)}"></div>`).join('') : '';
+}
+$('lblEvents').addEventListener('click', e => {
+  const s = e.target.dataset?.seek, d = e.target.dataset?.del;
+  if (s != null){ lblVideo.currentTime = +s; lblVideo.play(); }
+  if (d != null){ lbl.events.splice(+d, 1); renderEvents(); lblStatus('האירוע נמחק. אל תשכחי לשמור.'); }
+});
+lblVideo.addEventListener('timeupdate', () => {
+  if (!lbl.duration) return;
+  const h = $('lblHead'); h.style.left = (lblVideo.currentTime / lbl.duration * 100) + '%'; h.dataset.t = fmt(lblVideo.currentTime);
+});
+$('lblTimeline').addEventListener('click', e => {
+  if (!lbl.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  lblVideo.currentTime = (e.clientX - r.left) / r.width * lbl.duration;
+});
+
+$('lblSave').onclick = () => withBusy($('lblSave'), '⏳ שומרת…', async () => {
+  if (!lbl.name) return;
+  if (lbl.pending){ lblStatus('יש אירוע שהתחלת ולא סיימת. לחצי סוף (E) או בחרי סוג אחר.', 'demo'); return; }
+  if ($('lblCopy').checked && !lbl.saved[lbl.name]?.file_copied){
+    const fd = new FormData(); fd.append('file', lbl.file, lbl.name);
+    const u = await fetch(API + '/labels/video', { method: 'POST', body: fd });
+    if (!u.ok) throw new Error('העתקת הסרטון נכשלה');
+  }
+  const r = await fetch(API + '/labels', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ video: lbl.name, duration: lbl.duration, events: lbl.events }) });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || 'השמירה נכשלה');
+  await labelOpen();
+  lblStatus(`✅ נשמר: ${lbl.events.length} אירועים ב-${esc(lbl.name)}`, 'ok');
+}, msg => lblStatus('⚠ ' + esc(msg), 'demo'));
+
+function renderSaved(){
+  const v = Object.entries(lbl.saved);
+  $('lblBadge').textContent = v.length; $('lblBadge').hidden = !v.length;
+  $('lblSaved').innerHTML = !v.length
+    ? '<div class="empty"><span class="big">🏷</span>עוד אין סרטונים מתויגים.</div>'
+    : v.map(([name, x]) => {
+        const n = x.queries.reduce((a, q) => a + q.expected.length, 0);
+        const kinds = x.queries.filter(q => q.expected.length).map(q => lbl.scen[q.scenario] || q.scenario);
+        return `<div class="lblsaved">
+          <div><b>${esc(name)}</b><small>${n ? n + ' אירועים: ' + esc(kinds.join(', ')) : 'בלי אירועים (בודק התרעות שווא)'}
+          · ${fmt(x.duration || 0)}${x.file_copied ? '' : ' · ⚠ הסרטון לא הועתק'}</small></div>
+          <button data-delv="${esc(name)}" title="מחיקת התיוג">✕</button></div>`;
+      }).join('');
+}
+$('lblSaved').addEventListener('click', async e => {
+  const v = e.target.dataset?.delv;
+  if (!v || !confirmDelete(v)) return;
+  await fetch(`${API}/labels/${encodeURIComponent(v)}`, { method: 'DELETE' });
+  await labelOpen();
+});
+// a second click within 3 s confirms (no browser dialogs)
+let delArmed = null;
+function confirmDelete(v){
+  if (delArmed === v){ delArmed = null; return true; }
+  delArmed = v; lblStatus(`ללחוץ שוב על ✕ כדי למחוק את התיוג של ${esc(v)}`, 'demo');
+  setTimeout(() => { if (delArmed === v) delArmed = null; }, 3000);
+  return false;
+}
+
+$('navSearch').onclick = () => setMode('search');
+$('navLive').onclick = () => setMode('live');
+$('navLabel').onclick = () => setMode('label');
 
 
 // the side menu has no pages yet: keep "#" links from jumping to the top
