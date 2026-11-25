@@ -80,6 +80,7 @@ class QueryModel(BaseModel):
     object_colors: dict[str, list[str]] = {}   # colours of the other objects: {"car": ["white"]}
     actions: list[str] = []
     timeRange: Optional[list[Optional[float]]] = None
+    minDuration: Optional[float] = None    # s the subject stays in view ("for more than 30 seconds")
     semantic: str = ""                 # free text for CLIP re-ranking
     unknown: list[str] = []            # words no detector class covers -> stricter CLIP floor
     text: str = ""                     # the original sentence (for logs/export)
@@ -277,7 +278,8 @@ def search(req: SearchRequest):
         segments, [f for f in frames if f[1] is not None],
         q.objects, q.colors, q.actions, tr, q.semantic, q.unknown,
         embed=embeddings.embed_texts if embeddings.available() else None,
-        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9, object_colors=q.object_colors)
+        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9, object_colors=q.object_colors,
+        min_duration=q.minDuration)
 
     # "X next to Y": the results are the X's, each with the Y it was next to
     segments = with_context(segments, q.objects, W=meta["width"] or 16, H=meta["height"] or 9, require_near=req.near)

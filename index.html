@@ -1011,7 +1011,7 @@ async function queryBackend(parsed, offset = 0, limit = PAGE){
           video: state.videoName, offset, limit,
           query: { objects: parsed.objects, colors: parsed.colors, actions: parsed.actions,
                    object_colors: parsed.object_colors || {},
-                   timeRange: tr, semantic: parsed.semantic || '',
+                   timeRange: tr, minDuration: parsed.minDuration || null, semantic: parsed.semantic || '',
                    unknown: parsed.unknown || [], text: parsed.raw || '' },
         })
       });
@@ -1051,7 +1051,10 @@ const rangeText = r => !r ? 'כל הסרטון'
 const WORD_HE = { person:'אדם', car:'מכונית', bus:'אוטובוס', truck:'משאית', bicycle:'אופניים', motorcycle:'אופנוע',
   dog:'כלב', cat:'חתול', bag:'תיק', red:'אדום', white:'לבן', black:'שחור', gray:'אפור', blue:'כחול', green:'ירוק',
   yellow:'צהוב', orange:'כתום', purple:'סגול', pink:'ורוד', brown:'חום', running:'רץ', walking:'הולך', moving:'בתנועה',
-  parked:'עומד', entering:'נכנס', exiting:'יוצא' };
+  parked:'עומד', entering:'נכנס', exiting:'יוצא',
+  'going left':'שמאלה', 'going right':'ימינה', 'going up':'כלפי מעלה', 'going down':'כלפי מטה',
+  'on the left':'בצד שמאל', 'on the right':'בצד ימין', 'at the top':'למעלה', 'at the bottom':'למטה',
+  'in the center':'במרכז' };
 const he = w => WORD_HE[w] || w;
 // backend labels are "<colour> <class>": show them as "<class> <colour>" in Hebrew
 const heLabel = l => { const w = String(l).split(' ').map(he); return w.length === 2 && WORD_HE[String(l).split(' ')[0]] ? w[1] + ' ' + w[0] : w.join(' '); };
@@ -1063,6 +1066,7 @@ function addParsedCard(p){
   const parts = [...(subj ? [subj] : []), ...p.colors, ...p.actions].map(he);
   for (const o of others) parts.push('ליד ' + [o, ...((p.object_colors || {})[o] || [])].map(he).join(' '));
   if (p.timeRange) parts.push('⏱ ' + rangeText(p.timeRange));
+  if (p.minDuration) parts.push('לפחות ' + p.minDuration + ' שנ׳');
   if (p.semantic) parts.push('“' + p.semantic + '”');
   if (!parts.length) return;
   const d = document.createElement('div');

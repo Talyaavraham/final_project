@@ -113,7 +113,30 @@ VOCAB_ACTIONS = {
                  "נכנסת", "נכנסים", "מגיע"],
     "exiting": ["exiting", "exit", "leaving", "leaves", "יוצא", "יוצאת",
                 "יוצאים", "עוזב"],
+    # direction of travel in the image (search.heading)
+    "going left": ["to the left", "leftward", "leftwards", "moving left", "going left", "heading left",
+                   "walking left", "running left", "driving left", "שמאלה", "לכיוון שמאל", "לשמאל"],
+    "going right": ["to the right", "rightward", "rightwards", "moving right", "going right", "heading right",
+                    "walking right", "running right", "driving right", "ימינה", "לכיוון ימין", "לימין"],
+    "going up": ["going up", "moving up", "upward", "upwards", "כלפי מעלה", "עולה", "עולים"],
+    "going down": ["going down", "moving down", "downward", "downwards", "כלפי מטה", "יורד", "יורדת", "יורדים"],
+    # where in the frame the object is (search.ZONES)
+    "on the left": ["on the left", "at the left", "left side", "left part", "left half", "left of the frame",
+                    "צד שמאל", "משמאל", "בשמאל"],
+    "on the right": ["on the right", "at the right", "right side", "right part", "right half", "right of the frame",
+                     "צד ימין", "מימין", "בימין"],
+    "at the top": ["at the top", "top of the frame", "top part", "top half", "upper part", "upper half",
+                   "בחלק העליון", "חלק עליון", "למעלה"],
+    "at the bottom": ["at the bottom", "bottom of the frame", "bottom part", "bottom half", "lower part",
+                      "lower half", "בחלק התחתון", "חלק תחתון", "למטה"],
+    "in the center": ["in the center", "in the centre", "in the middle", "center of the frame",
+                      "במרכז", "באמצע"],
 }
+# "for more than 30 seconds", "at least 2 minutes", "יותר מ-30 שניות", "יותר מדקה" -> minDuration
+_LONGER = r"(?:for\s+)?(?:more than|longer than|over|at least|יותר מ|לפחות|מעל)"
+DWELL = re.compile(_LONGER + r"[\s-]*(\d+(?:\.\d+)?)\s*(seconds?|secs?|minutes?|mins?|שניות|שנייה|שניה|דקות|דקה)",
+                   re.IGNORECASE)
+DWELL_MINUTE = re.compile(_LONGER + r"[\s-]*(?:(?:a|one)\s+minute|דקה)", re.IGNORECASE)
 ACTIONS = list(VOCAB_ACTIONS)
 COLORS = list(VOCAB_COLORS)
 
@@ -121,6 +144,7 @@ HE_PREFIX = re.compile(r"^[הוושבלמכ]")
 STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to",
         "find", "show", "me", "all", "any", "is", "are", "that", "who", "where",
         "את", "עם", "של", "על", "מצא", "תמצא", "תראה", "לי", "כל", "ש", "ו",
+        "frame", "screen", "image", "פריים", "הפריים", "בפריים", "מסך", "המסך", "במסך",
         # clothing words: the colour already describes them
         "shirt", "shirts", "jacket", "coat", "pants", "dress", "clothes",
         "wearing", "wears", "dressed", "חולצה", "מעיל", "מכנסיים", "שמלה",
@@ -181,10 +205,15 @@ def english_phrase(objects, colors, actions) -> str:
 
 def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     """Vocabulary parser. `classes`: classes present in the video (optional)."""
+    found = {"objects": [], "colors": [], "actions": [], "timeRange": None, "minDuration": None,
+             "semantic": "", "unknown": [], "source": "rules"}
+    m = DWELL.search(text) or DWELL_MINUTE.search(text)
+    if m:       # taken out of the sentence, so "more", "seconds" do not become words for CLIP
+        unit = m.group(2).lower() if m.re is DWELL else "minute"
+        found["minDuration"] = float(m.group(1) if m.re is DWELL else 1) * (60 if unit[0] in "mד" else 1)
+        text = (text[:m.start()] + " " + text[m.end():]).strip()
     tokens = tokenize(text)
     lower = text.lower()
-    found = {"objects": [], "colors": [], "actions": [], "timeRange": None,
-             "semantic": "", "unknown": [], "source": "rules"}
     positions = {}
     for cls, words in VOCAB_OBJECTS.items():
         pos = [p for p in (_match_word(tokens, w) for w in words) if p >= 0]

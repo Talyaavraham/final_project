@@ -68,6 +68,36 @@ def half(video):
     return int(hashlib.md5(video.encode()).hexdigest(), 16) % 2
 
 
+def answers(conn, gt, only=None, without=(), track_views=0, raw=None):
+    """
+    Every ground-truth query through the rule parser and search.run_query.
+    Yields (video, query, results); (video, None, None) for a video that is not in the index.
+    """
+    dim = embeddings.embed_texts(["x"]).shape[1]
+    for video, spec in gt["videos"].items():
+        if only is not None and video not in only:
+            continue
+        meta = db.get_video(conn, video)
+        if meta is None:
+            yield video, None, None
+            continue
+        segments = [s for s in db.load_segments(conn, video) if s["cls"] not in without]
+        for s in segments:
+            s["embedding_vec"] = embeddings.from_blob(s.pop("embedding"))
+            if track_views and s["embedding_vec"] is not None:
+                s["embedding_vec"] = s["embedding_vec"].reshape(-1, dim)[:track_views]
+        segments += raw_segments((raw or {}).get(video, {}))
+        frames = [(t, embeddings.from_blob(b)) for t, b in db.load_frames(conn, video)]
+        classes = sorted({s["cls"] for s in segments})
+        for q in spec["queries"]:
+            p = parse_rules(q["text"], classes or None)
+            res, _ = search.run_query(segments, frames, p["objects"], p["colors"], p["actions"],
+                                      p["timeRange"], p["semantic"], p["unknown"],
+                                      embed=embeddings.embed_texts, W=meta["width"] or 16, H=meta["height"] or 9,
+                                      min_duration=p.get("minDuration"))
+            yield video, q, res
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("db")
@@ -101,31 +131,14 @@ def main():
     conn = sqlite3.connect(args.db)
     gt = json.load(open(args.gt, encoding="utf-8"))
     raw = json.load(open(args.extra_raw)) if args.extra_raw else {}
-    dim = embeddings.embed_texts(["x"]).shape[1]
     rows, skipped = [], 0
-    for video, spec in gt["videos"].items():
-        if only is not None and video not in only:
-            continue
-        meta = db.get_video(conn, video)
-        if meta is None:
+    for video, q, res in answers(conn, gt, only, without, args.track_views, raw):
+        if q is None:
             skipped += 1
             continue
-        segments = [s for s in db.load_segments(conn, video) if s["cls"] not in without]
-        for s in segments:
-            s["embedding_vec"] = embeddings.from_blob(s.pop("embedding"))
-            if args.track_views and s["embedding_vec"] is not None:
-                s["embedding_vec"] = s["embedding_vec"].reshape(-1, dim)[:args.track_views]
-        segments += raw_segments(raw.get(video, {}))
-        frames = [(t, embeddings.from_blob(b)) for t, b in db.load_frames(conn, video)]
-        classes = sorted({s["cls"] for s in segments})
-        for q in spec["queries"]:
-            p = parse_rules(q["text"], classes or None)
-            res, _ = search.run_query(segments, frames, p["objects"], p["colors"], p["actions"],
-                                      p["timeRange"], p["semantic"], p["unknown"],
-                                      embed=embeddings.embed_texts, W=meta["width"] or 16, H=meta["height"] or 9)
-            tp, fp, fn = score(res, q["expected"], 0.3, "hit")
-            rows.append({"video": video, "query": q["text"], "scenario": q.get("scenario") or "all",
-                         "returned": len(res), "expected": len(q["expected"]), "tp": tp, "fp": fp, "fn": fn})
+        tp, fp, fn = score(res, q["expected"], 0.3, "hit")
+        rows.append({"video": video, "query": q["text"], "scenario": q.get("scenario") or "all",
+                     "returned": len(res), "expected": len(q["expected"]), "tp": tp, "fp": fp, "fn": fn})
 
     def line(name, sel):
         tp, fp, fn = (sum(r[k] for r in sel) for k in ("tp", "fp", "fn"))

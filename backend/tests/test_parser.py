@@ -104,3 +104,24 @@ def test_actor_and_coloured_reference_are_different_objects():
         assert p["semantic"] == "", text                     # "ליד" / "next" are not unknown words
     # without an action the colour still makes its object the subject
     assert parse_rules("red car next to a bus")["object_colors"] == {}
+
+
+def test_direction_zone_and_dwell():
+    p = parse_rules("a red car driving to the left")
+    assert p["objects"] == ["car"] and p["colors"] == ["red"]
+    assert set(p["actions"]) == {"moving", "going left"} and p["unknown"] == []
+    assert parse_rules("רכב נוסע ימינה")["actions"] == ["moving", "going right"]
+    # where it is, not where it goes
+    assert parse_rules("a person on the right side")["actions"] == ["on the right"]
+    assert parse_rules("אדם בצד שמאל")["actions"] == ["on the left"]
+    assert parse_rules("כלב במרכז")["actions"] == ["in the center"]
+    # how long it stays: a number of seconds, and its words never reach CLIP
+    p = parse_rules("a person standing for more than 30 seconds")
+    assert p["minDuration"] == 30 and p["actions"] == ["parked"]
+    assert p["unknown"] == [] and p["semantic"] == ""
+    assert parse_rules("אדם עומד יותר מ-2 דקות")["minDuration"] == 120
+    assert parse_rules("רכב חונה יותר מדקה")["minDuration"] == 60
+    assert parse_rules("a car at least 1.5 minutes")["minDuration"] == 90
+    # a video timestamp is still a time window, not a duration
+    p = parse_rules("cars after 2:00")
+    assert p["minDuration"] is None and p["timeRange"] == [120, None]

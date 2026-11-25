@@ -23,7 +23,7 @@ uvicorn main:app --reload --port 8000
 | `OPEN_VOCAB` | — | רשימה מופרדת בפסיקים שמחליפה את `indexer.OPEN_VOCAB` עבור YOLO-World, למשל `tree,apple,character` |
 | `YOLO_MODEL=game.pt` | — | מודל שאומן על המחלקות שלכן (דמות, עץ, פרי, שמש במשחק של ex4_demo; mAP50 0.97). איך מאמנים: [train/README.md](train/README.md). להריץ עם `IMGSZ=800` |
 | `YOLO_MODEL=yolov8n.pt,game.pt` | — | **כמה מודלים**: לכל סרטון נבחר המודל שמוצא הכי הרבה ב-20 פריימים מפוזרים (סכום הביטחון של הזיהויים). סרטון מהמציאות מקבל את מודל COCO, המשחק מקבל את `game.pt`. המודל שנבחר נשמר ב-`/videos` |
-| `EXTRA_MODELS=security.pt` | — | מודלים שרצים על כל פריים **בנוסף** למודל שנבחר לסרטון. `security.pt` (yolov8s, בריפו): gun / knife / fire / smoke, אומן על CCTV weapons + D-Fire; mAP50 על validation: gun 0.69, knife 0.35, fire 0.73, smoke 0.84. הסכין חלש (210 תיבות אימון; 0 זיהויים על 585 תמונות סכין חדשות): האימון הבא מוסיף 3,600 תיבות סכין (`train/pack_exports.py`). אימון: `train/security_dataset.py`, `train/colab_train_security.ipynb`, פירוט ב-`train/README.md` |
+| `EXTRA_MODELS=security.pt` | — | מודלים שרצים על כל פריים **בנוסף** למודל שנבחר לסרטון. `security.pt` (yolov8s, בריפו): gun / knife / fire / smoke, אומן על CCTV weapons + D-Fire; mAP50 על validation: gun 0.69, knife 0.35, fire 0.73, smoke 0.84. הסכין חלש (210 תיבות אימון; 0 זיהויים על 585 תמונות סכין חדשות). אימון שני עם 3,600 תיבות סכין מצילומים קרובים (`security_v2.pt`, 2026-11-23, לא בריפו) מזהה את התמונות האלה (mAP50 0.95) אבל לא עוזר ב-UCF-Crime, ולכן לא החליף את `security.pt`: ראו "אימון שני של הגלאי" למטה. אימון: `train/security_dataset.py`, `train/colab_train_security.ipynb`, פירוט ב-`train/README.md` |
 | `EXTRA_CONF` | `0.2` | סף הביטחון למודלים הנוספים (אירועים נדירים: עדיף לשמור זיהוי חלש; track עדיין צריך 2+ זיהויים) |
 | `YOLO_MODEL=yolov8n.pt,game.pt,night.pt` | — | `night.pt` = מודל שאומן על תמונות לילה (ExDark + פריימים שלכן) לסרטוני מצלמות אבטחה חשוכים. איך: [train/README.md](train/README.md), `train/night_dataset.py`, `train/colab_train_night.ipynb` |
 | `YOLO_MODEL=yolov8s-oiv7.pt` | — | Open Images V7, 601 מחלקות (Tree, Window, Footwear…). פחות אמין מ-COCO על אנשים ורכבים, אז לא ברירת מחדל. Man/Woman/Boy/Girl ממופים ל-`person`, חלקי גוף (Human face וכו') מדולגים |
@@ -64,7 +64,7 @@ docker run -p 8000:8000 -v $(pwd)/data:/data video-search
 | GET | `/status?video=` | `indexing` / `ready` / `error`, עם `progress` ו-`stage` |
 | GET | `/videos`, DELETE `/videos/{name}` | רשימת סרטונים / מחיקה |
 | GET | `/classes?video=` | אילו מחלקות נמצאו בסרטון (וכמה) |
-| POST | `/parse` `{text, video}` | טקסט חופשי → `{objects, colors, actions, timeRange, semantic, unknown, source}` |
+| POST | `/parse` `{text, video}` | טקסט חופשי → `{objects, colors, actions, timeRange, minDuration, semantic, unknown, source}` |
 | POST | `/search` `{video, query, limit, offset, near}` | → `{total, results[]}` עם pagination |
 | GET | `/frame?video&t&x&y&w&h&label` | JPEG של הפריים עם המסגרת |
 | GET | `/clip?video&t0&t1&track&annotate` | MP4 של הקטע, עם מסגרת עוקבת כש-`track` נתון |
@@ -82,13 +82,17 @@ export.py        פריימים, קליפים (ffmpeg מובנה דרך imageio-
 db.py            סכמת SQLite: videos / detections / segments
 evaluate.py      precision / recall / F1 מול ground truth מתויג (eval/: benchmark UCF-Crime, כיול ספים)
 train/           תיוג אוטומטי לפי צבע + אימון YOLOv8 על מחלקות חדשות (train/README.md)
-tests/           pytest — 55 בדיקות, כולל end-to-end עם גלאי מדומה ו-CLIP מדומה
+tests/           pytest — 95 בדיקות, כולל end-to-end עם גלאי מדומה ו-CLIP מדומה
 ```
 
 - **זיהוי**: כל 80 מחלקות COCO (לא רק 9), או רשימה פתוחה עם YOLO-World
 - **מעקב**: ByteTrack (`model.track(persist=True)`)
 - **צבע**: הצבעה של פיקסלים על שם צבע ב-HSV (לאדם: החלק העליון = חולצה)
 - **פעולות**: מהירות המרכז בגבהי-גוף לשנייה — running / walking / parked, ו-entering / exiting לפי קצה הפריים
+- **כיוון, אזור ומשך בטקסט חופשי** (המסננים של מערכות כמו BriefCam, בלי תפריטים): "רכב נוסע שמאלה" = מרכז התיבה זז
+  לפחות 10% מרוחב הפריים בכיוון הזה (`search.heading`; אלכסון נספר לשני הצירים); "אדם בצד ימין" / "למעלה" / "במרכז" =
+  לפחות 30% מהזיהויים שלו באזור (`search.ZONES`); "עומד יותר מ-30 שניות" / "at least 2 minutes" = `minDuration`, משך ה-track.
+  המשך נמדד ל-track אחד: אדם שהמעקב איבד וחזר נספר כשני קטעים קצרים
 - **"איש עם כלב"**: חפיפה בזמן **וגם** קרבה במרחב (`NEAR_DIST`, ניתן לכבות עם `near:false`)
 - **חיפוש סמנטי**: כל track מקבל כמה וקטורי CLIP (החיתוך הטוב ביותר + מבטים עם הקשר לאורך חייו); טקסט חופשי ("a woman pushing a stroller") מדורג לפי דמיון קוסינוס ממוצע
 - **חיפוש סצנה**: וקטור CLIP של הפריים כל שנייה (בפריים רחב, 16:9: כמה ריבועים שמכסים את כולו), מדורג ב-softmax מול פרומפטים ניטרליים
@@ -154,6 +158,31 @@ python indexer.py reembed --db eval/benchmark.db --videos eval/data/ucf         
 ב-320x240 אדם הוא כ-30 פיקסלים ו-CLIP ViT-B/32 לא רואה מה יש לו ביד. כיסוי הפריים בריבועים לא עזר ב-4:3
 ולכן פועל רק בפריים רחב (לא נמדד: אין ב-benchmark סרטונים רחבים).
 
+**אימון שני של הגלאי (`security_v2.pt`, 2026-11-23/24, לא החליף את `security.pt`):** אותו מתכון עם 2,926 תמונות סכין
+נוספות (צילומים קרובים מ-Roboflow Universe, `train/pack_exports.py`). ההשוואה, פלט מלא ב-`eval/results/security_v2_2026-11-24.txt`:
+
+```bash
+python eval/detector_bench.py eval/ground_truth_uca.json eval/data/ucf --model security_v2.pt --classes gun=weapon,knife=knife,fire=fire,smoke=fire
+python eval/offline_eval.py eval/benchmark_v2.db eval/ground_truth_uca.json --extra-raw eval/results/detector_security_v2_raw_2026-11-24.json
+```
+
+| | `security.pt` | `security_v2.pt` |
+|---|---|---|
+| mAP50 סכין, 585 תמונות הסכין החדשות (צילומים קרובים) | 0.000 | 0.952 |
+| mAP50 סכין, validation של מצלמות האבטחה (Colab, אותן תמונות) | 0.35 | 0.223 |
+| mAP50 gun / fire / smoke, אותן תמונות | 0.69 / 0.73 / 0.84 | 0.685 / 0.729 / 0.834 |
+| UCF, הגלאי לבד, סף 0.2: סכין (נמצאו / הוחזרו / חלונות) | 0 / 0 / 46 | 2 / 51 / 46 |
+| UCF, הגלאי לבד, סף 0.2: אקדח | 6 / 28 / 81 | 3 / 15 / 81 |
+| UCF, חיפוש (CLIP + tracks בסימולציה): F1 כולל | 0.186 | 0.164 |
+| UCF, חיפוש: F1 סכין | 0.192 | 0.135 |
+| held-out, חיפוש באותה סימולציה (אש + אקדח בלבד): F1 כולל | 0.159 | 0.156 |
+
+מה זה אומר: המודל למד סכין גדולה וברורה (בתמונות האימון הצד הארוך של הסכין הוא 30% מהתמונה בחציון), וב-UCF סכין היא
+כמה פיקסלים. שם הוא כמעט רק מוסיף התרעות שווא: מתוך השניות שבהן אמר "סכין", 44 בסרטונים שיש בהם חלון סכין ו-1,118 באחרים;
+החיפוש מוצא את אותם 17 חלונות ומחזיר 206 קטעים במקום 131. אקדח, אש ועשן לא השתנו ב-validation; ההבדלים ב-UCF (אקדח 6 → 3
+חלונות) קטנים מכדי להסיק מהם. לכן `security.pt` נשאר ברירת המחדל, ו-`security_v2.pt` שמור לבדיקה על סרטונים מבוימים
+ב-1080p, שם הסכין גדולה (לא נמדד עדיין). כדי לשפר סכין ב-CCTV צריך תמונות אימון של סכינים קטנות ממצלמות אבטחה.
+
 **סט שלא כוילו עליו (held-out, 2026-11-17):** כל הספים נבחרו על 107 הסרטונים של ה-benchmark, אז המספרים שם אופטימיים.
 `eval/uca_ground_truth.py --heldout` בונה סט מ-54 סרטונים אחרים של UCF-Crime (חלק 1: 38 עם אש או אקדח, 16 בלי; 45 חלונות),
 והם אונדקסו עם `security.pt` אמיתי (לא סימולציה):
@@ -175,3 +204,28 @@ python eval/offline_eval.py eval/heldout.db eval/ground_truth_heldout.json --wit
 הספים של חיפוש הסצנה מתאימים ל-benchmark יותר מאשר לסרטונים חדשים; (3) החולשה היא התרעות שווא של CLIP: "a person with a gun"
 מחזיר משהו ב-14 מתוך 16 סרטונים שאין בהם אקדח, ו-"fire" ב-10 מתוך 19. הסט קטן (שני החצאים שלו: 0.21 ו-0.15), ולכן
 לא מכיילים עליו: הוא נשאר סט בדיקה.
+
+**מבט שני עם מודל ראייה-שפה (ניסוי, 2026-11-22, לא מחובר לחיפוש):** החולשה היא התרעות שווא, אז `eval/verify_bench.py`
+נותן למודל קטן (`SmolVLM2-500M`, מקומי, בלי אימון) שלושה פריימים מכל קטע שהחיפוש החזיר ושאלת כן/לא
+("Is a person holding a gun in these images?"), ומשמיט קטעים שה-P(yes) שלהם מתחת לסף.
+
+```bash
+python eval/verify_bench.py eval/benchmark_v2.db eval/ground_truth_uca.json --videos eval/data/ucf        # טבלת ספים + AUC
+python eval/verify_bench.py eval/heldout.db eval/ground_truth_heldout.json --videos C:/path/Anomaly-Videos-Part-1 --thresholds fire=0.0,weapon=0.1
+```
+
+| benchmark (107 סרטונים) | AUC: קטע נכון מול שגוי | F1 בלי אימות | F1 בסף הטוב ביותר |
+|---|---|---|---|
+| אש | 0.48 | 0.360 | 0.360 (כל סף מוריד, עד 0.295) |
+| סכין | 0.53 | 0.192 | 0.204 |
+| אקדח | 0.71 | 0.160 | 0.200 (precision 0.11 → 0.53, recall 0.31 → 0.12) |
+| חטיפת תיק (11 חלונות) | 0.64 | 0.136 | 0.381 |
+| חבילה (7 חלונות, 3 קטעים נכונים) | 0.97 | 0.077 | 0.364 |
+
+AUC 0.5 = ניחוש. באש ובסכין המודל לא מבדיל בין קטע נכון להתרעת שווא (320x240, חלק באינפרא-אדום); באקדח יש אות, במחיר
+רוב ה-recall. כשהספים נבחרים על חצי מהסרטונים ונבדקים על החצי השני: 0.277 → 0.306 ו-0.136 → 0.157 (עם ספים שנבחרו על
+כל הסרטונים, אופטימי: 0.180 → 0.257). על ה-held-out, עם הספים מה-benchmark (אש בלי סף, אקדח 0.1): 0.178 → 0.219, כולו מאקדח
+(0.108 → 0.151; 4 במקום 6 מתוך 14 חלונות, 39 במקום 97 קטעים), וה-AUC שם דומה: אש 0.53, אקדח 0.69.
+זמן: 5–15 שניות לקטע על CPU. הפלט המלא: `eval/results/verify_2026-11-22.txt`.
+מסקנה: שיפור קטן ולא עקבי במחיר של דקות לשאילתה, ולכן המודל לא חובר ל-`/search`. מודל כזה בלי אימון לא רואה ברזולוציה
+הזו יותר ממה ש-CLIP רואה; הצעד הבא שנשאר לבדוק הוא סרטונים ב-1080p.

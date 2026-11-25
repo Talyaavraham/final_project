@@ -167,6 +167,13 @@ python train/pack_exports.py "C:/.../knife.v2i.yolov8" "C:/.../Knife detection.v
 אותן תמונות כמו באימון הראשון: gun 0.69, knife 0.35, fire 0.73, smoke 0.84). המספר של סכין על כל ה-validation
 מחמיא (תמונות אינטרנט קלות, ופריימים מאותם סרטונים נמצאים גם באימון); ההשוואה ההוגנת היא ה-base וה-benchmark.
 
+**תוצאת האימון השני (2026-11-23, `security_v2.pt`):** (זה המודל שאומן במחברת `colab_train_security.ipynb` עם תמונות
+הסכין מ-Roboflow, ולא המודל של `colab_train_security_v2.ipynb` שמתואר למעלה, למרות השם הזהה.) על כל ה-validation סכין 0.916, אבל על ה-base סכין ירד ל-0.223
+(gun 0.685, fire 0.729, smoke 0.834, כמו קודם), וב-UCF-Crime המודל מוסיף בעיקר התרעות שווא של סכין (F1 של החיפוש
+0.186 → 0.164). לכן הוא **לא** החליף את `security.pt`; הפירוט ב-[../README.md](../README.md) ("אימון שני של הגלאי")
+וב-`eval/results/security_v2_2026-11-24.txt`. המסקנה לאימון הבא: תמונות סכין מצילומים קרובים לא עוזרות ל-CCTV;
+צריך סכינים קטנות ממצלמות אבטחה או מהסרטונים המבוימים שלכן.
+
 בנייה מקומית: `python train/security_dataset.py --own DIR` (ייצוא קטן, עד 500 תמונות אימון, מוכפל ×4; גדול נכנס פעם אחת).
 בדיקות: `tests/test_security_dataset.py`.
 

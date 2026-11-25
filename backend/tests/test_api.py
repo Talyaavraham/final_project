@@ -75,16 +75,18 @@ def test_index_search_and_outputs(client, video_file):
                                      "query": {"objects": ["car"], "actions": ["parked"]}}).json()
     assert r["total"] == 1 and r["results"][0]["label"] == "blue car"
 
-    # "person with a dog": the dog walks next to the person, the car is far
+    # "person with a dog": the dog walks next to the person, the car is far.
+    # The result is the person; the dog comes with it as its context (search.with_context)
     r = client.post("/search", json={"video": "street.mp4",
                                      "query": {"objects": ["person", "dog"]}}).json()
-    assert {x["cls"] for x in r["results"]} == {"person", "dog"}
+    assert [x["cls"] for x in r["results"]] == ["person"]
+    assert [c["cls"] for c in r["results"][0]["context"]] == ["dog"]
     r = client.post("/search", json={"video": "street.mp4",
                                      "query": {"objects": ["person", "car"]}}).json()
     assert r["total"] == 0
     r = client.post("/search", json={"video": "street.mp4", "near": False,
                                      "query": {"objects": ["person", "car"]}}).json()
-    assert r["total"] == 2
+    assert r["total"] == 1 and [c["cls"] for c in r["results"][0]["context"]] == ["car"]
 
     # pagination
     r = client.post("/search", json={"video": "street.mp4", "limit": 1, "offset": 1}).json()
