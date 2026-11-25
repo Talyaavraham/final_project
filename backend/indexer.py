@@ -386,9 +386,14 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         if model is None:
             model_name, model = choose_model(path, status=status)
             status["stage"] = "detecting"
-        extras = [n for n in EXTRA_MODELS if n != model_name]
+        # "security_v3.pt=gun+knife": only those classes of that model (live_engine.model_spec)
+        specs = [(n.partition("=")[0].strip(), {c.strip().lower() for c in n.partition("=")[2].split("+") if c.strip()})
+                 for n in EXTRA_MODELS]
+        specs = [(n, only) for n, only in specs if n != model_name]
+        extras = [n + ("=" + "+".join(sorted(only)) if only else "") for n, only in specs]
         runs = [(model, 0, CONF_THRESHOLD)] + [(load_model(n), EXTRA_ID_BASE * (k + 1), EXTRA_CONF)
-                                            for k, n in enumerate(extras)]
+                                            for k, (n, _) in enumerate(specs)]
+        only_of = [None] + [only or None for _, only in specs]
         if extras:
             model_name = "+".join([model_name] + extras)
         for m, _, _ in runs:
@@ -418,11 +423,12 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                 H, W = frame.shape[:2]
                 t = frame_i / fps
                 boxes = []
-                for m, id_base, conf_thr in runs:
+                for (m, id_base, conf_thr), only in zip(runs, only_of):
                     res = m.track(frame, persist=True, verbose=False,
                                   conf=conf_thr, tracker=TRACKER,
                                   imgsz=IMGSZ)[0]
-                    boxes += [(m, id_base, box) for box in (res.boxes or [])]
+                    boxes += [(m, id_base, box) for box in (res.boxes or [])
+                              if only is None or class_name(m, int(box.cls[0])) in only]
                 for m, id_base, box in boxes:
                     cls = class_name(m, int(box.cls[0]))
                     if cls in SKIP:

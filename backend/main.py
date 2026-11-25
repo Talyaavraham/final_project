@@ -453,10 +453,24 @@ def _cached_fps(out):
         return None
 
 
+def _cache_ok(out):
+    """the cached perception was made at EVENT_FPS by the detectors the server runs now (a new model,
+    e.g. security_v3.pt, means the video is analysed again)."""
+    import json
+    import live_engine
+    try:
+        with open(out, encoding="utf-8") as f:
+            head = json.loads(f.readline())
+    except (OSError, ValueError):
+        return False
+    now = live_engine.DET_MODELS + live_engine.EXTRA_MODELS + [live_engine.POSE_MODEL]
+    return head.get("fps") == EVENT_FPS and head.get("models", now) == now
+
+
 @app.get("/events/status")
 def events_status(video: str):
     out = _perception_path(safe_name(video))
-    if _cached_fps(out) == EVENT_FPS:
+    if _cache_ok(out):
         return {"status": "ready", "progress": 1.0}
     return EVENT_STATUS.get(safe_name(video), {"status": "none", "progress": 0.0})
 
