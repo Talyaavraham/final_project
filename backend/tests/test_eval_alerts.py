@@ -42,3 +42,15 @@ def test_diagnose_event_stats():
     st = diagnose.event_stats(frames, 0.5, 2.0, {"knife"})
     assert st["person"] and st["hand"] and st["best"] == 0.2
     assert diagnose.event_stats(frames, 4.5, 6.0, {"knife"})["best"] == 0.0
+
+
+def test_bootstrap_and_paired_compare():
+    import compare
+    a = {f"v{i}": {"events": 2, "caught": 2 if i < 8 else 0, "false": 1, "hours": 0.1} for i in range(10)}
+    b = {f"v{i}": {"events": 2, "caught": 0, "false": 1, "hours": 0.1} for i in range(10)}
+    lo, hi, flo, fhi = ev.bootstrap(a)
+    assert lo < 0.8 < hi and flo <= 10 <= fhi
+    r = compare.paired(a, b, n=500)
+    assert abs(r["d_recall"][0] - 0.8) < 1e-9 and r["d_recall"][1] > 0 and r["a_better"] > 0.99
+    same = compare.paired(b, b, n=200)
+    assert same["d_recall"] == (0.0, 0.0, 0.0)

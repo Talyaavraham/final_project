@@ -90,6 +90,31 @@ def score(windows, alerts):
     return hits, delays, false
 
 
+def video_hours(head, frames):
+    return (head.get("duration") or (frames[-1]["t"] if frames else 0)) / 3600
+
+
+def bootstrap(per_video, n=2000, seed=0):
+    """95% intervals of recall and false alarms per hour, resampling whole VIDEOS with replacement
+    (events of one video are not independent, so a per-event binomial interval would be too narrow).
+    per_video: {video: {"events", "caught", "false", "hours"}} -> (rec_lo, rec_hi, fph_lo, fph_hi)."""
+    import random
+    vids = [v for v in per_video.values() if "hours" in v]
+    if not vids:
+        return None
+    rnd, recs, fphs = random.Random(seed), [], []
+    for _ in range(n):
+        sample = [vids[rnd.randrange(len(vids))] for _ in vids]
+        ev = sum(v["events"] for v in sample)
+        h = sum(v["hours"] for v in sample)
+        if ev:
+            recs.append(sum(v["caught"] for v in sample) / ev)
+        if h:
+            fphs.append(sum(v["false"] for v in sample) / h)
+    q = lambda xs, p: sorted(xs)[min(len(xs) - 1, int(p * len(xs)))] if xs else None
+    return q(recs, 0.025), q(recs, 0.975), q(fphs, 0.025), q(fphs, 0.975)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--gt", nargs="+", required=True)
@@ -124,7 +149,8 @@ def main():
     unknown = sorted({s for v in gt.values() for s in v} - set(cfg))
     if unknown:
         print("scenarios without methods in scenarios.json (skipped): " + ", ".join(unknown))
-    head = f"{'scenario':12s} {'method':16s} {'videos':>6s} {'hours':>6s} {'events':>6s} {'caught':>6s} {'recall':>7s} {'alerts':>6s} {'false':>6s} {'false/h':>8s} {'delay':>7s}"
+    head = (f"{'scenario':12s} {'method':16s} {'videos':>6s} {'hours':>6s} {'events':>6s} {'caught':>6s} {'recall':>7s} "
+            f"{'95% CI':>13s} {'alerts':>6s} {'false':>6s} {'false/h':>8s} {'95% CI':>13s} {'delay':>7s}")
     lines.append(head)
     for sc in scen_names:
         if only and sc not in only:
@@ -143,21 +169,26 @@ def main():
                 hits, d, false = score(gt[v][sc], alerts)
                 tot_ev += len(gt[v][sc]); tot_hit += hits; tot_alerts += len(alerts); tot_false += false
                 delays += d
-                per_video[v] = {"events": len(gt[v][sc]), "caught": hits, "alerts": [round(t, 1) for t in alerts], "false": false}
+                per_video[v] = {"events": len(gt[v][sc]), "caught": hits, "alerts": [round(t, 1) for t in alerts],
+                                "false": false, "hours": round(video_hours(*cached[v]), 5)}
             rec = tot_hit / tot_ev if tot_ev else None
             fph = tot_false / hours if hours else None
             dly = statistics.median(delays) if delays else None
+            ci = bootstrap(per_video)
             report["scenarios"][sc][mname] = {"rule": spec, "videos": len(vids), "hours": round(hours, 3),
                                               "events": tot_ev, "caught": tot_hit, "recall": rec,
                                               "alerts": tot_alerts, "false": tot_false, "false_per_hour": fph,
-                                              "median_delay": dly, "per_video": per_video}
+                                              "median_delay": dly, "ci95": ci, "per_video": per_video}
             rec_s = f"{rec * 100:.1f}%" if rec is not None else "—"
             fph_s = f"{fph:.1f}" if fph is not None else "—"
             dly_s = f"{dly:.1f}s" if dly is not None else "—"
+            rci = f"{ci[0] * 100:.0f}-{ci[1] * 100:.0f}%" if ci and ci[0] is not None else "—"
+            fci = f"{ci[2]:.1f}-{ci[3]:.1f}" if ci and ci[2] is not None else "—"
             lines.append(f"{sc:12s} {mname:16s} {len(vids):6d} {hours:6.2f} {tot_ev:6d} {tot_hit:6d} "
-                         f"{rec_s:>7s} {tot_alerts:6d} {tot_false:6d} {fph_s:>8s} {dly_s:>7s}")
+                         f"{rec_s:>7s} {rci:>13s} {tot_alerts:6d} {tot_false:6d} {fph_s:>8s} {fci:>13s} {dly_s:>7s}")
     lines.append(f"\nrecall: alert from {SLACK_BEFORE}s before an event to {SLACK_AFTER}s after it. "
-                 f"false/h: alerts outside every event, per hour of those videos. delay: median, from the event's start.")
+                 f"false/h: alerts outside every event, per hour of those videos. delay: median, from the event's start.\n"
+                 f"95% CI: bootstrap over videos (2,000 resamples of whole videos).")
     print("\n".join(lines))
     os.makedirs(RESULTS, exist_ok=True)
     name = args.name or f"eval_{report['date']}"
