@@ -47,7 +47,15 @@ PROBE_MIN = 0.25 * PROBE_FRAMES   # twice as much, at least this much in total..
 PROBE_FOCUS = 0.3           # ...and 30% of what it finds at conf 0.3 survives PROBE_CONF ("at home")
 # models that run on every frame IN ADDITION to the chosen one, e.g.
 # "security.pt" (gun / knife / fire / smoke) next to the COCO model
-EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", "").split(",") if m.strip()]
+# Default (2026-11-25): security.pt for fire / smoke, security_v3.pt for guns / knives, the same split as the
+# live camera (live_engine): security_v3 sees knives and guns in CCTV, security.pt sees fire much better.
+# EXTRA_MODELS= (empty) turns them off; "model=cls+cls" keeps only those classes of a model.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+if os.path.isfile(os.path.join(_HERE, "security_v3.pt")) and os.path.isfile(os.path.join(_HERE, "security.pt")):
+    _default_extra = "security.pt=fire+smoke,security_v3.pt=gun+knife"
+else:
+    _default_extra = ""
+EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", _default_extra).split(",") if m.strip()]
 NO_COLOR = {"fire", "smoke"}  # "white fire" is not a thing: no colour attribute for these
 EXTRA_ID_BASE = 100000
 EXTRA_CONF = float(os.environ.get("EXTRA_CONF", "0.2"))  # extra models (gun, knife, fire) are rare-event detectors: keep weaker hits, tracks still need 2+      # track ids of extra models are offset so they never collide
@@ -134,7 +142,8 @@ def load_model(name: str = None):
     name = name or MODEL_NAMES[0]
     if name not in _models:
         from ultralytics import YOLO
-        model = YOLO(name)
+        local = os.path.join(_HERE, name)          # security.pt & co. next to this file work from any cwd
+        model = YOLO(local if os.path.isfile(local) else name)
         if "world" in name.lower():
             model.set_classes(OPEN_VOCAB)
         _models[name] = model

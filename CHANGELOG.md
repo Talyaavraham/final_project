@@ -23,7 +23,8 @@
 
 **שונה**
 - **חיפוש פעולות בסרטון מוקלט** (`/events`): הניתוח השמור (cache) נחשב תקף רק אם הוא נעשה עם אותם מודלים שהשרת מריץ עכשיו (`main._cache_ok`). כך סרטון שנותח עם `security.pt` לבד מנותח מחדש עם `security_v3.pt`.
-- **`indexer`:** גם `EXTRA_MODELS` מקבל עכשיו את התחביר `model=cls+cls`, למשל `security.pt=fire+smoke,security_v3.pt=gun+knife`. ברירת המחדל לא השתנתה (ריקה).
+- **`indexer`:** גם `EXTRA_MODELS` מקבל עכשיו את התחביר `model=cls+cls`. **ברירת המחדל** (כששני הקבצים קיימים) היא `security.pt=fire+smoke,security_v3.pt=gun+knife`, אותה חלוקה כמו במצלמה החיה. כדי לכבות את שניהם מגדירים `EXTRA_MODELS=` (ריק). `load_model` מוצא קבצי מודל שנמצאים ליד `indexer.py` מכל תיקייה. הבדיקות רצות בלי המודלים האלה (fixture אוטומטי ב-`conftest.py`), ו-97 עוברות.
+  **שימו לב:** מדידות החיפוש של טליה (`eval/offline_eval.py` וכו') נעשו בלי `EXTRA_MODELS`. סרטון שיאונדקס מעכשיו יקבל גם תיבות של אקדח, סכין ואש, ולכן כדי לשחזר את המספרים הישנים צריך להגדיר `EXTRA_MODELS=`.
 
 ### 2026-11-25: ‏security_v3: הגלאי רואה סכינים ואקדחים ב-UCF, ואש נשארת אצל security.pt
 **תוצאה** (בתיקייה `backend/live/results/ucf_2026-11-25_sec3/`, עם README וטבלאות):
