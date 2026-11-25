@@ -20,6 +20,7 @@ backend/*.log
 backend/train/night/
 !backend/night.pt
 !backend/security.pt
+!backend/security_v3.pt
 
 # security scenarios: downloaded datasets and benchmark videos
 backend/eval/data/

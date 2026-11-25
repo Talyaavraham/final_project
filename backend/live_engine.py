@@ -24,7 +24,15 @@ import alert_rules
 HERE = os.path.dirname(os.path.abspath(__file__))
 POSE_MODEL = os.environ.get("LIVE_POSE", "yolov8n-pose.pt")
 DET_MODELS = [m.strip() for m in os.environ.get("LIVE_DET", "yolov8n.pt").split(",") if m.strip()]
-_default_extra = "security.pt" if os.path.isfile(os.path.join(HERE, "security.pt")) else ""
+# "model=cls+cls" keeps only those classes of that model. security_v3.pt (2026-11-25) sees knives and guns in
+# CCTV that security.pt never saw, but on UCF-Crime it saw fire in 27% of the fire events against 84% for
+# security.pt: so each does what it is good at (live/results/ucf_2026-11-25_sec3).
+if os.path.isfile(os.path.join(HERE, "security_v3.pt")):
+    _default_extra = "security.pt=fire+smoke,security_v3.pt=gun+knife"
+elif os.path.isfile(os.path.join(HERE, "security.pt")):
+    _default_extra = "security.pt"
+else:
+    _default_extra = ""
 EXTRA_MODELS = [m.strip() for m in os.environ.get("LIVE_EXTRA", _default_extra).split(",") if m.strip()]
 CONF = float(os.environ.get("LIVE_CONF", "0.25"))
 IMGSZ = int(os.environ.get("LIVE_IMGSZ", "640"))
@@ -32,6 +40,13 @@ DEVICE = os.environ.get("LIVE_DEVICE") or None
 # A detector runs only when a rule asks for one of its classes: a "raise a
 # hand" rule needs the pose model alone, which is ~3x faster on a CPU than
 # pose + COCO + security.pt on every frame.
+
+
+def model_spec(spec):
+    """'security_v3.pt=gun+knife' -> ('security_v3.pt', {'gun', 'knife'}); 'yolov8n.pt' -> ('yolov8n.pt', None)."""
+    name, _, only = spec.partition("=")
+    classes = {alert_rules.RENAME.get(c.strip().lower(), c.strip().lower()) for c in only.split("+") if c.strip()}
+    return name.strip(), classes or None
 
 
 def _resolve(name):
@@ -45,7 +60,7 @@ class LiveEngine:
         self.lock = threading.Lock()          # one frame through the models at a time
         self.rules_lock = threading.Lock()
         self.pose = None
-        self.detectors = []
+        self.detectors, self.only = [], []
         self.error = None
         self.rules = []
         self.evaluator = alert_rules.Evaluator()
@@ -56,15 +71,20 @@ class LiveEngine:
             return
         from ultralytics import YOLO
         self.pose = YOLO(_resolve(POSE_MODEL))
-        self.detectors = [YOLO(_resolve(m)) for m in DET_MODELS + EXTRA_MODELS]
+        self.detectors, self.only = [], []
+        for spec in DET_MODELS + EXTRA_MODELS:
+            name, only = model_spec(spec)
+            self.detectors.append(YOLO(_resolve(name)))
+            self.only.append(only)
 
     def classes(self):
         """class names the detectors know (for the rule parser)."""
         if not self.detectors:
             return alert_rules.DEFAULT_CLASSES
         names = {"person"}
-        for d in self.detectors:
-            names |= {alert_rules.RENAME.get(str(n).lower(), str(n).lower()) for n in d.names.values()}
+        for d, only in zip(self.detectors, self.only):
+            names |= {alert_rules.RENAME.get(str(n).lower(), str(n).lower()) for n in d.names.values()} & (only or set(
+                alert_rules.RENAME.get(str(n).lower(), str(n).lower()) for n in d.names.values()))
         return sorted(names)
 
     def info(self):
@@ -113,15 +133,17 @@ class LiveEngine:
                             device=DEVICE, verbose=False)[0]
         persons = _people(r)
         objects = []
-        for d in self.detectors:
-            names = {str(n).lower() for n in d.names.values()}
-            if wanted is not None and not wanted & {alert_rules.RENAME.get(n, n) for n in names}:
+        for d, only in zip(self.detectors, self.only):
+            names = {alert_rules.RENAME.get(str(n).lower(), str(n).lower()) for n in d.names.values()}
+            if only:
+                names &= only
+            if wanted is not None and not wanted & names:
                 continue
             res = d.predict(frame, conf=CONF if conf is None else conf, imgsz=IMGSZ, device=DEVICE, verbose=False)[0]
             for box, c, sc in zip(res.boxes.xyxy.tolist(), res.boxes.cls.tolist(), res.boxes.conf.tolist()):
                 name = str(d.names[int(c)]).lower()
                 name = alert_rules.RENAME.get(name, name)
-                if name != "person" and (wanted is None or name in wanted):
+                if name != "person" and name in names and (wanted is None or name in wanted):
                     objects.append({"cls": name, "conf": round(sc, 3), "box": [round(v, 1) for v in box]})
         return persons, objects
 
