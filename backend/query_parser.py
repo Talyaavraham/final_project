@@ -141,7 +141,7 @@ ACTIONS = list(VOCAB_ACTIONS)
 COLORS = list(VOCAB_COLORS)
 
 HE_PREFIX = re.compile(r"^[הוושבלמכ]")
-STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to",
+STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to", "from", "someone", "somebody", "מישהו",
         "find", "show", "me", "all", "any", "is", "are", "that", "who", "where",
         "את", "עם", "של", "על", "מצא", "תמצא", "תראה", "לי", "כל", "ש", "ו",
         "frame", "screen", "image", "פריים", "הפריים", "בפריים", "מסך", "המסך", "במסך",
@@ -154,6 +154,17 @@ STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to",
 # "משהו שהולך" (literally "something that walks") is how people often write "someone": with an
 # action of a person it is a person
 SOMETHING = {"משהו", "something"}
+# Theft itself (hiding an item, walking out without paying) is not something the detectors or the rules
+# can see. A question about it is answered with the people in the video, and the reply says so
+# ("unsupported": "theft"), instead of an empty answer. Snatching a bag is an action the system does
+# know: alert_rules.SNATCH_WORDS, answered by /events before this parser is asked.
+THEFT = {"גונב", "גונבת", "גונבים", "שגונב", "שגונבת", "שגונבים", "גנב", "גנבה", "גנבים", "הגנב", "גניבה",
+         "גניבות", "שודד", "שודדת", "שוד", "מעלים", "מחביא", "מחביאה", "שמחביא", "שמחביאה",
+         "steal", "steals", "stealing", "stole", "thief", "thieves", "theft", "shoplift", "shoplifting",
+         "shoplifter", "rob", "robs", "robbing", "robber", "robbery", "hiding", "hides", "conceal", "conceals"}
+# places: the camera is already there ("someone stealing from the store")
+PLACE_WORDS = {"חנות", "החנות", "מהחנות", "בחנות", "לחנות", "מדף", "המדף", "מהמדף", "מהמדפים", "מדפים", "בחנויות",
+               "store", "shop", "shelf", "shelves", "supermarket", "סופר", "מהסופר", "בסופר"}
 
 
 def tokenize(text: str):
@@ -239,7 +250,17 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
         if any(_match_word(tokens, w) >= 0 for w in words):
             found["actions"].append(key)
     found["object_colors"] = {}
-    something = [i for i, t in enumerate(tokens) if t in SOMETHING]
+    something = [i for i, t in enumerate(tokens) if t in SOMETHING | {"מישהו", "someone", "somebody"}]
+    theft = [i for i, t in enumerate(tokens) if t in THEFT]
+    if theft:
+        found["unsupported"] = "theft"
+        if "person" not in positions:
+            positions["person"] = min(something + theft)
+            found["objects"] = sorted(positions, key=positions.get)
+    elif something and not found["objects"] and not found["colors"]:
+        # "משהו שמסתובב" (an action the parser does not know) is still about a person: show the people
+        positions["person"] = something[0]
+        found["objects"] = ["person"]
     if something and found["actions"] and "person" not in positions:
         positions["person"] = something[0]
         found["objects"] = sorted(positions, key=positions.get)
@@ -287,7 +308,7 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     for tok in tokens:
         base = tok[1:] if HE_PREFIX.match(tok) and tok[1:] in known else tok
         if base not in known and base not in STOP and len(base) > 2 \
-                and not base.isdigit():
+                and not base.isdigit() and tok not in THEFT and tok not in PLACE_WORDS:
             found["unknown"].append(tok)
     # CLIP reads English only: a Hebrew sentence is rebuilt from the words we know
     phrase = text.strip()

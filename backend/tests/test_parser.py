@@ -125,3 +125,14 @@ def test_direction_zone_and_dwell():
     # a video timestamp is still a time window, not a duration
     p = parse_rules("cars after 2:00")
     assert p["minDuration"] is None and p["timeRange"] == [120, None]
+
+
+def test_theft_question_shows_the_people():
+    for text in ("מצא משהו שגונב מהחנות", "מישהו גונב", "someone stealing from the store"):
+        r = parse(text, None)
+        assert r["objects"] == ["person"] and r.get("unsupported") == "theft" and r["unknown"] == [], text
+
+
+def test_someone_with_an_unknown_verb_is_a_person():
+    r = parse("משהו שמסתובב", None)
+    assert r["objects"] == ["person"] and r.get("unsupported") is None

@@ -1104,6 +1104,9 @@ async function runSearch(text){
              (state.engine === 'backend' && state.caps?.clip
                ? 'טיפ: אפשר לתאר איך זה נראה, ואחפש לפי התיאור.'
                : 'אני יודעת למצוא: אנשים, מכוניות, אוטובוסים, משאיות, אופניים, אופנועים, כלבים, חתולים ותיקים.'));
+    } else if (parsed.unsupported === 'theft'){
+      botSay('גניבה עצמה (להחביא מוצר, לצאת בלי לשלם) אני עוד לא יודעת לזהות. אז אראה לך את כל האנשים בסרטון, ואפשר לעבור עליהם.\n' +
+             'מה שאני כן מזהה: "מישהו חוטף תיק", "מישהו מחזיק סכין", "מישהו מרים אקדח".');
     } else if (parsed.semantic && !(state.caps?.clip) && state.engine === 'backend'){
       botSay('חלק מהשאלה דורש חיפוש לפי תיאור (CLIP), שכבוי בשרת. אחפש רק לפי סוג האובייקט.');
     }
@@ -1272,7 +1275,8 @@ function renderResults(parsed){
 
   captureThumbs();
   renderTimeline(state.matches, 'matches');
-  renderObjectCounts(state.matches, 'בחיפוש הנוכחי');
+  if (state.matches.length) renderObjectCounts(state.matches, 'בחיפוש הנוכחי');
+  else loadOverview();          // nothing found: show what IS in the video instead of an empty panel
 
   $('summary').hidden = false;
   $('sumMatches').textContent = total;
