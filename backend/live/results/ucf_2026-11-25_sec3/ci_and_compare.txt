@@ -1,0 +1,114 @@
+===== conf 0.25
+scenarios without methods in scenarios.json (skipped): package
+scenario     method           videos  hours events caught  recall        95% CI alerts  false  false/h        95% CI   delay
+knife        object only          49   2.16     46      8   17.4%         6-30%    197    186     86.2    18.8-149.0    6.4s
+knife        holds knife          49   2.16     46     11   23.9%        11-38%    285    271    125.6    43.9-205.9    2.8s
+knife        raises knife         49   2.16     46      1    2.2%          0-8%     90     89     41.3      3.3-81.9    6.9s
+weapon       object only          52   2.34     81     25   30.9%        19-45%    128     83     35.4     17.9-63.6    3.6s
+weapon       holds gun            52   2.34     81     23   28.4%        16-42%    171    126     53.8     30.6-85.4    4.2s
+weapon       raises gun           52   2.34     81      6    7.4%         1-15%     38     28     12.0      6.2-18.8    4.1s
+
+===== conf 0.35
+scenarios without methods in scenarios.json (skipped): package
+scenario     method           videos  hours events caught  recall        95% CI alerts  false  false/h        95% CI   delay
+knife        object only          49   2.16     46      3    6.5%         0-15%     85     81     37.5      6.4-65.6    8.9s
+knife        holds knife          49   2.16     46      6   13.0%         4-23%    142    136     63.0    17.1-106.0    4.0s
+knife        raises knife         49   2.16     46      1    2.2%          0-8%     41     40     18.5      0.5-37.3    6.9s
+weapon       object only          52   2.34     81     15   18.5%         8-31%     58     36     15.4      6.5-28.8    3.3s
+weapon       holds gun            52   2.34     81     18   22.2%        11-35%     92     62     26.5     13.6-45.0    4.6s
+weapon       raises gun           52   2.34     81      5    6.2%         1-13%     20     13      5.5      2.1-11.6    4.3s
+
+===== conf 0.45
+scenarios without methods in scenarios.json (skipped): package
+scenario     method           videos  hours events caught  recall        95% CI alerts  false  false/h        95% CI   delay
+knife        object only          49   2.16     46      1    2.2%          0-6%     24     23     10.7      1.2-18.2    2.9s
+knife        holds knife          49   2.16     46      3    6.5%         0-15%     63     60     27.8      3.5-50.9    6.9s
+knife        raises knife         49   2.16     46      1    2.2%          0-8%     18     17      7.9      0.0-16.7    6.9s
+weapon       object only          52   2.34     81      7    8.6%         2-17%     25     16      6.8      2.2-13.7    3.2s
+weapon       holds gun            52   2.34     81     14   17.3%         7-29%     50     31     13.2      6.1-23.1    5.5s
+weapon       raises gun           52   2.34     81      2    2.5%          0-7%      8      6      2.6       0.0-6.8    4.4s
+
+===== conf 0.55
+scenarios without methods in scenarios.json (skipped): package
+scenario     method           videos  hours events caught  recall        95% CI alerts  false  false/h        95% CI   delay
+knife        object only          49   2.16     46      1    2.2%          0-6%      5      4      1.9       0.0-5.6    5.6s
+knife        holds knife          49   2.16     46      1    2.2%          0-6%     15     14      6.5      1.6-10.9    7.4s
+knife        raises knife         49   2.16     46      0    0.0%          0-0%      2      2      0.9       0.0-2.0       —
+weapon       object only          52   2.34     81      0    0.0%          0-0%      1      1      0.4       0.0-1.5       —
+weapon       holds gun            52   2.34     81     11   13.6%         5-23%     23     11      4.7       1.5-8.8    4.9s
+weapon       raises gun           52   2.34     81      0    0.0%          0-0%      0      0      0.0       0.0-0.0       —
+
+===== conf 0.65
+scenarios without methods in scenarios.json (skipped): package
+scenario     method           videos  hours events caught  recall        95% CI alerts  false  false/h        95% CI   delay
+knife        object only          49   2.16     46      0    0.0%          0-0%      0      0      0.0       0.0-0.0       —
+knife        holds knife          49   2.16     46      0    0.0%          0-0%      4      4      1.9       0.0-5.0       —
+knife        raises knife         49   2.16     46      0    0.0%          0-0%      0      0      0.0       0.0-0.0       —
+weapon       object only          52   2.34     81      0    0.0%          0-0%      1      1      0.4       0.0-1.5       —
+weapon       holds gun            52   2.34     81      4    4.9%         0-11%      6      1      0.4       0.0-1.5   13.0s
+weapon       raises gun           52   2.34     81      0    0.0%          0-0%      0      0      0.0       0.0-0.0       —
+
+----------------------------------------------------------------------
+A = holds gun (live/results/ci_sec3_conf0.55.json)
+B = object only (live/results/ci_sec3_conf0.45.json)
+on 52 videos
+
+A: recall 13.6%  false/h 4.7
+B: recall 8.6%  false/h 6.8
+
+recall A - B : +4.9 points, 95% CI +0.0 .. +10.7
+false/h A - B: -2.1, 95% CI -7.3 .. +0.8
+A caught more than B in 93% of the resamples
+-> cannot tell them apart on these videos (the interval contains 0)
+
+----------------------------------------------------------------------
+A = holds gun (live/results/ci_sec3_conf0.45.json)
+B = object only (live/results/ci_sec3_conf0.35.json)
+on 52 videos
+
+A: recall 17.3%  false/h 13.2
+B: recall 18.5%  false/h 15.4
+
+recall A - B : -1.2 points, 95% CI -7.9 .. +5.1
+false/h A - B: -2.1, 95% CI -10.2 .. +2.7
+A caught more than B in 28% of the resamples
+-> cannot tell them apart on these videos (the interval contains 0)
+
+----------------------------------------------------------------------
+A = holds gun (live/results/ci_sec3_conf0.65.json)
+B = object only (live/results/ci_sec3_conf0.55.json)
+on 52 videos
+
+A: recall 4.9%  false/h 0.4
+B: recall 0.0%  false/h 0.4
+
+recall A - B : +4.9 points, 95% CI +0.0 .. +11.4
+false/h A - B: +0.0, 95% CI +0.0 .. +0.0
+A caught more than B in 95% of the resamples
+-> cannot tell them apart on these videos (the interval contains 0)
+
+----------------------------------------------------------------------
+A = raises gun (live/results/ci_sec3_conf0.25.json)
+B = object only (live/results/ci_sec3_conf0.35.json)
+on 52 videos
+
+A: recall 7.4%  false/h 12.0
+B: recall 18.5%  false/h 15.4
+
+recall A - B : -11.1 points, 95% CI -21.9 .. -1.6
+false/h A - B: -3.4, 95% CI -16.9 .. +5.6
+A caught more than B in 0% of the resamples
+-> B catches more, beyond noise
+
+----------------------------------------------------------------------
+A = holds knife (live/results/ci_sec3_conf0.45.json)
+B = object only (live/results/ci_sec3_conf0.35.json)
+on 49 videos
+
+A: recall 6.5%  false/h 27.8
+B: recall 6.5%  false/h 37.5
+
+recall A - B : +0.0 points, 95% CI -10.4 .. +10.6
+false/h A - B: -9.7, 95% CI -16.8 .. -1.4
+A caught more than B in 45% of the resamples
+-> cannot tell them apart on these videos (the interval contains 0)
