@@ -61,6 +61,10 @@ EXTRA_ID_BASE = 100000
 EXTRA_CONF = float(os.environ.get("EXTRA_CONF", "0.2"))  # extra models (gun, knife, fire) are rare-event detectors: keep weaker hits, tracks still need 2+      # track ids of extra models are offset so they never collide
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.3"))
 SAMPLE_FPS = float(os.environ.get("SAMPLE_FPS", "3"))
+# The extra detectors (security.pt / security_v3.pt, yolov8s each: ~2x the cost of yolov8n per frame on a CPU)
+# run on fewer frames: a gun / knife / fire in view for 2 s still gets the 2 detections a track needs.
+# With both of them at 3 fps indexing was ~5x slower than COCO alone; at 1 fps ~2x.
+EXTRA_FPS = float(os.environ.get("EXTRA_FPS", "1"))
 IMGSZ = int(os.environ.get("IMGSZ", "640"))   # detector input size; 800+ for small objects
 FLUSH_EVERY = 2000          # detections per DB write
 # ByteTrack: no camera-motion compensation step, so it is faster than the
@@ -414,6 +418,8 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         fps = cap.get(cv2.CAP_PROP_FPS) or 25
         total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
         step = max(1, int(round(fps / sample_fps)))
+        extra_every = max(1, int(round(sample_fps / EXTRA_FPS))) if EXTRA_FPS > 0 else 1
+        n_sampled = 0
 
         database.delete_video(conn, name)
         conn.commit()
@@ -432,7 +438,10 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                 H, W = frame.shape[:2]
                 t = frame_i / fps
                 boxes = []
-                for (m, id_base, conf_thr), only in zip(runs, only_of):
+                n_sampled += 1
+                for k, ((m, id_base, conf_thr), only) in enumerate(zip(runs, only_of)):
+                    if k > 0 and (n_sampled - 1) % extra_every:
+                        continue                      # extra detectors: EXTRA_FPS, not every sampled frame
                     res = m.track(frame, persist=True, verbose=False,
                                   conf=conf_thr, tracker=TRACKER,
                                   imgsz=IMGSZ)[0]
