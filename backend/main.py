@@ -4,16 +4,24 @@ Video Search Agent — Backend
 FastAPI server:
   POST /index              upload a video -> index in the background
   GET  /                   the web interface (index.html)
-  GET  /api                server capabilities (model, CLIP, Claude, ffmpeg)
+  GET  /api                server capabilities (model, CLIP, language model, ffmpeg)
   GET  /status?video=      indexing progress
   GET  /videos             indexed videos
   GET  /classes?video=     which classes were found (for the UI / parser)
-  POST /parse              natural language -> structured query (Claude / rules)
+  POST /parse              natural language -> structured query (local rules)
   POST /search             structured (+ free text) query -> matches
   GET  /frame              one frame as JPEG, with the match box drawn
   GET  /clip               a clip as MP4 (optionally with tracked boxes)
   POST /export             ZIP with frames + clips + results.json/csv
   DELETE /videos/{name}    remove a video and its index
+  POST /live/rules         live mode: a sentence -> an alert rule (our language model / rules)
+  GET  /live/rules, DELETE /live/rules/{id}
+  WS   /live/ws            live mode: JPEG frames in -> people, objects, alerts out
+  POST /events             search a recorded video for an ACTION ("someone snatches a bag"): the
+                           live perception runs over the video once (cached), then the alert rule
+  GET  /events/status?video=
+  GET/POST /labels, DELETE /labels/{video}, POST /labels/video
+                           labelling mode: events marked in our own videos (live/data/labels.json)
 
 Run:
     pip install -r requirements.txt
@@ -23,7 +31,7 @@ Env:
     YOLO_MODEL=yolov8s.pt | yolov8m.pt | yolov8s-worldv2.pt (open vocabulary)
     YOLO_MODEL=yolov8n.pt,game.pt   several: the best one per video is chosen
     CLIP_RERANK=0          disable CLIP (semantic search + entity merge)
-    ANTHROPIC_API_KEY=...  enable the Claude query parser
+Everything runs locally: no outside API is called.
 """
 
 import hashlib
@@ -33,7 +41,8 @@ import threading
 import time
 from typing import Optional
 
-from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import FastAPI, File, HTTPException, Query, UploadFile, WebSocket, WebSocketDisconnect
+from fastapi.concurrency import run_in_threadpool
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
@@ -42,8 +51,10 @@ import db as database
 import embeddings
 import export
 import indexer
+import alert_rules
 import query_parser
-from search import run_query
+from live_engine import engine as live
+from search import run_query, with_context
 
 app = FastAPI(title="Video Search Agent API", version="2.0")
 app.add_middleware(
@@ -66,8 +77,10 @@ INDEX_LOCK = threading.Lock()          # one indexing job at a time
 class QueryModel(BaseModel):
     objects: list[str] = []
     colors: list[str] = []
+    object_colors: dict[str, list[str]] = {}   # colours of the other objects: {"car": ["white"]}
     actions: list[str] = []
     timeRange: Optional[list[Optional[float]]] = None
+    minDuration: Optional[float] = None    # s the subject stays in view ("for more than 30 seconds")
     semantic: str = ""                 # free text for CLIP re-ranking
     unknown: list[str] = []            # words no detector class covers -> stricter CLIP floor
     text: str = ""                     # the original sentence (for logs/export)
@@ -143,8 +156,9 @@ def capabilities():
         "open_vocab": "world" in indexer.MODEL_NAME.lower(),
         "clip": embeddings.available(),
         "clip_error": embeddings.error(),
-        "llm_parser": query_parser.llm_available(),
+        "nlu": alert_rules.nlu_info(),
         "ffmpeg": export.ffmpeg_exe() is not None,
+        "live": live.info(),
     }
 
 
@@ -264,8 +278,11 @@ def search(req: SearchRequest):
         segments, [f for f in frames if f[1] is not None],
         q.objects, q.colors, q.actions, tr, q.semantic, q.unknown,
         embed=embeddings.embed_texts if embeddings.available() else None,
-        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9)
+        near=req.near, W=meta["width"] or 16, H=meta["height"] or 9, object_colors=q.object_colors,
+        min_duration=q.minDuration)
 
+    # "X next to Y": the results are the X's, each with the Y it was next to
+    segments = with_context(segments, q.objects, W=meta["width"] or 16, H=meta["height"] or 9, require_near=req.near)
     total = len(segments)
     page = segments[req.offset:req.offset + req.limit]
     return {
@@ -276,6 +293,8 @@ def search(req: SearchRequest):
                       else f'{s["color"]} {s["cls"]}'.strip()),
             "box": s["box"], "path": s["path"], "best_t": s.get("best_t", s["t"]),
             "track": s["track_id"], "entity": s["entity_id"],
+            "context": [{"cls": c["cls"], "label": f'{c["color"]} {c["cls"]}'.strip(), "box": c["box"],
+                         "path": c["path"], "t": c["t"], "dur": c["dur"]} for c in s.get("context", [])],
             "speed": round(s["speed"], 3),
             "score": round(s.get("score", 0.0), 3),
         } for s in page],
@@ -339,6 +358,262 @@ def export_zip(req: ExportRequest):
     fname = f"{os.path.splitext(req.video)[0]}_results_{int(time.time())}.zip"
     return Response(data, media_type="application/zip",
                     headers={"Content-Disposition": f'attachment; filename="{fname}"'})
+
+
+# ---------------------------------------------------------------- live mode
+class RuleRequest(BaseModel):
+    text: str
+
+
+@app.post("/live/rules")
+def add_live_rule(req: RuleRequest):
+    """A sentence -> an alert rule. {rule, source} or {rule: null, reason}."""
+    if not req.text.strip():
+        raise HTTPException(400, "empty text")
+    out = alert_rules.parse(req.text, live.classes())
+    if out.get("rule"):
+        out["rule"], out["new"] = live.add_rule(out["rule"])
+    return out
+
+
+@app.get("/live/rules")
+def list_live_rules():
+    return {"rules": live.list_rules()}
+
+
+@app.delete("/live/rules/{rule_id}")
+def delete_live_rule(rule_id: str):
+    if not live.remove_rule(rule_id):
+        raise HTTPException(404, "no such rule")
+    return {"ok": True}
+
+
+@app.websocket("/live/ws")
+async def live_ws(ws: WebSocket):
+    """The browser sends one JPEG (binary message) and waits for the JSON answer."""
+    await ws.accept()
+    await run_in_threadpool(live.start_stream)
+    try:
+        while True:
+            data = await ws.receive_bytes()
+            try:
+                out = await run_in_threadpool(live.process, data)
+            except Exception as e:  # noqa: BLE001  (model download failed, ...)
+                live.error = str(e)
+                out = {"error": str(e)}
+            await ws.send_json(out)
+    except WebSocketDisconnect:
+        pass
+
+
+# ---------------------------------------------------- actions in recorded videos
+# The same alert rules as the live camera, on an uploaded video: "מישהו חוטף
+# תיק" in the search chat. The live perception (pose + detectors) runs over
+# the video once at EVENT_FPS and is cached in live/data/perception (the same
+# cache live/eval_alerts.py uses); then any action rule is answered in seconds.
+EVENT_FPS = float(os.environ.get("EVENT_FPS", "3"))
+EVENT_KINDS = {"hold", "raise_object", "hands_up", "ignite", "snatch"}
+EVENT_STATUS: dict[str, dict] = {}
+_offline = {"engine": None}
+_offline_lock = threading.Lock()
+
+
+class EventRequest(BaseModel):
+    video: str
+    text: str
+
+
+def _perception_path(video):
+    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "live", "data", "perception", video + ".jsonl")
+
+
+def _perceive_bg(video, path, out):
+    import sys
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "live"))
+    from perceive import perceive_video
+    from live_engine import LiveEngine
+    st = EVENT_STATUS[video]
+    try:
+        with _offline_lock:            # one video at a time; its own engine, so the live camera is not disturbed
+            if _offline["engine"] is None:
+                _offline["engine"] = LiveEngine()
+            os.makedirs(os.path.dirname(out), exist_ok=True)
+            perceive_video(_offline["engine"], path, out, EVENT_FPS, progress=lambda p: st.update(progress=p))
+        st.update(status="ready", progress=1.0)
+    except Exception as e:  # noqa: BLE001
+        st.update(status="error", error=str(e))
+
+
+def _cached_fps(out):
+    import json
+    try:
+        with open(out, encoding="utf-8") as f:
+            return json.loads(f.readline()).get("fps")
+    except (OSError, ValueError):
+        return None
+
+
+def _cache_ok(out):
+    """the cached perception was made at EVENT_FPS by the detectors the server runs now (a new model,
+    e.g. security_v3.pt, means the video is analysed again)."""
+    import json
+    import live_engine
+    try:
+        with open(out, encoding="utf-8") as f:
+            head = json.loads(f.readline())
+    except (OSError, ValueError):
+        return False
+    now = live_engine.DET_MODELS + live_engine.EXTRA_MODELS + [live_engine.POSE_MODEL]
+    return head.get("fps") == EVENT_FPS and head.get("models", now) == now
+
+
+@app.get("/events/status")
+def events_status(video: str):
+    out = _perception_path(safe_name(video))
+    if _cache_ok(out):
+        return {"status": "ready", "progress": 1.0}
+    return EVENT_STATUS.get(safe_name(video), {"status": "none", "progress": 0.0})
+
+
+@app.post("/events")
+def search_events(req: EventRequest):
+    """{"event": false} when the sentence is not an action (the normal search answers it);
+    {"event": true, "status": "perceiving", "progress"} while the video is analysed;
+    {"event": true, "status": "ready", "rule", "results"} with the moments it happens."""
+    import json
+    parsed = alert_rules.parse(req.text, live.classes())
+    rule = parsed.get("rule")
+    if not rule or rule["kind"] not in EVENT_KINDS:
+        return {"event": False}
+    video = safe_name(req.video)
+    path = video_path(video)
+    out = _perception_path(video)
+    if _cached_fps(out) != EVENT_FPS:
+        st = EVENT_STATUS.get(video)
+        if not st or st.get("status") in ("error", "ready"):
+            EVENT_STATUS[video] = {"status": "perceiving", "progress": 0.0}
+            threading.Thread(target=_perceive_bg, args=(video, path, out), daemon=True).start()
+        return {"event": True, "status": EVENT_STATUS[video]["status"], "progress": EVENT_STATUS[video]["progress"],
+                "error": EVENT_STATUS[video].get("error"), "rule": rule}
+    with open(out, encoding="utf-8") as f:
+        head = json.loads(f.readline())
+        frames = [json.loads(l) for l in f if l.strip()]
+    W, H = max(1, head.get("w") or 1), max(1, head.get("h") or 1)
+    rule["cooldown"] = 3.0                     # a recorded video: list every separate moment
+    ev, results = alert_rules.Evaluator(), []
+    for fr in frames:
+        objs = [o for o in fr["objects"] if o["conf"] >= live_conf()]
+        for a in ev.step([rule], fr["persons"], objs, fr["t"])[0]:
+            b = a.get("box")
+            box = ({"x": 100 * b[0] / W, "y": 100 * b[1] / H, "w": 100 * (b[2] - b[0]) / W, "h": 100 * (b[3] - b[1]) / H}
+                   if b else {"x": 0, "y": 0, "w": 100, "h": 100})
+            t = fr["t"]
+            results.append({"t": max(0.0, t - 2.0), "dur": 4.0, "best_t": t, "label": rule["label"],
+                            "cls": "event" if b else "scene", "conf": 1.0, "box": box})
+    return {"event": True, "status": "ready", "rule": rule, "results": results, "total": len(results)}
+
+
+def live_conf():
+    import live_engine
+    return live_engine.CONF
+
+
+# ------------------------------------------------------------- labelling
+# Our own videos, labelled in the UI ("תיוג"): for every video, every
+# scenario of live/scenarios.json gets its list of [start, end] windows, so a
+# scenario that was not marked counts as "did not happen" (false alarms are
+# measured too). Same format as eval/ground_truth_uca.json, so
+# live/eval_alerts.py reads both.
+LIVE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "live")
+LABELS = os.path.join(LIVE_DIR, "data", "labels.json")
+LABEL_VIDEOS = os.path.join(LIVE_DIR, "data", "videos")
+LABELS_LOCK = threading.Lock()
+
+
+def _scenario_names():
+    import json
+    with open(os.path.join(LIVE_DIR, "scenarios.json"), encoding="utf-8") as f:
+        cfg = json.load(f)
+    return {k: v.get("name", k) for k, v in cfg.items() if not k.startswith("_")}
+
+
+def _read_labels():
+    import json
+    if not os.path.isfile(LABELS):
+        return {"videos": {}}
+    with open(LABELS, encoding="utf-8") as f:
+        return json.load(f)
+
+
+def _write_labels(data):
+    import json
+    os.makedirs(os.path.dirname(LABELS), exist_ok=True)
+    tmp = LABELS + ".tmp"
+    with open(tmp, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=1)
+    os.replace(tmp, LABELS)
+
+
+class LabelEvent(BaseModel):
+    scenario: str
+    start: float = Field(..., ge=0)
+    end: float = Field(..., ge=0)
+
+
+class LabelRequest(BaseModel):
+    video: str
+    duration: float = 0
+    events: list[LabelEvent] = []
+
+
+@app.get("/labels")
+def get_labels():
+    data = _read_labels()
+    have = set(os.listdir(LABEL_VIDEOS)) if os.path.isdir(LABEL_VIDEOS) else set()
+    for name, v in data["videos"].items():
+        v["file_copied"] = name in have
+    return {"scenarios": _scenario_names(), "videos": data["videos"]}
+
+
+@app.post("/labels")
+def save_labels(req: LabelRequest):
+    names = _scenario_names()
+    bad = sorted({e.scenario for e in req.events} - set(names))
+    if bad:
+        raise HTTPException(400, f"unknown scenario: {', '.join(bad)}")
+    if any(e.end <= e.start for e in req.events):
+        raise HTTPException(400, "an event ends before it starts")
+    video = safe_name(req.video)
+    queries = []
+    for sc, title in names.items():
+        wins = sorted([round(e.start, 2), round(e.end, 2)] for e in req.events if e.scenario == sc)
+        queries.append({"scenario": sc, "text": title, "expected": wins})
+    with LABELS_LOCK:
+        data = _read_labels()
+        data["videos"][video] = {"category": "own", "duration": round(req.duration, 2),
+                                 "labelled_at": time.strftime("%Y-%m-%d %H:%M"), "queries": queries}
+        _write_labels(data)
+    return {"ok": True, "video": video, "events": len(req.events)}
+
+
+@app.delete("/labels/{video}")
+def delete_labels(video: str):
+    with LABELS_LOCK:
+        data = _read_labels()
+        if data["videos"].pop(video, None) is None:
+            raise HTTPException(404, "no labels for this video")
+        _write_labels(data)
+    return {"ok": True}
+
+
+@app.post("/labels/video")
+def upload_label_video(file: UploadFile = File(...)):
+    """a copy of the labelled video in live/data/videos, where live/perceive.py looks."""
+    os.makedirs(LABEL_VIDEOS, exist_ok=True)
+    name = safe_name(file.filename or "video.mp4")
+    with open(os.path.join(LABEL_VIDEOS, name), "wb") as f:
+        shutil.copyfileobj(file.file, f)
+    return {"ok": True, "video": name}
 
 
 # cleanup of old rendered clips (older than a day) at start-up

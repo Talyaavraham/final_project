@@ -5,13 +5,15 @@ video, keeps the best confidence per class per second, and scores
 "seconds above a threshold, grouped into windows" against the expected
 windows with hit scoring — for a grid of thresholds, per scenario.
 
-    python eval/detector_bench.py eval/ground_truth_uca.json eval/data/ucf
+    python eval/detector_bench.py eval/ground_truth_uca.json eval/data/ucf        # sub-folders included
     python eval/detector_bench.py ... --classes gun=weapon,knife=knife,fire=fire,smoke=fire   # smoke counts as fire
 
 The per-second confidences are saved next to the ground truth
-(<gt>_<model>_raw.json), so a new threshold grid needs no re-run (--raw).
+(<gt>_<model>_raw.json, or --raw-out), so a new threshold grid needs no
+re-run (--raw). An interrupted run continues from that file.
 """
 import argparse
+import glob
 import json
 import os
 import sys
@@ -68,20 +70,22 @@ def main():
                     help="detector class=scenario")
     ap.add_argument("--thr", default="0.2,0.3,0.4,0.5,0.6")
     ap.add_argument("--raw", help="reuse saved per-second confidences instead of running the model")
+    ap.add_argument("--raw-out", help="where to save the per-second confidences (default: next to the ground truth)")
     args = ap.parse_args()
     cls2sc = dict(kv.split("=") for kv in args.classes.split(","))
     gt = json.load(open(args.gt, encoding="utf-8"))
-    raw_path = args.raw or os.path.splitext(args.gt)[0] + f"_{os.path.splitext(os.path.basename(args.model))[0]}_raw.json"
+    raw_path = args.raw or args.raw_out or os.path.splitext(args.gt)[0] + f"_{os.path.splitext(os.path.basename(args.model))[0]}_raw.json"
     raw = json.load(open(raw_path)) if os.path.exists(raw_path) else {}
     if not args.raw:
         from ultralytics import YOLO
         model = YOLO(args.model)
-        todo = [v for v in gt["videos"] if v not in raw and os.path.exists(os.path.join(args.folder, v))]
+        paths = {os.path.basename(f): f for f in glob.glob(os.path.join(args.folder, "**", "*.mp4"), recursive=True)}
+        todo = [v for v in gt["videos"] if v not in raw and v in paths]
         print(f"{len(todo)} videos to scan with {args.model} ({len(raw)} already in {raw_path})", flush=True)
         t0 = time.time()
         for n, v in enumerate(todo, 1):
             t1 = time.time()
-            raw[v] = {str(k): b for k, b in scan(model, os.path.join(args.folder, v), args.imgsz).items()}
+            raw[v] = {str(k): b for k, b in scan(model, paths[v], args.imgsz).items()}
             json.dump(raw, open(raw_path, "w"))
             print(f"[{n}/{len(todo)}] {v}: {len(raw[v])} s with detections ({time.time()-t1:.0f}s, {(time.time()-t0)/60:.1f} min)", flush=True)
     scenarios = sorted(set(cls2sc.values()))
@@ -104,7 +108,7 @@ def main():
         for s in scenarios:
             p, r, f = prf(*agg[s])
             cells.append(f"P{p:.2f} R{r:.2f} F1 {f:.2f} ({agg[s][0]}/{agg[s][0]+agg[s][1]}/{agg[s][0]+agg[s][2]})")
-        print(f"{thr:>4.1f} | " + " ".join(f"{c:>22}" for c in cells))
+        print(f"{thr:>4.2g} | " + " ".join(f"{c:>22}" for c in cells))
     print("cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring")
 
 

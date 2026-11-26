@@ -1,0 +1,3248 @@
+{
+ "date": "2026-11-24",
+ "gt": [
+  "eval/ground_truth_uca.json"
+ ],
+ "conf": 0.5,
+ "slack": [
+  1.0,
+  2.0
+ ],
+ "scenarios": {
+  "fire": {
+   "fire seen": {
+    "rule": {
+     "kind": "object",
+     "object": "fire"
+    },
+    "videos": 38,
+    "hours": 2.965,
+    "events": 44,
+    "caught": 14,
+    "recall": 0.3181818181818182,
+    "alerts": 44,
+    "false": 16,
+    "false_per_hour": 5.395627855303499,
+    "median_delay": 4.516499999999999,
+    "per_video": {
+     "Arson019_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson025_x264.mp4": {
+      "events": 6,
+      "caught": 2,
+      "alerts": [
+       35.0,
+       61.3,
+       139.0,
+       147.7,
+       152.7
+      ],
+      "false": 2
+     },
+     "Arson053_x264.mp4": {
+      "events": 2,
+      "caught": 1,
+      "alerts": [
+       172.3,
+       177.3,
+       219.0,
+       224.3
+      ],
+      "false": 2
+     },
+     "Arson008_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson036_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson040_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       13.0,
+       46.0,
+       51.0,
+       56.0,
+       61.0,
+       66.0,
+       71.0,
+       76.0,
+       81.0,
+       86.0,
+       91.0
+      ],
+      "false": 0
+     },
+     "Arson032_x264.mp4": {
+      "events": 3,
+      "caught": 1,
+      "alerts": [
+       10.3,
+       45.3,
+       50.7
+      ],
+      "false": 2
+     },
+     "Arson003_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       35.3,
+       40.3,
+       105.3,
+       111.7,
+       117.0
+      ],
+      "false": 2
+     },
+     "Arson013_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson022_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson015_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       235.7,
+       240.7,
+       245.7,
+       250.7,
+       255.7,
+       261.0,
+       325.3,
+       330.3
+      ],
+      "false": 4
+     },
+     "Arson049_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson012_x264.mp4": {
+      "events": 3,
+      "caught": 1,
+      "alerts": [
+       19.3
+      ],
+      "false": 0
+     },
+     "Arson030_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson051_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       22.0,
+       32.0
+      ],
+      "false": 0
+     },
+     "Arson005_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson031_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson035_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson027_x264.mp4": {
+      "events": 2,
+      "caught": 1,
+      "alerts": [
+       46.0,
+       62.0,
+       67.0,
+       72.0,
+       77.0
+      ],
+      "false": 4
+     },
+     "Arson001_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "smoke seen": {
+    "rule": {
+     "kind": "object",
+     "object": "smoke"
+    },
+    "videos": 38,
+    "hours": 2.965,
+    "events": 44,
+    "caught": 6,
+    "recall": 0.13636363636363635,
+    "alerts": 32,
+    "false": 21,
+    "false_per_hour": 7.081761560085844,
+    "median_delay": 5.417000000000002,
+    "per_video": {
+     "Arson019_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson025_x264.mp4": {
+      "events": 6,
+      "caught": 4,
+      "alerts": [
+       57.0,
+       62.0,
+       67.0,
+       76.7,
+       81.7,
+       86.7,
+       92.7,
+       97.7,
+       102.7,
+       107.7,
+       113.7,
+       119.0,
+       124.0,
+       149.0,
+       155.3,
+       160.3,
+       165.3,
+       174.7
+      ],
+      "false": 9
+     },
+     "Arson053_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson008_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson036_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson040_x264.mp4": {
+      "events": 2,
+      "caught": 1,
+      "alerts": [
+       47.7
+      ],
+      "false": 0
+     },
+     "Arson032_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson003_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson013_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson022_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson015_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [
+       35.7,
+       55.3,
+       99.7,
+       153.0,
+       267.3,
+       338.0
+      ],
+      "false": 6
+     },
+     "Arson049_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson012_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson030_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson051_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson005_x264.mp4": {
+      "events": 1,
+      "caught": 1,
+      "alerts": [
+       31.0
+      ],
+      "false": 0
+     },
+     "Arson031_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson035_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson027_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [
+       80.7,
+       89.3
+      ],
+      "false": 2
+     },
+     "Arson001_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [
+       45.7,
+       170.3,
+       227.0,
+       353.0
+      ],
+      "false": 4
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "someone ignites": {
+    "rule": {
+     "kind": "ignite"
+    },
+    "videos": 38,
+    "hours": 2.965,
+    "events": 44,
+    "caught": 17,
+    "recall": 0.38636363636363635,
+    "alerts": 63,
+    "false": 29,
+    "false_per_hour": 9.779575487737594,
+    "median_delay": 5.032999999999998,
+    "per_video": {
+     "Arson019_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson025_x264.mp4": {
+      "events": 6,
+      "caught": 4,
+      "alerts": [
+       57.0,
+       62.0,
+       67.0,
+       76.7,
+       81.7,
+       92.7,
+       97.7,
+       102.7,
+       139.0,
+       147.7,
+       155.3,
+       160.3,
+       165.3
+      ],
+      "false": 5
+     },
+     "Arson053_x264.mp4": {
+      "events": 2,
+      "caught": 1,
+      "alerts": [
+       172.3,
+       177.3,
+       219.0,
+       224.3
+      ],
+      "false": 2
+     },
+     "Arson008_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson036_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson040_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       13.0,
+       46.0,
+       51.0,
+       56.0,
+       61.0,
+       66.0,
+       71.0,
+       76.0,
+       81.0,
+       86.0,
+       91.0
+      ],
+      "false": 0
+     },
+     "Arson032_x264.mp4": {
+      "events": 3,
+      "caught": 1,
+      "alerts": [
+       10.3,
+       45.3
+      ],
+      "false": 1
+     },
+     "Arson003_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       35.3,
+       40.3,
+       105.3,
+       111.7,
+       117.0
+      ],
+      "false": 2
+     },
+     "Arson013_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson022_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson015_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       35.7,
+       55.3,
+       99.7,
+       153.0,
+       235.7,
+       240.7,
+       245.7,
+       250.7,
+       255.7,
+       261.0,
+       267.3,
+       326.3,
+       331.3,
+       338.0
+      ],
+      "false": 10
+     },
+     "Arson049_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson012_x264.mp4": {
+      "events": 3,
+      "caught": 1,
+      "alerts": [
+       19.3
+      ],
+      "false": 0
+     },
+     "Arson030_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson051_x264.mp4": {
+      "events": 2,
+      "caught": 2,
+      "alerts": [
+       22.0,
+       32.0
+      ],
+      "false": 0
+     },
+     "Arson005_x264.mp4": {
+      "events": 1,
+      "caught": 1,
+      "alerts": [
+       31.0
+      ],
+      "false": 0
+     },
+     "Arson031_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson035_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson027_x264.mp4": {
+      "events": 2,
+      "caught": 1,
+      "alerts": [
+       46.0,
+       62.0,
+       67.0,
+       72.0,
+       77.0,
+       89.3
+      ],
+      "false": 5
+     },
+     "Arson001_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [
+       45.7,
+       170.3,
+       227.0,
+       353.0
+      ],
+      "false": 4
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   }
+  },
+  "knife": {
+   "object only": {
+    "rule": {
+     "kind": "object",
+     "object": "knife"
+    },
+    "videos": 49,
+    "hours": 2.157,
+    "events": 46,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 0,
+    "false": 0,
+    "false_per_hour": 0.0,
+    "median_delay": null,
+    "per_video": {
+     "Arrest035_x264.mp4": {
+      "events": 5,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery001_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery088_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery084_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault004_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arrest038_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery102_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery038_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery129_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery018_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery017_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting024_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting008_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery068_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery122_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery132_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery143_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery087_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery031_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery127_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery108_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault015_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery016_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault007_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery022_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting014_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery021_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shoplifting008_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting015_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "holds knife": {
+    "rule": {
+     "kind": "hold",
+     "object": "knife"
+    },
+    "videos": 49,
+    "hours": 2.157,
+    "events": 46,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 0,
+    "false": 0,
+    "false_per_hour": 0.0,
+    "median_delay": null,
+    "per_video": {
+     "Arrest035_x264.mp4": {
+      "events": 5,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery001_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery088_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery084_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault004_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arrest038_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery102_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery038_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery129_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery018_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery017_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting024_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting008_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery068_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery122_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery132_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery143_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery087_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery031_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery127_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery108_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault015_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery016_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault007_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery022_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting014_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery021_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shoplifting008_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting015_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "raises knife": {
+    "rule": {
+     "kind": "raise_object",
+     "object": "knife"
+    },
+    "videos": 49,
+    "hours": 2.157,
+    "events": 46,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 0,
+    "false": 0,
+    "false_per_hour": 0.0,
+    "median_delay": null,
+    "per_video": {
+     "Arrest035_x264.mp4": {
+      "events": 5,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery001_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery088_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery084_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault004_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arrest038_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery102_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery038_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery129_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery018_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery017_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting024_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting008_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery068_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery122_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery132_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery143_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery087_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery031_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery127_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery108_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault015_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery016_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Assault007_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery022_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting014_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery021_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shoplifting008_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting015_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   }
+  },
+  "snatch": {
+   "holds a bag": {
+    "rule": {
+     "kind": "hold",
+     "object": "bag"
+    },
+    "videos": 29,
+    "hours": 1.376,
+    "events": 11,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 11,
+    "false": 11,
+    "false_per_hour": 7.996995068519709,
+    "median_delay": null,
+    "per_video": {
+     "Robbery102_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery031_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery062_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery032_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery089_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery138_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery072_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [
+       5.3
+      ],
+      "false": 1
+     },
+     "Robbery093_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery080_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery029_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery020_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [
+       387.3,
+       832.0
+      ],
+      "false": 2
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [
+       416.7,
+       551.0,
+       890.7,
+       913.7,
+       952.7,
+       1168.3,
+       2028.7
+      ],
+      "false": 7
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [
+       21.7
+      ],
+      "false": 1
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "snatches a bag": {
+    "rule": {
+     "kind": "snatch",
+     "object": "bag"
+    },
+    "videos": 29,
+    "hours": 1.376,
+    "events": 11,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 0,
+    "false": 0,
+    "false_per_hour": 0.0,
+    "median_delay": null,
+    "per_video": {
+     "Robbery102_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery031_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery062_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery032_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery089_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery138_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery072_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery093_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery080_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery029_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery020_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   }
+  },
+  "weapon": {
+   "object only": {
+    "rule": {
+     "kind": "object",
+     "object": "gun"
+    },
+    "videos": 52,
+    "hours": 2.342,
+    "events": 81,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 1,
+    "false": 1,
+    "false_per_hour": 0.42690801199611517,
+    "median_delay": null,
+    "per_video": {
+     "Arrest038_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [
+       22.3
+      ],
+      "false": 1
+     },
+     "Fighting024_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery132_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting014_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery019_x264.mp4": {
+      "events": 6,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting031_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery078_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery006_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery024_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery065_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting020_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery014_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery124_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery033_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery099_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery051_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery100_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery036_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery073_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting001_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting030_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting038_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery004_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting026_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting004_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery118_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery025_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson025_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery062_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery060_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery075_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Burglary049_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery020_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "holds gun": {
+    "rule": {
+     "kind": "hold",
+     "object": "gun"
+    },
+    "videos": 52,
+    "hours": 2.342,
+    "events": 81,
+    "caught": 2,
+    "recall": 0.024691358024691357,
+    "alerts": 5,
+    "false": 2,
+    "false_per_hour": 0.8538160239922303,
+    "median_delay": 12.366500000000002,
+    "per_video": {
+     "Arrest038_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [
+       23.3
+      ],
+      "false": 1
+     },
+     "Fighting024_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery132_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [
+       69.7
+      ],
+      "false": 1
+     },
+     "Shooting014_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery019_x264.mp4": {
+      "events": 6,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting031_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery078_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery006_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery024_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery065_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting020_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery014_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery124_x264.mp4": {
+      "events": 4,
+      "caught": 1,
+      "alerts": [
+       79.3,
+       86.0
+      ],
+      "false": 0
+     },
+     "Robbery033_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery099_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery051_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery100_x264.mp4": {
+      "events": 3,
+      "caught": 1,
+      "alerts": [
+       103.0
+      ],
+      "false": 0
+     },
+     "Robbery036_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery073_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting001_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting030_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting038_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery004_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting026_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting004_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery118_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery025_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson025_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery062_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery060_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery075_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Burglary049_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery020_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   },
+   "raises gun": {
+    "rule": {
+     "kind": "raise_object",
+     "object": "gun"
+    },
+    "videos": 52,
+    "hours": 2.342,
+    "events": 81,
+    "caught": 0,
+    "recall": 0.0,
+    "alerts": 0,
+    "false": 0,
+    "false_per_hour": 0.0,
+    "median_delay": null,
+    "per_video": {
+     "Arrest038_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Fighting024_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery132_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting011_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting014_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery019_x264.mp4": {
+      "events": 6,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting031_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery078_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery006_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery024_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery065_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting020_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery014_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery124_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery033_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery099_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery051_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery100_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery036_x264.mp4": {
+      "events": 4,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery073_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting001_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting030_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting038_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery004_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting026_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Shooting004_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery118_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery025_x264.mp4": {
+      "events": 3,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Arson025_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery062_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery060_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery075_x264.mp4": {
+      "events": 1,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Burglary049_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Robbery020_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos084_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos473_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos225_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos737_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos736_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos254_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos361_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos073_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos705_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_881_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_345_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_889_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos344_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos916_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos157_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos297_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos_745_x264.mp4": {
+      "events": 0,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     },
+     "Normal_Videos170_x264.mp4": {
+      "events": 2,
+      "caught": 0,
+      "alerts": [],
+      "false": 0
+     }
+    }
+   }
+  }
+ }
+}

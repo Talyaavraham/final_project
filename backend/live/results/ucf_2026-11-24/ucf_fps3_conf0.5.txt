@@ -1,0 +1,16 @@
+python live/eval_alerts.py --gt eval/ground_truth_uca.json --conf 0.5
+
+scenario     method           videos  hours events caught  recall alerts  false  false/h   delay
+fire         fire seen            38   2.97     44     14   31.8%     44     16      5.4    4.5s
+fire         smoke seen           38   2.97     44      6   13.6%     32     21      7.1    5.4s
+fire         someone ignites      38   2.97     44     17   38.6%     63     29      9.8    5.0s
+knife        object only          49   2.16     46      0    0.0%      0      0      0.0       —
+knife        holds knife          49   2.16     46      0    0.0%      0      0      0.0       —
+knife        raises knife         49   2.16     46      0    0.0%      0      0      0.0       —
+snatch       holds a bag          29   1.38     11      0    0.0%     11     11      8.0       —
+snatch       snatches a bag       29   1.38     11      0    0.0%      0      0      0.0       —
+weapon       object only          52   2.34     81      0    0.0%      1      1      0.4       —
+weapon       holds gun            52   2.34     81      2    2.5%      5      2      0.9   12.4s
+weapon       raises gun           52   2.34     81      0    0.0%      0      0      0.0       —
+
+recall: alert from 1.0s before an event to 2.0s after it. false/h: alerts outside every event, per hour of those videos. delay: median, from the event's start.

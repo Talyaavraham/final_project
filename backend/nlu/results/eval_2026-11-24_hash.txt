@@ -1,0 +1,14 @@
+python nlu/evaluate.py  —  2026-11-24, encoder=hash, 11581 training sentences (templates), with ignite + snatch
+test_handwritten = 68 free sentences written by Claude (not from templates), NOT real users
+test_templates: unseen wrappers / verbs on purpose (e.g. 'שודד', 'מעלים', 'makes off with', 'swipes' for snatch): 504 of its 1775 sentences are snatch
+
+test set                 parser      n    kind  object   hands   exact
+test_templates.jsonl     keywords 1775   43.9%   98.6%   69.5%   43.9%
+test_templates.jsonl     model    1775   48.6%   81.0%   97.6%   48.3%
+test_templates.jsonl     combined 1775   52.9%   97.4%  100.0%   52.7%
+test_handwritten.jsonl   keywords   68   77.9%   97.2%   87.5%   77.9%
+test_handwritten.jsonl   model      68   85.3%   86.1%   87.5%   83.8%
+test_handwritten.jsonl   combined   68   85.3%   97.2%   87.5%   83.8%
+test_people.jsonl        (empty: add sentences people wrote)
+
+kind/object/hands = accuracy of each part; exact = the whole rule right

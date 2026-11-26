@@ -20,6 +20,7 @@ backend/*.log
 backend/train/night/
 !backend/night.pt
 !backend/security.pt
+!backend/security_v3.pt
 
 # security scenarios: downloaded datasets and benchmark videos
 backend/eval/data/
@@ -29,3 +30,7 @@ backend/eval/*.txt
 backend/eval/redo.txt
 backend/eval/benchmark.db
 backend/eval/benchmark_videos/
+
+# live mode: our own videos and the perception cache (big, local); labels.json and results are kept
+backend/live/data/videos/
+backend/live/data/perception/

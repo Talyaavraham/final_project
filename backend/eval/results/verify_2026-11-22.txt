@@ -1,0 +1,135 @@
+Second look by a vision-language model (SmolVLM2-500M-Video-Instruct, no training, CPU): eval/verify_bench.py
+Three frames of every returned segment, a yes/no question per scenario, segments below a P(yes) threshold dropped.
+The 'segments returned' column is windows found + wrong segments, as in offline_eval.py.
+
+=== benchmark, 107 videos: python eval/verify_bench.py eval/benchmark_v2.db eval/ground_truth_uca.json --videos eval/data/ucf ===
+
+fire: "Is there fire or flames in these images?"  AUC 0.48 (36 right, 29 wrong segments)
+  p>=0.0     P=0.36 R=0.36 F1=0.360  (found 16 of 44 windows, 45 segments returned)
+  p>=0.1     P=0.36 R=0.23 F1=0.278  (found 10 of 44 windows, 28 segments returned)
+  p>=0.2     P=0.40 R=0.23 F1=0.290  (found 10 of 44 windows, 25 segments returned)
+  p>=0.3     P=0.39 R=0.20 F1=0.269  (found 9 of 44 windows, 23 segments returned)
+  p>=0.4     P=0.43 R=0.20 F1=0.277  (found 9 of 44 windows, 21 segments returned)
+  p>=0.5     P=0.50 R=0.20 F1=0.290  (found 9 of 44 windows, 18 segments returned)
+  p>=0.6     P=0.53 R=0.20 F1=0.295  (found 9 of 44 windows, 17 segments returned)
+  p>=0.7     P=0.47 R=0.16 F1=0.237  (found 7 of 44 windows, 15 segments returned)
+  p>=0.8     P=0.50 R=0.14 F1=0.214  (found 6 of 44 windows, 12 segments returned)
+  p>=0.9     P=0.50 R=0.07 F1=0.120  (found 3 of 44 windows, 6 segments returned)
+
+knife: "Is a person holding a knife in these images?"  AUC 0.53 (27 right, 114 wrong segments)
+  p>=0.0     P=0.13 R=0.37 F1=0.192  (found 17 of 46 windows, 131 segments returned)
+  p>=0.1     P=0.15 R=0.30 F1=0.204  (found 14 of 46 windows, 91 segments returned)
+  p>=0.2     P=0.16 R=0.15 F1=0.156  (found 7 of 46 windows, 44 segments returned)
+  p>=0.3     P=0.12 R=0.07 F1=0.083  (found 3 of 46 windows, 26 segments returned)
+  p>=0.4     P=0.13 R=0.04 F1=0.066  (found 2 of 46 windows, 15 segments returned)
+  p>=0.5     P=0.08 R=0.02 F1=0.034  (found 1 of 46 windows, 13 segments returned)
+  p>=0.6     P=0.00 R=0.00 F1=0.000  (found 0 of 46 windows, 8 segments returned)
+  p>=0.7     P=0.00 R=0.00 F1=0.000  (found 0 of 46 windows, 4 segments returned)
+  p>=0.8     P=0.00 R=0.00 F1=0.000  (found 0 of 46 windows, 3 segments returned)
+  p>=0.9     P=0.00 R=0.00 F1=0.000  (found 0 of 46 windows, 1 segments returned)
+
+package: "Is a person carrying a package or a box in these images?"  AUC 0.97 (3 right, 68 wrong segments)
+  p>=0.0     P=0.04 R=0.43 F1=0.077  (found 3 of 7 windows, 71 segments returned)
+  p>=0.1     P=0.04 R=0.43 F1=0.077  (found 3 of 7 windows, 71 segments returned)
+  p>=0.2     P=0.04 R=0.43 F1=0.081  (found 3 of 7 windows, 67 segments returned)
+  p>=0.3     P=0.07 R=0.43 F1=0.125  (found 3 of 7 windows, 41 segments returned)
+  p>=0.4     P=0.14 R=0.43 F1=0.214  (found 3 of 7 windows, 21 segments returned)
+  p>=0.5     P=0.19 R=0.43 F1=0.261  (found 3 of 7 windows, 16 segments returned)
+  p>=0.6     P=0.25 R=0.43 F1=0.316  (found 3 of 7 windows, 12 segments returned)
+  p>=0.7     P=0.50 R=0.29 F1=0.364  (found 2 of 7 windows, 4 segments returned)
+  p>=0.8     P=1.00 R=0.14 F1=0.250  (found 1 of 7 windows, 1 segments returned)
+  p>=0.9     P=0.00 R=0.00 F1=0.000  (found 0 of 7 windows, 0 segments returned)
+
+snatch: "Is someone grabbing a bag from another person in these images?"  AUC 0.64 (14 right, 71 wrong segments)
+  p>=0.0     P=0.08 R=0.55 F1=0.136  (found 6 of 11 windows, 77 segments returned)
+  p>=0.1     P=0.09 R=0.45 F1=0.147  (found 5 of 11 windows, 57 segments returned)
+  p>=0.2     P=0.14 R=0.45 F1=0.217  (found 5 of 11 windows, 35 segments returned)
+  p>=0.3     P=0.25 R=0.45 F1=0.323  (found 5 of 11 windows, 20 segments returned)
+  p>=0.4     P=0.40 R=0.36 F1=0.381  (found 4 of 11 windows, 10 segments returned)
+  p>=0.5     P=0.25 R=0.09 F1=0.133  (found 1 of 11 windows, 4 segments returned)
+  p>=0.6     P=0.00 R=0.00 F1=0.000  (found 0 of 11 windows, 2 segments returned)
+  p>=0.7     P=0.00 R=0.00 F1=0.000  (found 0 of 11 windows, 1 segments returned)
+  p>=0.8     P=0.00 R=0.00 F1=0.000  (found 0 of 11 windows, 1 segments returned)
+  p>=0.9     P=0.00 R=0.00 F1=0.000  (found 0 of 11 windows, 1 segments returned)
+
+weapon: "Is a person holding a gun in these images?"  AUC 0.71 (38 right, 206 wrong segments)
+  p>=0.0     P=0.11 R=0.31 F1=0.160  (found 25 of 81 windows, 231 segments returned)
+  p>=0.1     P=0.53 R=0.12 F1=0.200  (found 10 of 81 windows, 19 segments returned)
+  p>=0.2     P=0.57 R=0.05 F1=0.091  (found 4 of 81 windows, 7 segments returned)
+  p>=0.3     P=0.67 R=0.05 F1=0.092  (found 4 of 81 windows, 6 segments returned)
+  p>=0.4     P=0.60 R=0.04 F1=0.070  (found 3 of 81 windows, 5 segments returned)
+  p>=0.5     P=0.50 R=0.02 F1=0.047  (found 2 of 81 windows, 4 segments returned)
+  p>=0.6     P=0.33 R=0.01 F1=0.024  (found 1 of 81 windows, 3 segments returned)
+  p>=0.7     P=0.33 R=0.01 F1=0.024  (found 1 of 81 windows, 3 segments returned)
+  p>=0.8     P=0.00 R=0.00 F1=0.000  (found 0 of 81 windows, 0 segments returned)
+  p>=0.9     P=0.00 R=0.00 F1=0.000  (found 0 of 81 windows, 0 segments returned)
+
+best thresholds on all videos: fire=0.0,knife=0.1,package=0.7,snatch=0.4,weapon=0.1
+OVERALL    P=0.12 R=0.35 F1=0.180  (found 67 of 189 windows, 555 segments returned) 
+  -> verified   P=0.27 R=0.24 F1=0.257  (found 46 of 189 windows, 169 segments returned)  (optimistic: picked on these videos)
+thresholds from half 0 on half 1: fire=0.0,knife=0.1,package=0.6,snatch=0.4,weapon=0.1
+  before     P=0.21 R=0.42 F1=0.277  (found 32 of 76 windows, 155 segments returned) 
+  after      P=0.32 R=0.29 F1=0.306  (found 22 of 76 windows, 68 segments returned)
+thresholds from half 1 on half 0: fire=0.0,knife=0.0,package=0.4,snatch=0.2,weapon=0.0
+  before     P=0.09 R=0.31 F1=0.136  (found 35 of 113 windows, 400 segments returned) 
+  after      P=0.11 R=0.31 F1=0.157  (found 35 of 113 windows, 332 segments returned)
+
+=== held-out, 54 videos, thresholds fixed on the benchmark: --thresholds fire=0.0,weapon=0.1 ===
+'(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)), '(Request ID: 32981b35-f82f-4b1b-b7e1-5804a9beb79e)')' thrown while requesting HEAD https://huggingface.co/openai/clip-vit-base-patch32/resolve/main/config.json
+Retrying in 1s [Retry 1/5].
+'(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)), '(Request ID: 8e2a7feb-cd3e-4f19-95ac-0c28a9a63845)')' thrown while requesting HEAD https://huggingface.co/api/resolve-cache/models/openai/clip-vit-base-patch32/3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268/config.json
+Retrying in 1s [Retry 1/5].
+'(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)), '(Request ID: 21c5232f-d29b-473f-9b3f-84716624bc4e)')' thrown while requesting HEAD https://huggingface.co/api/resolve-cache/models/openai/clip-vit-base-patch32/3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268/config.json
+Retrying in 2s [Retry 2/5].
+'(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)), '(Request ID: 9462a578-e0fa-4ad3-ba81-b79b8948960c)')' thrown while requesting HEAD https://huggingface.co/openai/clip-vit-base-patch32/resolve/main/config.json
+Retrying in 1s [Retry 1/5].
+'(ProtocolError('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None)), '(Request ID: 2972768b-cc69-472d-bf7f-6b0d5e124b33)')' thrown while requesting HEAD https://huggingface.co/api/resolve-cache/models/openai/clip-vit-base-patch32/3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268/config.json
+Retrying in 1s [Retry 1/5].
+Traceback (most recent call last):
+  File "c:\Users\talya\Downloads\final_project\backend\eval\verify_bench.py", line 196, in <module>
+    main()
+  File "c:\Users\talya\Downloads\final_project\backend\eval\verify_bench.py", line 146, in main
+    for video, q, res in answers(sqlite3.connect(args.db), gt):
+  File "c:\Users\talya\Downloads\final_project\backend\eval\offline_eval.py", line 76, in answers
+    dim = embeddings.embed_texts(["x"]).shape[1]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'shape'
+
+=== held-out, sweep (for information only: nothing is tuned on this set) ===
+
+fire: "Is there fire or flames in these images?"  AUC 0.53 (23 right, 58 wrong segments)
+  p>=0.0     P=0.18 R=0.42 F1=0.255  (found 13 of 31 windows, 71 segments returned)
+  p>=0.1     P=0.40 R=0.26 F1=0.314  (found 8 of 31 windows, 20 segments returned)
+  p>=0.2     P=0.47 R=0.26 F1=0.333  (found 8 of 31 windows, 17 segments returned)
+  p>=0.3     P=0.53 R=0.26 F1=0.348  (found 8 of 31 windows, 15 segments returned)
+  p>=0.4     P=0.57 R=0.26 F1=0.356  (found 8 of 31 windows, 14 segments returned)
+  p>=0.5     P=0.62 R=0.26 F1=0.364  (found 8 of 31 windows, 13 segments returned)
+  p>=0.6     P=0.67 R=0.26 F1=0.372  (found 8 of 31 windows, 12 segments returned)
+  p>=0.7     P=0.70 R=0.23 F1=0.341  (found 7 of 31 windows, 10 segments returned)
+  p>=0.8     P=0.67 R=0.13 F1=0.216  (found 4 of 31 windows, 6 segments returned)
+  p>=0.9     P=1.00 R=0.06 F1=0.121  (found 2 of 31 windows, 2 segments returned)
+
+weapon: "Is a person holding a gun in these images?"  AUC 0.69 (7 right, 91 wrong segments)
+  p>=0.0     P=0.06 R=0.43 F1=0.108  (found 6 of 14 windows, 97 segments returned)
+  p>=0.1     P=0.10 R=0.29 F1=0.151  (found 4 of 14 windows, 39 segments returned)
+  p>=0.2     P=0.15 R=0.29 F1=0.195  (found 4 of 14 windows, 27 segments returned)
+  p>=0.3     P=0.14 R=0.21 F1=0.167  (found 3 of 14 windows, 22 segments returned)
+  p>=0.4     P=0.10 R=0.14 F1=0.118  (found 2 of 14 windows, 20 segments returned)
+  p>=0.5     P=0.12 R=0.14 F1=0.129  (found 2 of 14 windows, 17 segments returned)
+  p>=0.6     P=0.22 R=0.14 F1=0.174  (found 2 of 14 windows, 9 segments returned)
+  p>=0.7     P=0.67 R=0.14 F1=0.235  (found 2 of 14 windows, 3 segments returned)
+  p>=0.8     P=1.00 R=0.14 F1=0.250  (found 2 of 14 windows, 2 segments returned)
+  p>=0.9     P=0.00 R=0.00 F1=0.000  (found 0 of 14 windows, 0 segments returned)
+
+best thresholds on all videos: fire=0.6,weapon=0.8
+OVERALL    P=0.11 R=0.42 F1=0.178  (found 19 of 45 windows, 168 segments returned) 
+  -> verified   P=0.71 R=0.22 F1=0.339  (found 10 of 45 windows, 14 segments returned)  (optimistic: picked on these videos)
+thresholds from half 0 on half 1: fire=0.6,weapon=0.2
+  before     P=0.10 R=0.36 F1=0.151  (found 8 of 22 windows, 84 segments returned) 
+  after      P=0.31 R=0.23 F1=0.263  (found 5 of 22 windows, 16 segments returned)
+thresholds from half 1 on half 0: fire=0.3,weapon=0.8
+  before     P=0.13 R=0.48 F1=0.206  (found 11 of 23 windows, 84 segments returned) 
+  after      P=0.42 R=0.22 F1=0.286  (found 5 of 23 windows, 12 segments returned)
+
+
+Time: 5-15 s per segment on this CPU (606 benchmark segments, 177 held-out segments).

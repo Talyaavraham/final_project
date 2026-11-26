@@ -205,3 +205,66 @@ def test_event_class_keeps_detector_hits_and_adds_what_clip_finds():
     assert out[0]["score"] == fire["conf"]
     # without CLIP the detector's answer is all there is
     assert run_query([fire, person], frames, ["fire"]) == ([fire], False)
+
+
+def test_colour_of_the_other_object():
+    walker = seg("person", 0, 4, 10, 40)
+    white_car = seg("car", 0, 4, 20, 40, color="white", tid=2)
+    red_car = seg("car", 0, 4, 18, 42, color="red", tid=3)
+    out = filter_segments([walker, white_car, red_car], ["person", "car"], [], [], None,
+                          object_colors={"car": ["white"]})
+    assert walker in out and white_car in out and red_car not in out
+    alone = seg("person", 0, 4, 10, 40, tid=4)
+    assert filter_segments([alone, red_car], ["person", "car"], [], [], None,
+                           object_colors={"car": ["white"]}) == []
+
+
+def test_results_are_the_subject_with_its_context():
+    from search import with_context
+    walker = seg("person", 30, 4, 10, 40)
+    car = seg("car", 10, 80, 20, 40, color="white", tid=2)     # the car's track starts long before anyone is there
+    out = with_context([car, walker], ["person", "car"])
+    assert [s["cls"] for s in out] == ["person"]
+    assert out[0]["t"] == 30 and [c["cls"] for c in out[0]["context"]] == ["car"]
+    assert with_context([car], ["car"]) == [car]               # one object: unchanged
+
+
+# ------------------------------------------------- direction, zone, dwell
+def test_direction_of_travel():
+    right = seg("car", 0, 5, 10, 40, dx=6.0)            # centre 15% -> 75%
+    left = seg("car", 0, 5, 80, 40, dx=-6.0, tid=2)
+    still = seg("car", 0, 5, 50, 40, tid=3)
+    cars = [right, left, still]
+    assert filter_segments(cars, ["car"], [], ["going right"], None) == [right]
+    assert filter_segments(cars, ["car"], [], ["going left"], None) == [left]
+    assert filter_segments(cars, ["car"], [], ["going up"], None) == []
+    # a diagonal counts for both axes; a small drift counts for none
+    rows = [(i * 0.5, 1, "person", .9, 10 + 6 * i, 70 - 6 * i, 6, 12, "red") for i in range(8)]
+    diagonal = track_segments(rows, duration=100, W=16, H=9)[0]
+    assert filter_segments([diagonal], [], [], ["going right", "going up"], None) == [diagonal]
+    drift = seg("person", 0, 5, 50, 40, dx=0.5, tid=4)   # 5% of the width in all
+    assert filter_segments([drift], [], [], ["going right"], None) == []
+
+
+def test_zone_of_the_frame():
+    left = seg("person", 0, 4, 5, 40)                   # centre x = 10%
+    right = seg("person", 0, 4, 80, 40, tid=2)
+    crossing = seg("person", 0, 5, 10, 40, dx=7.0, tid=3)   # passes through every zone
+    people = [left, right, crossing]
+    assert filter_segments(people, ["person"], [], ["on the left"], None) == [left, crossing]
+    assert filter_segments(people, ["person"], [], ["on the right"], None) == [right, crossing]
+    assert filter_segments(people, ["person"], [], ["in the center"], None) == [crossing]
+    top = seg("person", 0, 4, 45, 5, h=20, tid=4)       # centre y = 15%
+    assert filter_segments(people + [top], ["person"], [], ["at the top"], None) == [top]
+
+
+def test_min_duration_applies_to_the_subject():
+    from search import run_query
+    short = seg("person", 0, 5, 10, 40)
+    long = seg("person", 10, 40, 30, 40, tid=2)
+    dog = seg("dog", 12, 3, 34, 60, w=6, h=6, tid=3)
+    assert filter_segments([short, long], ["person"], [], [], None, min_duration=30) == [long]
+    # "a person with a dog for more than 30 seconds": the short dog track still counts as the dog
+    out = filter_segments([short, long, dog], ["person", "dog"], [], [], None, min_duration=30)
+    assert long in out and dog in out and short not in out
+    assert run_query([short, long], [], ["person"], min_duration=30) == ([long], False)

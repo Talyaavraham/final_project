@@ -1,0 +1,68 @@
+{"text": "תתריעי לי אם מישהו מרים סכין", "kind": "raise_object", "object": "knife", "hands": 0}
+{"text": "אם מישהו שולף סכין תצפצפי", "kind": "hold", "object": "knife", "hands": 0}
+{"text": "אני רוצה לדעת כשמישהו מניף משהו חד כמו סכין", "kind": "raise_object", "object": "knife", "hands": 0}
+{"text": "תשגיחי שאף אחד לא מסתובב פה עם אקדח", "kind": "hold", "object": "gun", "hands": 0}
+{"text": "מישהו עם נשק ביד", "kind": "hold", "object": "gun", "hands": 0}
+{"text": "אם אחד מהם מכוון אקדח", "kind": "raise_object", "object": "gun", "hands": 0}
+{"text": "תתריעי כשרואים אקדח", "kind": "object", "object": "gun", "hands": 0}
+{"text": "יש פה סכין?", "kind": "object", "object": "knife", "hands": 0}
+{"text": "כשמישהו מדבר בטלפון", "kind": "hold", "object": "cell phone", "hands": 0}
+{"text": "מישהי מחזיקה את הפלאפון שלה", "kind": "hold", "object": "cell phone", "hands": 0}
+{"text": "תודיעי לי אם מישהו לוקח את המחשב הנייד", "kind": "hold", "object": "laptop", "hands": 0}
+{"text": "אם מישהו מרים את הבקבוק", "kind": "raise_object", "object": "bottle", "hands": 0}
+{"text": "תתריעי אם פורצת שריפה", "kind": "object", "object": "fire", "hands": 0}
+{"text": "אם יש עשן בחדר", "kind": "object", "object": "smoke", "hands": 0}
+{"text": "אם הכלב נכנס לסלון", "kind": "object", "object": "dog", "hands": 0}
+{"text": "כשמישהו מרים את היד", "kind": "hands_up", "object": "", "hands": 1}
+{"text": "מישהו מצביע ביד למעלה", "kind": "hands_up", "object": "", "hands": 1}
+{"text": "אם מישהו מרים את שתי הידיים כאילו נכנע", "kind": "hands_up", "object": "", "hands": 2}
+{"text": "ידיים למעלה!", "kind": "hands_up", "object": "", "hands": 2}
+{"text": "תתריעי כשמישהו נכנס לחדר", "kind": "person", "object": "", "hands": 0}
+{"text": "אם יש יותר משלושה אנשים", "kind": "person", "object": "", "hands": 0}
+{"text": "כשמגיעים ארבעה אנשים או יותר", "kind": "person", "object": "", "hands": 0}
+{"text": "אם מישהו מופיע במצלמה בלילה", "kind": "person", "object": "", "hands": 0}
+{"text": "אם מישהו נופל על הרצפה", "kind": "none", "object": "", "hands": 0}
+{"text": "תתריעי אם יש קטטה", "kind": "none", "object": "", "hands": 0}
+{"text": "כשמישהו צורח", "kind": "none", "object": "", "hands": 0}
+{"text": "אם מישהו גונב מהמדף", "kind": "none", "object": "", "hands": 0}
+{"text": "מה מזג האוויר היום", "kind": "none", "object": "", "hands": 0}
+{"text": "תודה רבה!", "kind": "none", "object": "", "hands": 0}
+{"text": "אם מישהו מתעלף", "kind": "none", "object": "", "hands": 0}
+{"text": "alert me if anyone pulls a knife", "kind": "hold", "object": "knife", "hands": 0}
+{"text": "let me know when someone waves a knife around", "kind": "raise_object", "object": "knife", "hands": 0}
+{"text": "is anyone carrying a gun?", "kind": "hold", "object": "gun", "hands": 0}
+{"text": "someone pointing a pistol", "kind": "raise_object", "object": "gun", "hands": 0}
+{"text": "tell me if you spot a weapon", "kind": "object", "object": "gun", "hands": 0}
+{"text": "someone on their phone", "kind": "hold", "object": "cell phone", "hands": 0}
+{"text": "if somebody picks up my laptop", "kind": "hold", "object": "laptop", "hands": 0}
+{"text": "alert if there's a fire", "kind": "object", "object": "fire", "hands": 0}
+{"text": "smoke in the kitchen", "kind": "object", "object": "smoke", "hands": 0}
+{"text": "when the cat shows up", "kind": "object", "object": "cat", "hands": 0}
+{"text": "someone raises their hand", "kind": "hands_up", "object": "", "hands": 1}
+{"text": "a student puts his hand up", "kind": "hands_up", "object": "", "hands": 1}
+{"text": "both hands up like a robbery", "kind": "hands_up", "object": "", "hands": 2}
+{"text": "someone surrenders with hands in the air", "kind": "hands_up", "object": "", "hands": 2}
+{"text": "someone walks into the room", "kind": "person", "object": "", "hands": 0}
+{"text": "more than three people", "kind": "person", "object": "", "hands": 0}
+{"text": "if a crowd of five people gathers", "kind": "person", "object": "", "hands": 0}
+{"text": "someone falls over", "kind": "none", "object": "", "hands": 0}
+{"text": "people fighting", "kind": "none", "object": "", "hands": 0}
+{"text": "someone shouting", "kind": "none", "object": "", "hands": 0}
+{"text": "a person is stealing", "kind": "none", "object": "", "hands": 0}
+{"text": "what's the weather like", "kind": "none", "object": "", "hands": 0}
+{"text": "thank you", "kind": "none", "object": "", "hands": 0}
+{"text": "someone swings a bat at the window", "kind": "raise_object", "object": "baseball bat", "hands": 0}
+{"text": "מישהו מניף מחבט", "kind": "raise_object", "object": "baseball bat", "hands": 0}
+{"text": "תתריעי אם מישהו עם מספריים", "kind": "hold", "object": "scissors", "hands": 0}
+{"text": "someone holding scissors", "kind": "hold", "object": "scissors", "hands": 0}
+{"text": "אם מישהו לוקח תיק", "kind": "hold", "object": "bag", "hands": 0}
+{"text": "someone grabs a bag", "kind": "hold", "object": "bag", "hands": 0}
+{"text": "מישהי פותחת מטריה", "kind": "hold", "object": "umbrella", "hands": 0}
+{"text": "אם מישהו מדליק אש ליד הדלת", "kind": "ignite", "object": "", "hands": 0}
+{"text": "someone setting the trash on fire", "kind": "ignite", "object": "", "hands": 0}
+{"text": "תתריעי אם מישהו מנסה לשרוף משהו", "kind": "ignite", "object": "", "hands": 0}
+{"text": "alert me about arson", "kind": "ignite", "object": "", "hands": 0}
+{"text": "אם מישהו לוקח לי את התיק", "kind": "snatch", "object": "bag", "hands": 0}
+{"text": "someone grabs a purse and runs", "kind": "snatch", "object": "bag", "hands": 0}
+{"text": "תתריעי אם גונבים לי את הטלפון", "kind": "snatch", "object": "cell phone", "hands": 0}
+{"text": "if someone steals the laptop from the table", "kind": "snatch", "object": "laptop", "hands": 0}

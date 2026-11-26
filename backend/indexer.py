@@ -47,12 +47,24 @@ PROBE_MIN = 0.25 * PROBE_FRAMES   # twice as much, at least this much in total..
 PROBE_FOCUS = 0.3           # ...and 30% of what it finds at conf 0.3 survives PROBE_CONF ("at home")
 # models that run on every frame IN ADDITION to the chosen one, e.g.
 # "security.pt" (gun / knife / fire / smoke) next to the COCO model
-EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", "").split(",") if m.strip()]
+# Default (2026-11-25): security.pt for fire / smoke, security_v3.pt for guns / knives, the same split as the
+# live camera (live_engine): security_v3 sees knives and guns in CCTV, security.pt sees fire much better.
+# EXTRA_MODELS= (empty) turns them off; "model=cls+cls" keeps only those classes of a model.
+_HERE = os.path.dirname(os.path.abspath(__file__))
+if os.path.isfile(os.path.join(_HERE, "security_v3.pt")) and os.path.isfile(os.path.join(_HERE, "security.pt")):
+    _default_extra = "security.pt=fire+smoke,security_v3.pt=gun+knife"
+else:
+    _default_extra = ""
+EXTRA_MODELS = [m.strip() for m in os.environ.get("EXTRA_MODELS", _default_extra).split(",") if m.strip()]
 NO_COLOR = {"fire", "smoke"}  # "white fire" is not a thing: no colour attribute for these
 EXTRA_ID_BASE = 100000
 EXTRA_CONF = float(os.environ.get("EXTRA_CONF", "0.2"))  # extra models (gun, knife, fire) are rare-event detectors: keep weaker hits, tracks still need 2+      # track ids of extra models are offset so they never collide
 CONF_THRESHOLD = float(os.environ.get("CONF_THRESHOLD", "0.3"))
 SAMPLE_FPS = float(os.environ.get("SAMPLE_FPS", "3"))
+# The extra detectors (security.pt / security_v3.pt, yolov8s each: ~2x the cost of yolov8n per frame on a CPU)
+# run on fewer frames: a gun / knife / fire in view for 2 s still gets the 2 detections a track needs.
+# With both of them at 3 fps indexing was ~5x slower than COCO alone; at 1 fps ~2x.
+EXTRA_FPS = float(os.environ.get("EXTRA_FPS", "1"))
 IMGSZ = int(os.environ.get("IMGSZ", "640"))   # detector input size; 800+ for small objects
 FLUSH_EVERY = 2000          # detections per DB write
 # ByteTrack: no camera-motion compensation step, so it is faster than the
@@ -134,7 +146,8 @@ def load_model(name: str = None):
     name = name or MODEL_NAMES[0]
     if name not in _models:
         from ultralytics import YOLO
-        model = YOLO(name)
+        local = os.path.join(_HERE, name)          # security.pt & co. next to this file work from any cwd
+        model = YOLO(local if os.path.isfile(local) else name)
         if "world" in name.lower():
             model.set_classes(OPEN_VOCAB)
         _models[name] = model
@@ -386,9 +399,14 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         if model is None:
             model_name, model = choose_model(path, status=status)
             status["stage"] = "detecting"
-        extras = [n for n in EXTRA_MODELS if n != model_name]
+        # "security_v3.pt=gun+knife": only those classes of that model (live_engine.model_spec)
+        specs = [(n.partition("=")[0].strip(), {c.strip().lower() for c in n.partition("=")[2].split("+") if c.strip()})
+                 for n in EXTRA_MODELS]
+        specs = [(n, only) for n, only in specs if n != model_name]
+        extras = [n + ("=" + "+".join(sorted(only)) if only else "") for n, only in specs]
         runs = [(model, 0, CONF_THRESHOLD)] + [(load_model(n), EXTRA_ID_BASE * (k + 1), EXTRA_CONF)
-                                            for k, n in enumerate(extras)]
+                                            for k, (n, _) in enumerate(specs)]
+        only_of = [None] + [only or None for _, only in specs]
         if extras:
             model_name = "+".join([model_name] + extras)
         for m, _, _ in runs:
@@ -400,6 +418,8 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
         fps = cap.get(cv2.CAP_PROP_FPS) or 25
         total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT)) or 0
         step = max(1, int(round(fps / sample_fps)))
+        extra_every = max(1, int(round(sample_fps / EXTRA_FPS))) if EXTRA_FPS > 0 else 1
+        n_sampled = 0
 
         database.delete_video(conn, name)
         conn.commit()
@@ -418,11 +438,15 @@ def index_video(path: str, name: str, sha1: str = "", status: dict = None,
                 H, W = frame.shape[:2]
                 t = frame_i / fps
                 boxes = []
-                for m, id_base, conf_thr in runs:
+                n_sampled += 1
+                for k, ((m, id_base, conf_thr), only) in enumerate(zip(runs, only_of)):
+                    if k > 0 and (n_sampled - 1) % extra_every:
+                        continue                      # extra detectors: EXTRA_FPS, not every sampled frame
                     res = m.track(frame, persist=True, verbose=False,
                                   conf=conf_thr, tracker=TRACKER,
                                   imgsz=IMGSZ)[0]
-                    boxes += [(m, id_base, box) for box in (res.boxes or [])]
+                    boxes += [(m, id_base, box) for box in (res.boxes or [])
+                              if only is None or class_name(m, int(box.cls[0])) in only]
                 for m, id_base, box in boxes:
                     cls = class_name(m, int(box.cls[0]))
                     if cls in SKIP:

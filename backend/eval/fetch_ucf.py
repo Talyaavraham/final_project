@@ -26,13 +26,16 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int, default=0)
     ap.add_argument("--workers", type=int, default=2)   # the server throttles per IP; more is not faster
+    ap.add_argument("--sel", default=SEL, help="selection json (default: the 107 benchmark videos)")
+    ap.add_argument("--out", default=OUT, help="folder the videos go to")
     args = ap.parse_args()
-    sel = json.load(open(SEL))
+    out = args.out
+    sel = json.load(open(args.sel))
     names = sorted(sel, key=lambda n: sel[n]["bytes"])
     if args.limit:
         names = names[:args.limit]
-    os.makedirs(OUT, exist_ok=True)
-    todo = [n for n in names if not os.path.exists(os.path.join(OUT, n + ".mp4"))]
+    os.makedirs(out, exist_ok=True)
+    todo = [n for n in names if not os.path.exists(os.path.join(out, n + ".mp4"))]
     total = sum(sel[n]["bytes"] for n in todo)
     print(f"{len(todo)} of {len(names)} videos to fetch, {total/1e9:.2f} GB", flush=True)
     t0 = time.time()
@@ -40,7 +43,7 @@ def main():
 
     def fetch(n):
         member = sel[n]["path"]
-        dst = os.path.join(OUT, n + ".mp4")
+        dst = os.path.join(out, n + ".mp4")
         for attempt in range(4):
             try:
                 # timeout: a stalled connection must fail and retry, not hang for hours

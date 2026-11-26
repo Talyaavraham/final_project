@@ -1,0 +1,7 @@
+scenario     target       events  person seen@0.15 seen@0.25  seen@0.5 max conf  in hand outside/h  verdict
+knife        knife            46    100%        0%        0%        0%     0.00       0%       0.0  detector blind: retrain it, rules cannot help
+weapon       gun              81     99%       20%       11%        2%     0.27      14%      21.8  threshold too high: try a lower --conf
+fire         fire,smoke       44     89%       84%       77%       45%     0.68      34%     479.2  detector sees it: the gap is in the rules / labels
+snatch       bag              11    100%       64%       27%        0%     0.23      55%     333.7  threshold too high: try a lower --conf
+
+person / seen / in hand: % of the labelled events. outside/h: detections (conf >= 0.25) outside every event, per hour of those videos.

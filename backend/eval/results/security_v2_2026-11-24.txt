@@ -1,0 +1,101 @@
+security_v2.pt (Colab, 2026-11-23: the 2026-11-10 recipe + 2,926 knife photos from two Roboflow exports)
+against security.pt (2026-11-10). Decision: security.pt stays the default, security_v2.pt is kept aside
+(not in the repo) for the staged 1080p videos.
+
+1. Colab validation (cell 7 of train/colab_train_security.ipynb), mAP50
+                 v1 (2026-11-10)   v2, same images ("base")   v2, with the new knife photos
+   gun           0.69              0.685                      0.685
+   knife         0.35              0.223                      0.916
+   fire          0.73              0.729                      0.728
+   smoke         0.84              0.834                      0.834
+   v2 "base":  knife P=0.397 R=0.257 mAP50=0.223 mAP50-95=0.057   (CCTV knives: no gain, lower)
+   v2 "all":   knife P=0.873 R=0.882 mAP50=0.916 mAP50-95=0.588
+
+2. The 585 validation photos of train/security/knives.zip, on this machine, imgsz 800
+   security.pt      knife P=0.000 R=0.000 mAP50=0.000
+   security_v2.pt   knife P=0.957 R=0.894 mAP50=0.952 mAP50-95=0.681
+   (close-up photos from the same sources as the training photos: the longer side of a knife box is
+    30% of the image at the median, 12% at the 10th percentile)
+
+3. Detector alone on the 107 benchmark videos (UCF-Crime, 320x240), 1 fps, imgsz 800, smoke counted as fire
+   python eval/detector_bench.py eval/ground_truth_uca.json eval/data/ucf --model MODEL --classes gun=weapon,knife=knife,fire=fire,smoke=fire
+
+security.pt:
+ thr |                   fire                  knife                 weapon
+ 0.2 | P0.07 R0.39 F1 0.12 (17/240/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.21 R0.07 F1 0.11 (6/28/81)
+ 0.3 | P0.11 R0.39 F1 0.18 (17/150/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.33 R0.05 F1 0.09 (4/12/81)
+ 0.4 | P0.15 R0.36 F1 0.22 (16/104/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.50 R0.04 F1 0.07 (3/6/81)
+ 0.5 | P0.22 R0.32 F1 0.26 (14/65/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.60 R0.04 F1 0.07 (3/5/81)
+ 0.6 | P0.30 R0.30 F1 0.30 (13/44/44) P0.00 R0.00 F1 0.00 (0/0/46) P0.67 R0.02 F1 0.05 (2/3/81)
+cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring
+
+security_v2.pt:
+ thr |                   fire                  knife                 weapon
+ 0.2 | P0.06 R0.36 F1 0.10 (16/270/44) P0.04 R0.04 F1 0.04 (2/51/46) P0.20 R0.04 F1 0.06 (3/15/81)
+ 0.3 | P0.09 R0.34 F1 0.15 (15/160/44) P0.03 R0.02 F1 0.03 (1/33/46) P0.29 R0.02 F1 0.05 (2/7/81)
+ 0.4 | P0.13 R0.32 F1 0.18 (14/111/44) P0.04 R0.02 F1 0.03 (1/23/46) P0.50 R0.01 F1 0.02 (1/2/81)
+ 0.5 | P0.16 R0.25 F1 0.20 (11/67/44) P0.06 R0.02 F1 0.03 (1/17/46) P0.00 R0.00 F1 0.00 (0/1/81)
+ 0.6 | P0.24 R0.27 F1 0.26 (12/50/44) P0.09 R0.02 F1 0.04 (1/11/46) P0.00 R0.00 F1 0.00 (0/0/81)
+cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring
+
+   Seconds where security_v2.pt says knife (conf >= 0.2): 44 in the 31 videos with a knife window, 1,118 in the other 76.
+
+4. Search (CLIP + the tracks the detector would add, simulated from 1 fps) on the benchmark
+   python eval/offline_eval.py eval/benchmark_v2.db eval/ground_truth_uca.json --extra-raw RAW
+
+security.pt (eval/results/detector_security_raw_2026-11-10.json):
+fire       P=0.34 R=0.45 F1=0.392  (found 20 of 44 windows, 58 segments returned)
+knife      P=0.13 R=0.37 F1=0.192  (found 17 of 46 windows, 131 segments returned)
+package    P=0.04 R=0.43 F1=0.077  (found 3 of 7 windows, 71 segments returned)
+snatch     P=0.08 R=0.55 F1=0.136  (found 6 of 11 windows, 77 segments returned)
+weapon     P=0.10 R=0.33 F1=0.158  (found 27 of 81 windows, 261 segments returned)
+OVERALL    P=0.12 R=0.39 F1=0.186  (found 73 of 189 windows, 598 segments returned)
+half 0     P=0.09 R=0.34 F1=0.137  (found 38 of 113 windows, 443 segments returned)
+half 1     P=0.23 R=0.46 F1=0.303  (found 35 of 76 windows, 155 segments returned)
+
+security_v2.pt (eval/results/detector_security_v2_raw_2026-11-24.json):
+fire       P=0.32 R=0.39 F1=0.351  (found 17 of 44 windows, 53 segments returned)
+knife      P=0.08 R=0.37 F1=0.135  (found 17 of 46 windows, 206 segments returned)
+package    P=0.04 R=0.43 F1=0.077  (found 3 of 7 windows, 71 segments returned)
+snatch     P=0.08 R=0.55 F1=0.136  (found 6 of 11 windows, 77 segments returned)
+weapon     P=0.11 R=0.32 F1=0.159  (found 26 of 81 windows, 246 segments returned)
+OVERALL    P=0.11 R=0.37 F1=0.164  (found 69 of 189 windows, 653 segments returned)
+half 0     P=0.07 R=0.32 F1=0.121  (found 36 of 113 windows, 480 segments returned)
+half 1     P=0.19 R=0.43 F1=0.265  (found 33 of 76 windows, 173 segments returned)
+
+5. Held-out (54 videos, fire + weapon only, nothing tuned here). Detector alone:
+
+security.pt:
+ thr |                   fire                 weapon
+ 0.2 | P0.12 R0.48 F1 0.20 (15/122/31) P0.07 R0.14 F1 0.10 (2/28/14)
+ 0.3 | P0.22 R0.48 F1 0.30 (15/69/31) P0.08 R0.14 F1 0.11 (2/24/14)
+ 0.4 | P0.29 R0.45 F1 0.35 (14/49/31) P0.08 R0.07 F1 0.08 (1/12/14)
+ 0.5 | P0.43 R0.39 F1 0.41 (12/28/31) P0.00 R0.00 F1 0.00 (0/6/14)
+ 0.6 | P0.50 R0.32 F1 0.39 (10/20/31) P0.00 R0.00 F1 0.00 (0/3/14)
+cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring
+
+security_v2.pt:
+ thr |                   fire                 weapon
+ 0.2 | P0.12 R0.48 F1 0.20 (15/122/31) P0.10 R0.21 F1 0.14 (3/30/14)
+ 0.3 | P0.15 R0.42 F1 0.22 (13/88/31) P0.08 R0.14 F1 0.11 (2/24/14)
+ 0.4 | P0.18 R0.39 F1 0.24 (12/67/31) P0.13 R0.14 F1 0.14 (2/15/14)
+ 0.5 | P0.21 R0.32 F1 0.25 (10/48/31) P0.17 R0.07 F1 0.10 (1/6/14)
+ 0.6 | P0.32 R0.32 F1 0.32 (10/31/31) P0.20 R0.07 F1 0.11 (1/5/14)
+cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring
+
+   Search, same simulation for both (the real 3 fps index with security.pt gives 0.178, see heldout_2026-11-17.txt):
+   python eval/offline_eval.py eval/heldout.db eval/ground_truth_heldout.json --without gun,knife,fire,smoke --extra-raw RAW
+
+security.pt:
+fire       P=0.17 R=0.42 F1=0.239  (found 13 of 31 windows, 78 segments returned)
+weapon     P=0.05 R=0.36 F1=0.085  (found 5 of 14 windows, 104 segments returned)
+OVERALL    P=0.10 R=0.40 F1=0.159  (found 18 of 45 windows, 182 segments returned)
+half 0     P=0.12 R=0.48 F1=0.193  (found 11 of 23 windows, 91 segments returned)
+half 1     P=0.08 R=0.32 F1=0.124  (found 7 of 22 windows, 91 segments returned)
+
+security_v2.pt:
+fire       P=0.17 R=0.39 F1=0.238  (found 12 of 31 windows, 70 segments returned)
+weapon     P=0.05 R=0.36 F1=0.085  (found 5 of 14 windows, 103 segments returned)
+OVERALL    P=0.10 R=0.38 F1=0.156  (found 17 of 45 windows, 173 segments returned)
+half 0     P=0.11 R=0.43 F1=0.174  (found 10 of 23 windows, 92 segments returned)
+half 1     P=0.09 R=0.32 F1=0.136  (found 7 of 22 windows, 81 segments returned)

@@ -94,3 +94,11 @@ def fake_model():
 def no_clip(monkeypatch):
     import embeddings
     monkeypatch.setattr(embeddings, "_ENABLED", False)
+
+
+@pytest.fixture(autouse=True)
+def _no_default_extra_models(monkeypatch):
+    """the server's default extra detectors (security.pt / security_v3.pt) stay out of the unit tests;
+    a test that wants extras sets indexer.EXTRA_MODELS itself."""
+    import indexer
+    monkeypatch.setattr(indexer, "EXTRA_MODELS", [])

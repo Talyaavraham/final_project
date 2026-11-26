@@ -47,7 +47,7 @@ def test_root_serves_ui_and_api_reports_capabilities(client):
     assert r.status_code == 200 and "text/html" in r.headers["content-type"]
     assert "Video Search Agent" in r.text
     info = client.get("/api").json()
-    assert info["ok"] and "ffmpeg" in info and "clip" in info and "llm_parser" in info
+    assert info["ok"] and "ffmpeg" in info and "clip" in info and "nlu" in info
 
 
 def test_index_search_and_outputs(client, video_file):
@@ -75,16 +75,18 @@ def test_index_search_and_outputs(client, video_file):
                                      "query": {"objects": ["car"], "actions": ["parked"]}}).json()
     assert r["total"] == 1 and r["results"][0]["label"] == "blue car"
 
-    # "person with a dog": the dog walks next to the person, the car is far
+    # "person with a dog": the dog walks next to the person, the car is far.
+    # The result is the person; the dog comes with it as its context (search.with_context)
     r = client.post("/search", json={"video": "street.mp4",
                                      "query": {"objects": ["person", "dog"]}}).json()
-    assert {x["cls"] for x in r["results"]} == {"person", "dog"}
+    assert [x["cls"] for x in r["results"]] == ["person"]
+    assert [c["cls"] for c in r["results"][0]["context"]] == ["dog"]
     r = client.post("/search", json={"video": "street.mp4",
                                      "query": {"objects": ["person", "car"]}}).json()
     assert r["total"] == 0
     r = client.post("/search", json={"video": "street.mp4", "near": False,
                                      "query": {"objects": ["person", "car"]}}).json()
-    assert r["total"] == 2
+    assert r["total"] == 1 and [c["cls"] for c in r["results"][0]["context"]] == ["car"]
 
     # pagination
     r = client.post("/search", json={"video": "street.mp4", "limit": 1, "offset": 1}).json()
@@ -140,9 +142,7 @@ def test_status_survives_restart_and_delete(client, video_file):
     assert client.post("/search", json={"video": "street.mp4"}).status_code == 404
 
 
-def test_parse_endpoint_uses_rules_offline(client, monkeypatch):
-    import query_parser
-    monkeypatch.setattr(query_parser, "llm_available", lambda: False)
+def test_parse_endpoint_uses_rules_offline(client):
     p = client.post("/parse", json={"text": "a red car after 1:00"}).json()
     assert p["objects"] == ["car"] and p["colors"] == ["red"]
     assert p["timeRange"] == [60, None] and p["source"] == "rules"

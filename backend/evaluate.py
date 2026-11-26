@@ -118,7 +118,7 @@ def main():
 
     gt = json.load(open(args.ground_truth, encoding="utf-8"))
     info = httpx.get(f"{args.api}/api").json()
-    print(f"server: model={info['model']} clip={info['clip']} llm_parser={info['llm_parser']}")
+    print(f"server: model={info['model']} clip={info['clip']} nlu={info.get('nlu')}")
 
     rows, TP, FP, FN = [], 0, 0, 0
     skipped = 0

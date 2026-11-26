@@ -35,34 +35,10 @@ def test_unknown_words_become_semantic_query():
     assert p["semantic"] == "a woman with a stroller"
 
 
-def test_parse_falls_back_to_rules_without_llm(monkeypatch):
+def test_parse_runs_locally():
     import query_parser
-    monkeypatch.setattr(query_parser, "llm_available", lambda: False)
     assert parse("a red car")["source"] == "rules"
-
-
-def test_parse_uses_llm_result_when_available(monkeypatch):
-    import query_parser
-    monkeypatch.setattr(query_parser, "llm_available", lambda: True)
-    monkeypatch.setattr(query_parser, "parse_llm",
-                        lambda text, classes: {"objects": ["person"], "colors": [],
-                                               "actions": [], "timeRange": None,
-                                               "semantic": "x", "unknown": [],
-                                               "source": "llm"})
-    assert parse("anything")["source"] == "llm"
-
-
-def test_parse_llm_handles_missing_sdk(monkeypatch):
-    import builtins
-    import query_parser
-    real_import = builtins.__import__
-
-    def fake_import(name, *a, **k):
-        if name == "anthropic":
-            raise ImportError
-        return real_import(name, *a, **k)
-    monkeypatch.setattr(builtins, "__import__", fake_import)
-    assert query_parser.parse_llm("a dog", ["dog"]) is None
+    assert not hasattr(query_parser, "parse_llm")      # no outside API
 
 
 def test_game_classes_hebrew_and_english():
@@ -116,3 +92,47 @@ def test_absent_security_class_becomes_a_clip_question():
     # a COCO class the detector did not see is simply not there
     q = parse_rules("a dog", classes=["person"])
     assert q["objects"] == ["dog"] and q["semantic"] == ""
+
+
+def test_actor_and_coloured_reference_are_different_objects():
+    # the person walks, the car is white ("someone walking next to the white car")
+    for text in ("תמצא מישהו שהולך ליד הרכב הלבן", "a person walking next to the white car",
+                 "תמצא משהו שהולך ליד הרכב הלבן"):        # "משהו" + an action of a person = someone
+        p = parse_rules(text)
+        assert p["objects"] == ["person", "car"], text
+        assert p["colors"] == [] and p["object_colors"] == {"car": ["white"]} and p["actions"] == ["walking"], text
+        assert p["semantic"] == "", text                     # "ליד" / "next" are not unknown words
+    # without an action the colour still makes its object the subject
+    assert parse_rules("red car next to a bus")["object_colors"] == {}
+
+
+def test_direction_zone_and_dwell():
+    p = parse_rules("a red car driving to the left")
+    assert p["objects"] == ["car"] and p["colors"] == ["red"]
+    assert set(p["actions"]) == {"moving", "going left"} and p["unknown"] == []
+    assert parse_rules("רכב נוסע ימינה")["actions"] == ["moving", "going right"]
+    # where it is, not where it goes
+    assert parse_rules("a person on the right side")["actions"] == ["on the right"]
+    assert parse_rules("אדם בצד שמאל")["actions"] == ["on the left"]
+    assert parse_rules("כלב במרכז")["actions"] == ["in the center"]
+    # how long it stays: a number of seconds, and its words never reach CLIP
+    p = parse_rules("a person standing for more than 30 seconds")
+    assert p["minDuration"] == 30 and p["actions"] == ["parked"]
+    assert p["unknown"] == [] and p["semantic"] == ""
+    assert parse_rules("אדם עומד יותר מ-2 דקות")["minDuration"] == 120
+    assert parse_rules("רכב חונה יותר מדקה")["minDuration"] == 60
+    assert parse_rules("a car at least 1.5 minutes")["minDuration"] == 90
+    # a video timestamp is still a time window, not a duration
+    p = parse_rules("cars after 2:00")
+    assert p["minDuration"] is None and p["timeRange"] == [120, None]
+
+
+def test_theft_question_shows_the_people():
+    for text in ("מצא משהו שגונב מהחנות", "מישהו גונב", "someone stealing from the store"):
+        r = parse(text, None)
+        assert r["objects"] == ["person"] and r.get("unsupported") == "theft" and r["unknown"] == [], text
+
+
+def test_someone_with_an_unknown_verb_is_a_person():
+    r = parse("משהו שמסתובב", None)
+    assert r["objects"] == ["person"] and r.get("unsupported") is None

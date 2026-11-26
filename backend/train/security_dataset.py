@@ -49,6 +49,7 @@ DFIRE_MAP = {0: "smoke", 1: "fire"}          # D-Fire convention (verified on sa
 
 sys.path.insert(0, HERE)
 from night_dataset import ALIASES, find_splits, read_names, convert_label  # noqa: E402
+import re as _re  # noqa: E402,F401
 
 ALIASES.update({"gun": "gun", "pistol": "gun", "handgun": "gun", "rifle": "gun", "weapon": "gun",
                 "knife": "knife", "knives": "knife", "blade": "knife",
@@ -169,6 +170,185 @@ def add_dfire(writer, limit=0, neg_ratio=0.3, rnd=None):
                     print(f"D-Fire: {n_pos} with boxes + {n_neg} negatives (limit)")
                     return
     print(f"D-Fire: {n_pos} with boxes + {n_neg} negatives")
+
+
+# ---------------------------------------------------------------- WeaponDetection (Hugging Face)
+# Subh775/WeaponDetection (CC BY 4.0, from Roboflow "weapon-detection" by yolov7test): ~9,600 images,
+# 29 classes, COCO boxes [x, y, w, h]. Its many knife boxes are what security.pt lacked.
+WEAPONDET_REPO = "Subh775/WeaponDetection"
+WD_KNIFE = {"knife", "knife_deploy", "knife_weapon"}
+WD_GUN = {"guns", "pistol", "pistols", "handgun", "heavy gun", "heavy_gun", "heavyweapon",
+          "rifle", "shotgun", "long guns", "long_guns", "larga"}
+# boxes that may hold a gun or a knife without saying which: the image is dropped rather than
+# kept with an unlabelled weapon in it (that would teach the model that a knife is background)
+WD_AMBIGUOUS = {"weapon", "weapons", "guns perspective", "guns_perspective", "al", "stabbing"}
+
+
+def weapondet_lines(bboxes, cats, names, w, h):
+    """COCO boxes + category ids -> YOLO lines (gun / knife), or None when the image has an ambiguous weapon box.
+    Classes that are not objects of ours (person, hand, blood, aggressor, ...) are ignored."""
+    lines = []
+    for (x, y, bw, bh), c in zip(bboxes, cats):
+        n = str(names[int(c)]).strip().lower()
+        if n in WD_AMBIGUOUS:
+            return None
+        cls = "knife" if n in WD_KNIFE else "gun" if n in WD_GUN else None
+        if cls is None or bw <= 1 or bh <= 1 or not w or not h:
+            continue
+        cx, cy = min(max((x + bw / 2) / w, 0), 1), min(max((y + bh / 2) / h, 0), 1)
+        lines.append(f"{CLASSES.index(cls)} {cx:.6f} {cy:.6f} {min(bw / w, 1):.6f} {min(bh / h, 1):.6f}")
+    return lines
+
+
+def cctv_look(img, rnd):
+    """A photo made to look like a security camera frame: low resolution, blur, heavy JPEG, sometimes grey.
+    Boxes are relative, so they stay valid. Returns JPEG bytes."""
+    from PIL import Image, ImageFilter
+    img = img.convert("RGB")
+    w, h = img.size
+    f = rnd.uniform(0.2, 0.45)                                     # UCF-Crime is 320x240
+    small = img.resize((max(16, int(w * f)), max(16, int(h * f))), Image.BILINEAR)
+    if rnd.random() < 0.5:
+        small = small.filter(ImageFilter.GaussianBlur(rnd.uniform(0.3, 1.0)))
+    img = small.resize((w, h), Image.BILINEAR)
+    if rnd.random() < 0.3:
+        img = img.convert("L").convert("RGB")                      # night / IR cameras
+    buf = io.BytesIO()
+    img.save(buf, "JPEG", quality=rnd.randint(20, 45))
+    return buf.getvalue()
+
+
+def add_weapondet(writer, dataset, limit=0, cctv=True, rnd=None):
+    """dataset: the DatasetDict of datasets.load_dataset(WEAPONDET_REPO). Its validation split goes to val;
+    train + test to train, each image twice when cctv=True (as is + cctv_look)."""
+    rnd = rnd or random.Random(3)
+    stats = {"images": 0, "dropped": 0, "no_box": 0, "cctv": 0}
+    for split_name, ds in dataset.items():
+        split = "val" if split_name.startswith("val") else "train"
+        objs = ds.features["objects"]
+        feat = getattr(objs, "feature", objs)
+        if isinstance(feat, (list, tuple)):
+            feat = feat[0]
+        cat_key = next(k for k in feat if k != "bbox" and hasattr(getattr(feat[k], "feature", feat[k]), "names")
+                       or k in ("category", "categories", "label", "labels", "class"))
+        cf = getattr(feat[cat_key], "feature", feat[cat_key])
+        names = cf.names
+        for i, r in enumerate(ds):
+            o = r["objects"]
+            if isinstance(o, list):            # a list of {bbox, category} instead of a dict of lists
+                o = {k: [x[k] for x in o] for k in ("bbox", cat_key)}
+            img = r["image"]
+            w, h = r.get("width") or img.size[0], r.get("height") or img.size[1]
+            lines = weapondet_lines(o["bbox"], o[cat_key], names, w, h)
+            if lines is None:
+                stats["dropped"] += 1
+                continue
+            if not lines:                      # people / blood only: a few as negatives
+                if rnd.random() > 0.2:
+                    stats["no_box"] += 1
+                    continue
+            buf = io.BytesIO()
+            img.convert("RGB").save(buf, "JPEG", quality=92)
+            stem = f"wd_{split_name}_{i}"
+            writer.add(stem, buf.getvalue(), lines, split=split)
+            stats["images"] += 1
+            if cctv and split == "train" and lines:
+                writer.add(stem + "_cctv", cctv_look(img, rnd), lines, split=split)
+                stats["cctv"] += 1
+            if limit and stats["images"] >= limit:
+                break
+    print(f"WeaponDetection: {stats}")
+    return stats
+
+
+# ---------------------------------------------------------------- Dangerous Items (Zenodo)
+# "Dangerous Items Dataset for 5-Class Object Detection" (Lublin University of Technology, CC BY-NC 4.0):
+# 8,478 images, 8,805 boxes: machete, knife, baseball bat, rifle, gun, + 826 backgrounds; YOLO labels.
+# Includes small, partly hidden, blurry and dark objects: closer to CCTV than product photos.
+DANGEROUS_URL = "https://zenodo.org/records/16422779/files/Dangerous%20Items.zip?download=1"
+DANGEROUS_MAP = {"knife": "knife", "machete": "knife", "gun": "gun", "pistol": "gun", "handgun": "gun"}
+DANGEROUS_DROP = {"rifle"}          # a long gun: neither our "gun" (handguns) nor background -> image dropped
+
+
+def find_names(root):
+    """Class names of a YOLO folder: data.yaml / *.yaml with names, or classes.txt / obj.names. {id: name}."""
+    for dirpath, _, files in os.walk(root):
+        for fn in sorted(files):
+            path = os.path.join(dirpath, fn)
+            if fn.endswith((".yaml", ".yml")):
+                names = read_names(path)
+                if names:
+                    return names
+            if fn in ("classes.txt", "obj.names", "classes.names"):
+                with open(path, encoding="utf-8") as f:
+                    return {i: n.strip() for i, n in enumerate(l for l in f if l.strip())}
+    return {}
+
+
+def yolo_pairs(root):
+    """Every (image, label, split) under root: a label file in a .../labels/... folder and the image with the
+    same stem in the matching .../images/... folder. split = val when the path says val/valid, else train."""
+    out = []
+    for dirpath, _, files in os.walk(root):
+        parts = dirpath.replace("\\", "/").split("/")
+        if "labels" not in parts:
+            continue
+        img_dir = "/".join("images" if x == "labels" else x for x in parts)
+        low = [x.lower() for x in parts]
+        split = "val" if ("val" in low or "valid" in low or "validation" in low) else "train"
+        for fn in sorted(files):
+            if not fn.endswith(".txt") or fn in ("classes.txt",):
+                continue
+            stem = os.path.splitext(fn)[0]
+            img = next((os.path.join(img_dir, stem + e) for e in IMG_EXT_ALL
+                        if os.path.exists(os.path.join(img_dir, stem + e))), None)
+            if img:
+                out.append((img, os.path.join(dirpath, fn), split))
+    return out
+
+
+IMG_EXT_ALL = (".jpg", ".jpeg", ".png", ".bmp", ".webp", ".JPG", ".JPEG", ".PNG")
+
+
+def add_dangerous(writer, root, cctv=True, rnd=None):
+    """The extracted Dangerous Items zip -> knife (knife + machete) and gun boxes. Images with a rifle are
+    dropped; baseball bats are kept as background. Training images with a box get a cctv_look copy too."""
+    from PIL import Image
+    rnd = rnd or random.Random(4)
+    names = find_names(root)
+    if not names:
+        raise SystemExit(f"{root}: no data.yaml / classes.txt found, cannot tell the classes apart")
+    print("Dangerous Items classes:", names)
+    cmap = {sid: CLASSES.index(DANGEROUS_MAP[n.strip().lower()]) for sid, n in names.items()
+            if n.strip().lower() in DANGEROUS_MAP}
+    drop = {sid for sid, n in names.items() if n.strip().lower() in DANGEROUS_DROP}
+    stats = {"images": 0, "dropped_rifle": 0, "cctv": 0}
+    for img, lbl, split in yolo_pairs(root):
+        with open(lbl, encoding="utf-8") as f:
+            rows = [l.split() for l in f if len(l.split()) >= 5]
+        if any(int(float(r[0])) in drop for r in rows):
+            stats["dropped_rifle"] += 1
+            continue
+        lines = [" ".join([str(cmap[int(float(r[0]))])] + r[1:5]) for r in rows if int(float(r[0])) in cmap]
+        with open(img, "rb") as f:
+            data = f.read()
+        stem = "dang_" + split + "_" + re.sub(r"[^\w.-]", "_", os.path.splitext(os.path.basename(img))[0])
+        writer.add(stem, data, lines, split=split, ext=os.path.splitext(img)[1].lower())
+        stats["images"] += 1
+        if cctv and split == "train" and lines:
+            writer.add(stem + "_cctv", cctv_look(Image.open(io.BytesIO(data)), rnd), lines, split=split)
+            stats["cctv"] += 1
+    print(f"Dangerous Items: {stats}")
+    return stats
+
+
+def check_enough(writer, need=None):
+    """Stop before a long training when a class is too thin (the WeaponDetection lesson: 7 knives)."""
+    need = need or {"knife": 1500, "gun": 1500, "fire": 1000, "smoke": 1000}
+    low = {c: writer.boxes[c] for c, n in need.items() if writer.boxes[c] < n}
+    if low:
+        raise SystemExit(f"too few boxes for {low} (need {need}): not training on this")
+    print("box counts OK:", writer.boxes)
 
 
 BIG_EXPORT = 500      # training images; below this an export is "a few own frames" and is repeated

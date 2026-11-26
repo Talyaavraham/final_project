@@ -1,347 +1,460 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Video Search Agent</title>
 <style>
+/* =====================================================================
+   Look: soft dark, calm. Few borders, more space, one accent colour.
+   Layout (right to left): rail of modes | chat | main | results
+   ===================================================================== */
 :root{
-  --bg:#0b0d1a;
-  --panel:#12152a;
-  --panel-2:#181c36;
-  --card:#1d2142;
-  --border:#272c52;
-  --accent:#7c6cf5;
-  --accent-soft:rgba(124,108,245,.16);
-  --accent-2:#4cc9f0;
-  --danger:#f0564c;
-  --ok:#3ddc97;
-  --text:#e8eaf6;
-  --text-dim:#8f94b8;
-  --radius:14px;
+  --bg:#15171f;
+  --panel:#1b1e28;
+  --panel-2:#222532;
+  --card:#262a38;
+  --border:rgba(255,255,255,.06);
+  --border-2:rgba(255,255,255,.11);
+  --accent:#8f86f2;
+  --accent-soft:rgba(143,134,242,.14);
+  --accent-2:#62c7dd;
+  --danger:#ef6f6c;
+  --danger-soft:rgba(239,111,108,.12);
+  --ok:#5ccf9e;
+  --warn:#e8b45a;
+  --text:#e8e9ef;
+  --text-dim:#9399ad;
+  --text-faint:#666c80;
+  --radius:16px;
+  --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.18);
   font-size:15px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
-  height:100vh;overflow:hidden;
+  background:var(--bg);color:var(--text);
+  font-family:"Rubik","Segoe UI","Heebo",system-ui,-apple-system,Arial,sans-serif;
+  height:100vh;overflow:hidden;line-height:1.5;
 }
-.app{display:grid;grid-template-columns:210px 340px 1fr 300px;height:100vh}
+button{font-family:inherit}
+.app{display:grid;grid-template-columns:84px 340px 1fr 320px;height:100vh}
+.rail,.chatpane,.mainpane,.resultspane{height:100vh;overflow-y:auto}
 
-/* ---------- top bar ---------- */
-.topbar{
-  grid-column:1/-1;display:flex;align-items:center;gap:14px;
-  padding:10px 18px;background:var(--panel);border-bottom:1px solid var(--border);
-}
-.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem}
-.logo .bot{
-  width:34px;height:34px;border-radius:10px;background:var(--accent);
-  display:grid;place-items:center;font-size:18px;
-}
-.logo small{display:block;font-weight:400;color:var(--text-dim);font-size:.72rem}
-.topbar .spacer{flex:1}
+/* ---------- buttons ---------- */
 .btn{
-  border:1px solid var(--border);background:var(--panel-2);color:var(--text);
-  padding:8px 14px;border-radius:10px;cursor:pointer;font-size:.85rem;
-  display:inline-flex;align-items:center;gap:7px;transition:.15s;
+  border:1px solid var(--border-2);background:var(--panel-2);color:var(--text);
+  padding:9px 16px;border-radius:12px;cursor:pointer;font-size:.88rem;
+  display:inline-flex;align-items:center;gap:8px;transition:.15s;white-space:nowrap;
 }
 .btn:hover{border-color:var(--accent);background:var(--accent-soft)}
-.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--danger);display:inline-block}
-.dot.green{background:var(--ok)}
+.btn:focus-visible,.railbtn:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:5px 11px;font-size:.78rem;border-radius:9px}
+.btn.icon{padding:9px 12px}
+.btn[hidden]{display:none}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);display:inline-block;flex-shrink:0}
+.dot.green{background:var(--ok);box-shadow:0 0 0 3px rgba(92,207,158,.18)}
 
-/* ---------- grid rows ---------- */
-.app{grid-template-rows:56px 1fr}
-.sidebar,.chatpane,.mainpane,.resultspane{overflow-y:auto;height:calc(100vh - 56px)}
+/* ---------- rail: one button per mode (new modes = one more button) ---------- */
+.rail{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px}
+.brand{width:44px;height:44px;border-radius:14px;background:var(--accent);display:grid;place-items:center;font-size:22px;margin-bottom:14px}
+.railbtn{
+  width:100%;border:none;background:transparent;color:var(--text-dim);cursor:pointer;
+  border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;
+  font-size:.72rem;line-height:1.25;transition:.15s;
+}
+.railbtn .ri{font-size:20px;position:relative}
+.railbtn .ri .dot{position:absolute;top:-1px;left:-5px;width:7px;height:7px}
+.railbtn .ri .dot:not(.green){display:none}
+.railbtn:hover{background:var(--panel-2);color:var(--text)}
+.railbtn.active{background:var(--accent-soft);color:var(--text)}
+.railbtn.active .ri{filter:none}
+.railfoot{margin-top:auto;font-size:.68rem;color:var(--text-dim);text-align:center}
+.srv{display:flex;flex-direction:column;align-items:center;gap:5px}
 
-/* ---------- sidebar ---------- */
-.sidebar{background:var(--panel);border-right:1px solid var(--border);padding:14px 10px;display:flex;flex-direction:column}
-.nav a{
-  display:flex;align-items:center;gap:11px;padding:10px 12px;border-radius:10px;
-  color:var(--text-dim);text-decoration:none;font-size:.9rem;margin-bottom:2px;
+/* ---------- chat ---------- */
+.chatpane{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column}
+.chathead{padding:18px 18px 14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--border)}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;font-size:19px}
+.chathead b{font-size:.98rem;font-weight:600}
+.chathead small{color:var(--text-dim);font-size:.78rem;display:block}
+.messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.msg{
+  max-width:90%;padding:10px 14px;border-radius:16px;font-size:.9rem;line-height:1.55;
+  white-space:pre-wrap;unicode-bidi:plaintext;text-align:start;
 }
-.nav a.active,.nav a:hover{background:var(--accent-soft);color:var(--text)}
-.nav a.active{color:var(--accent)}
-/* sections that are not built yet */
-.nav a.soon{cursor:default;opacity:.7}
-.nav a.soon:hover{background:transparent;color:var(--text-dim)}
-.nav a.soon i,.btn.soon i{
-  margin-left:auto;font-style:normal;font-size:.62rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--text-dim);border:1px solid var(--border);border-radius:4px;padding:1px 5px;line-height:1.4;
-}
-.btn.soon{opacity:.6;cursor:default}
-.btn.soon:hover{border-color:var(--border);background:var(--panel-2)}
-.btn.soon i{margin-left:2px}
-.sysbox{margin-top:auto;padding:12px;background:var(--panel-2);border-radius:12px;font-size:.75rem;color:var(--text-dim)}
-.sysbox .row{display:flex;justify-content:space-between;margin-bottom:6px}
-.meter{height:5px;border-radius:4px;background:#0e1124;overflow:hidden;margin-bottom:10px}
-.meter i{display:block;height:100%;background:var(--accent)}
-
-/* ---------- chat pane ---------- */
-.chatpane{background:var(--panel-2);border-right:1px solid var(--border);display:flex;flex-direction:column}
-.chathead{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center}
-.chathead .bot{width:36px;height:36px;border-radius:50%;background:var(--accent);display:grid;place-items:center;font-size:18px}
-.chathead b{font-size:.95rem}
-.chathead small{color:var(--text-dim);font-size:.75rem;display:block}
-.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-.msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.87rem;line-height:1.45;white-space:pre-wrap}
-.msg.bot{background:var(--card);border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px}
-.msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-bottom-right-radius:4px;direction:auto}
-.msg time{display:block;font-size:.65rem;opacity:.6;margin-top:5px}
-.parsed{
-  align-self:flex-start;background:var(--card);border:1px solid var(--border);
-  border-radius:14px;padding:12px 14px;width:88%;font-size:.82rem;
-}
-.parsed h4{font-size:.78rem;color:var(--ok);margin-bottom:8px;display:flex;gap:6px;align-items:center}
-.parsed .prow{display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid var(--border)}
-.parsed .prow span:first-child{color:var(--text-dim)}
-.chips{padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:7px}
+.msg.bot{background:var(--panel-2);align-self:flex-start;border-start-start-radius:6px}
+.msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-start-end-radius:6px}
+.msg.alert{background:var(--danger-soft);color:var(--text);align-self:flex-start}
+.msg time{display:block;font-size:.68rem;opacity:.55;margin-top:4px}
+/* what the assistant understood from a search: a row of small chips */
+.understood{align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.78rem;color:var(--text-dim);max-width:90%}
+.understood span{background:var(--accent-soft);color:var(--text);border-radius:8px;padding:3px 9px;unicode-bidi:plaintext}
+.understood span.warn{background:rgba(232,180,90,.14)}
+.chips{padding:0 18px 10px;display:flex;flex-wrap:wrap;gap:7px}
 .chip{
-  border:1px solid var(--border);background:var(--panel);color:var(--text-dim);
-  padding:6px 11px;border-radius:20px;font-size:.75rem;cursor:pointer;transition:.15s;
+  border:1px solid var(--border-2);background:transparent;color:var(--text-dim);
+  padding:6px 12px;border-radius:20px;font-size:.8rem;cursor:pointer;transition:.15s;unicode-bidi:plaintext;
 }
-.chip:hover{border-color:var(--accent);color:var(--text)}
-.inputrow{padding:12px 14px;border-top:1px solid var(--border);display:flex;gap:8px}
+.chip:hover{border-color:var(--accent);color:var(--text);background:var(--accent-soft)}
+.inputrow{padding:14px 16px 18px;display:flex;gap:8px}
 .inputrow input{
-  flex:1;background:var(--panel);border:1px solid var(--border);color:var(--text);
-  border-radius:10px;padding:11px 13px;font-size:.87rem;direction:auto;
+  flex:1;background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
+  border-radius:14px;padding:12px 14px;font-size:.92rem;direction:auto;font-family:inherit;
 }
+.inputrow input::placeholder{color:var(--text-faint)}
 .inputrow input:focus{outline:none;border-color:var(--accent)}
-.send{
-  width:42px;height:42px;border-radius:10px;background:var(--accent);border:none;
-  color:#fff;font-size:17px;cursor:pointer;flex-shrink:0;
-}
-.send:hover{filter:brightness(1.12)}
+.send{width:46px;height:46px;border-radius:14px;background:var(--accent);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;transform:scaleX(-1)}
+.send:hover{filter:brightness(1.1)}
 
-/* ---------- main pane ---------- */
-.mainpane{padding:16px;display:flex;flex-direction:column;gap:14px}
-.panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px}
-.panel h3{font-size:.85rem;margin-bottom:10px;color:var(--text)}
-.panel h3 small{color:var(--text-dim);font-weight:400}
-.videohead{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.videohead .meta{font-size:.75rem;color:var(--text-dim)}
-.videowrap{position:relative;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9}
+/* ---------- main ---------- */
+.mainpane{padding:22px 26px;display:flex;flex-direction:column;gap:16px}
+.pagehead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pagehead h1{font-size:1.35rem;font-weight:600}
+.pagehead p{color:var(--text-dim);font-size:.88rem}
+.card{background:var(--panel);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card h3{font-size:.92rem;font-weight:600;margin-bottom:12px}
+.card h3 small{color:var(--text-dim);font-weight:400;margin-inline-start:6px}
+.videohead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px;font-size:.85rem}
+.videohead b{font-weight:500;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.videohead .meta{color:var(--text-dim);font-size:.78rem;direction:ltr}
+.videowrap{position:relative;background:#0c0d12;border-radius:12px;overflow:hidden;aspect-ratio:16/9}
 video{width:100%;height:100%;display:block}
 .dropzone{
-  position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;
-  justify-content:center;color:var(--text-dim);font-size:.9rem;background:var(--panel-2);
-  border:2px dashed var(--border);border-radius:10px;cursor:pointer;text-align:center;padding:20px;
+  position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;
+  color:var(--text-dim);font-size:.95rem;background:var(--panel-2);border:2px dashed var(--border-2);
+  border-radius:12px;cursor:pointer;text-align:center;padding:20px;transition:.15s;
 }
-.dropzone:hover,.dropzone.drag{border-color:var(--accent);color:var(--text)}
-.dropzone .big{font-size:38px}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);color:var(--text);background:var(--accent-soft)}
+.dropzone .big{font-size:40px}
+.dropzone code{direction:ltr;display:inline-block;margin-top:6px;background:#0c0d12;padding:6px 10px;border-radius:8px}
 .overlay{position:absolute;inset:0;pointer-events:none}
-.bbox{
-  position:absolute;border:2px solid var(--danger);border-radius:4px;
-  box-shadow:0 0 0 2px rgba(240,86,76,.25);
-}
-.bbox.alt{border-color:var(--accent-2);box-shadow:0 0 0 2px rgba(76,201,240,.25)}
+.bbox{position:absolute;border:2px solid var(--danger);border-radius:5px}
+.bbox.alt{border-color:var(--accent-2)}
 .bbox.alt label{background:var(--accent-2);color:#06121a}
 .bbox label{
-  position:absolute;top:-22px;left:-2px;background:var(--danger);color:#fff;
-  font-size:.65rem;padding:2px 7px;border-radius:4px;white-space:nowrap;
+  position:absolute;top:-22px;left:-2px;background:var(--danger);color:#fff;direction:ltr;
+  font-size:.68rem;padding:2px 7px;border-radius:5px;white-space:nowrap;
 }
+/* status line under the video (indexing progress, engine) */
+.status{margin-top:12px;font-size:.82rem;color:var(--text-dim);display:flex;gap:8px;align-items:center;unicode-bidi:plaintext}
+.status.ok{color:var(--ok)}
+.status.wait{color:var(--accent)}
 /* timeline */
-.timeline{position:relative;height:56px;background:var(--panel-2);border-radius:10px;cursor:pointer;overflow:hidden}
+.timeline{position:relative;height:40px;background:var(--panel-2);border-radius:10px;cursor:pointer;overflow:hidden;margin-top:14px;direction:ltr}
 .tl-marks{position:absolute;inset:0}
-.tl-match{position:absolute;top:14px;bottom:14px;min-width:4px;border-radius:2px;background:var(--accent);opacity:.85}
+.tl-match{position:absolute;top:10px;bottom:10px;min-width:4px;border-radius:3px;background:var(--accent)}
 .tl-match:hover{background:var(--accent-2)}
 .playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--danger)}
-.playhead::after{
-  content:attr(data-t);position:absolute;top:2px;left:6px;font-size:.62rem;
-  color:var(--danger);white-space:nowrap;
-}
-.tl-labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--text-dim);margin-top:6px}
-/* detected objects */
+.playhead::after{content:attr(data-t);position:absolute;top:2px;left:6px;font-size:.62rem;color:var(--danger);white-space:nowrap}
+.tl-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-faint);margin-top:6px;direction:ltr}
+/* objects in the video */
 .objects{display:flex;gap:10px;flex-wrap:wrap}
-.objcard{
-  background:var(--panel-2);border:1px solid var(--border);border-radius:10px;
-  padding:10px 16px;min-width:92px;text-align:center;
-}
+.objcard{background:var(--panel-2);border-radius:12px;padding:10px 16px;min-width:88px;text-align:center}
 .objcard .ico{font-size:20px}
 .objcard b{display:block;font-size:1.1rem;margin-top:2px}
-.objcard span{font-size:.7rem;color:var(--text-dim)}
-.demo-banner{
-  background:rgba(76,201,240,.1);border:1px solid rgba(76,201,240,.35);color:var(--accent-2);
-  border-radius:10px;padding:9px 13px;font-size:.78rem;
-}
+.objcard span{font-size:.72rem;color:var(--text-dim)}
+/* technical details, out of the way */
+details.tech{font-size:.78rem;color:var(--text-dim)}
+details.tech summary{cursor:pointer;width:max-content;padding:4px 0}
+details.tech summary:hover{color:var(--text)}
+details.tech .techbody{background:var(--panel);border-radius:12px;padding:12px;margin-top:8px;display:grid;gap:8px}
+details.tech .row{display:flex;justify-content:space-between}
+.meter{height:5px;border-radius:4px;background:var(--panel-2);overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent)}
+.caps{display:flex;gap:5px;flex-wrap:wrap}
+.caps span{background:var(--panel-2);border-radius:6px;padding:2px 7px;font-size:.68rem;color:var(--text-faint)}
+.caps span.on{color:var(--ok)}
 
-/* ---------- results pane ---------- */
-.resultspane{background:var(--panel);border-left:1px solid var(--border);padding:14px}
-.reshead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-.reshead b{font-size:.9rem}
-.badge{background:var(--accent);color:#fff;font-size:.68rem;padding:3px 9px;border-radius:20px}
-.rescard{
-  background:var(--panel-2);border:1px solid var(--border);border-radius:12px;
-  padding:10px;margin-bottom:10px;display:flex;gap:10px;
-}
-.rescard .thumb{
-  width:74px;height:54px;border-radius:8px;background:var(--card);flex-shrink:0;
-  display:grid;place-items:center;font-size:22px;overflow:hidden;
-}
-.rescard .thumb canvas{width:100%;height:100%;object-fit:cover}
-.rescard .info{flex:1;font-size:.72rem;color:var(--text-dim);line-height:1.5}
-.rescard .info b{color:var(--text);font-size:.85rem;display:block}
-.viewclip{
-  margin-top:5px;border:none;background:var(--accent-soft);color:var(--accent);
-  border-radius:7px;padding:4px 10px;font-size:.7rem;cursor:pointer;
-}
-.viewclip:hover{background:var(--accent);color:#fff}
-.btn.small{padding:5px 10px;font-size:.72rem;border-radius:8px}
+/* ---------- results / alerts ---------- */
+.resultspane{background:var(--panel);border-right:1px solid var(--border);padding:18px 16px}
+.reshead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
+.reshead b{font-size:.98rem;font-weight:600}
 .reshead .tools{display:flex;gap:6px;align-items:center}
+.badge{background:var(--accent-soft);color:var(--accent);font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600}
+.badge[hidden]{display:none}
+.rescard{background:var(--panel-2);border-radius:14px;padding:10px;margin-bottom:10px;display:flex;gap:12px;cursor:pointer;transition:.15s}
+.rescard:hover{background:var(--card)}
+.rescard .thumb{width:84px;height:60px;border-radius:9px;background:var(--card);flex-shrink:0;overflow:hidden}
+.rescard .thumb canvas{width:100%;height:100%;object-fit:cover}
+.rescard .info{flex:1;font-size:.75rem;color:var(--text-dim);line-height:1.55;min-width:0}
+.rescard .info b{color:var(--text);font-size:.88rem;display:block;direction:ltr;text-align:right}
+.rescard .info .what{unicode-bidi:plaintext}
 .rescard .actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.rescard .actions button{
-  border:none;background:var(--accent-soft);color:var(--accent);border-radius:7px;
-  padding:4px 9px;font-size:.68rem;cursor:pointer;
-}
+.rescard .actions button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:4px 9px;font-size:.7rem;cursor:pointer}
 .rescard .actions button:hover{background:var(--accent);color:#fff}
 .rescard .actions button:disabled{opacity:.5;cursor:wait}
-.tag{display:inline-block;background:var(--card);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.65rem;margin-left:4px;color:var(--text-dim)}
-.tag.sem{color:var(--accent-2);border-color:rgba(76,201,240,.35)}
-.showmore{width:100%;margin:4px 0 10px}
-.caps{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
-.caps span{background:#0e1124;border-radius:6px;padding:2px 6px;font-size:.65rem}
-.caps span.on{color:var(--ok)}
-.summary{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:.75rem;margin-top:6px}
-.summary .row{display:flex;justify-content:space-between;padding:4px 0;color:var(--text-dim)}
-.summary .row span:last-child{color:var(--text)}
-.empty{color:var(--text-dim);font-size:.8rem;text-align:center;padding:30px 10px;line-height:1.6}
+.tag{display:inline-block;background:var(--card);border-radius:6px;padding:0 6px;font-size:.66rem;margin-left:4px;color:var(--text-dim);font-weight:400}
+.tag.sem{color:var(--accent-2)}
+.showmore{width:100%;justify-content:center;margin:4px 0 10px}
+.summary{background:var(--panel-2);border-radius:14px;padding:12px 14px;font-size:.78rem;margin-top:8px}
+.summary .row{display:flex;justify-content:space-between;padding:3px 0;color:var(--text-dim)}
+.summary .row span:last-child{color:var(--text);unicode-bidi:plaintext}
+.empty{color:var(--text-dim);font-size:.85rem;text-align:center;padding:34px 12px;line-height:1.7}
+.empty .big{font-size:30px;display:block;margin-bottom:6px;opacity:.8}
+
+/* ---------- modes: search (default) / live / label ---------- */
+body:not(.live) .live-only{display:none!important}
+body.live .file-only{display:none!important}
+body:not(.label) .label-only{display:none!important}
+body.label .file-only,body.label .live-only{display:none!important}
+body.label .chatpane{display:none}
+body.label .app{grid-template-columns:84px 1fr 320px}
+/* labelling */
+.lblbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.lblkinds{display:flex;flex-wrap:wrap;gap:6px}
+.kind{border:1px solid var(--border-2);background:transparent;color:var(--text-dim);border-radius:20px;padding:6px 12px;font-size:.8rem;cursor:pointer;transition:.15s}
+.kind:hover{color:var(--text);border-color:var(--c)}
+.kind.on{background:var(--c);border-color:var(--c);color:#14161f;font-weight:600}
+.lblbtns{display:flex;gap:6px}
+kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4px;padding:0 5px;color:var(--text-dim)}
+.lblev{display:flex;align-items:center;gap:10px;background:var(--panel-2);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:.86rem}
+.lblev .sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.lblev .tm{color:var(--text-dim);direction:ltr;margin-inline-start:auto;font-size:.8rem}
+.lblev button,.lblsaved button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:.85rem;padding:0 4px}
+.lblev button:hover{color:var(--accent)}
+.lblsaved button:hover{color:var(--danger)}
+.lblnote{color:var(--text-dim);font-size:.8rem;margin:12px 0}
+.lblsave{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--text-dim)}
+.lblsave label{display:flex;gap:6px;align-items:center;cursor:pointer}
+.lblsaved{display:flex;gap:8px;align-items:center;background:var(--panel-2);border-radius:12px;padding:9px 12px;margin-bottom:8px}
+.lblsaved div{flex:1;min-width:0}
+.lblsaved b{display:block;font-size:.82rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
+.lblsaved small{color:var(--text-dim);font-size:.72rem}
+@media (max-width:1200px){ body.label .app{grid-template-columns:72px 1fr 270px} }
+.camrow{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.camrow select{
+  flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
+  border-radius:12px;padding:10px 12px;font-size:.88rem;font-family:inherit;
+}
+.camrow select:focus{outline:none;border-color:var(--accent)}
+#liveVideo{object-fit:contain;background:#0c0d12}
+#liveCanvas{width:100%;height:100%}
+.videowrap.alarm{box-shadow:0 0 0 4px var(--danger),0 0 30px rgba(239,111,108,.5);animation:alarm .5s 3}
+@keyframes alarm{50%{box-shadow:0 0 0 4px transparent}}
+.livestatus{font-size:.82rem;color:var(--text-dim);display:flex;gap:8px;align-items:center;min-height:20px;margin-top:12px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:12px;text-align:right;font-size:.95rem}
+.steps li{display:flex;align-items:center;gap:10px}
+.steps li b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:.8rem;flex-shrink:0}
+.ruleshead{font-size:.8rem;color:var(--text-dim);margin:16px 0 8px}
+#rulesList{display:flex;flex-wrap:wrap;gap:8px}
+.rhint{color:var(--text-faint);font-size:.85rem}
+.rpill{
+  position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;
+  background:var(--panel-2);border:1px solid var(--border-2);border-radius:22px;padding:7px 14px 7px 8px;font-size:.86rem;unicode-bidi:plaintext;
+}
+.rpill i{position:absolute;right:0;bottom:0;height:3px;width:0;background:var(--accent-2);transition:width .25s}
+.rpill.hot{border-color:var(--danger)}
+.rpill.hot i{background:var(--danger)}
+.rpill button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:.8rem;padding:0 3px}
+.rpill button:hover{color:var(--danger)}
+.alertcard{display:flex;gap:12px;align-items:center;background:var(--panel-2);border-radius:14px;padding:8px;margin-bottom:8px;cursor:pointer;transition:.15s;border-right:3px solid var(--danger)}
+.alertcard:hover{background:var(--card)}
+.alertcard img{width:88px;height:60px;object-fit:cover;border-radius:9px;flex-shrink:0}
+.alertcard b{display:block;font-size:.88rem;font-weight:500;unicode-bidi:plaintext}
+.alertcard small{color:var(--text-dim);font-size:.74rem}
 
 ::-webkit-scrollbar{width:9px}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px}
-@media (max-width:1100px){
-  .app{grid-template-columns:64px 300px 1fr 260px}
-  .nav a span,.nav a i,.sysbox,.logo small{display:none}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:6px}
+@media (max-width:1200px){
+  .app{grid-template-columns:72px 300px 1fr 270px}
+  .mainpane{padding:18px}
 }
-@media (max-width:820px){
+@media (max-width:860px){
   body{height:auto;overflow:auto}
   .app{display:flex;flex-direction:column;height:auto}
-  .topbar{flex-wrap:wrap;padding:10px 16px}
-  .topbar .btn:not(.primary){display:none}
-  .sidebar{display:none}
-  .sidebar,.chatpane,.mainpane,.resultspane{height:auto;overflow:visible}
-  .mainpane{order:1;padding:12px 16px}
-  .chatpane{order:2;border-right:none;border-top:1px solid var(--border)}
+  .rail{flex-direction:row;height:auto;position:sticky;top:0;z-index:5;border-left:none;border-bottom:1px solid var(--border);padding:8px}
+  .brand{margin:0 0 0 8px;width:38px;height:38px}
+  .railbtn{width:auto;flex-direction:row;padding:8px 12px}
+  .railbtn br{display:none}
+  .railfoot{margin:0;margin-inline-start:auto}
+  .chatpane,.mainpane,.resultspane{height:auto;overflow:visible}
+  .mainpane{order:1}
+  .chatpane{order:2;border-left:none;border-top:1px solid var(--border)}
   .messages{max-height:340px}
-  .resultspane{order:3;border-left:none;border-top:1px solid var(--border);padding:14px 16px}
-  .parsed,.msg{max-width:100%;width:auto}
+  .resultspane{order:3;border-right:none;border-top:1px solid var(--border)}
 }
 </style>
 </head>
 <body>
 <div class="app">
 
-  <!-- ===== TOP BAR ===== -->
-  <div class="topbar">
-    <div class="logo">
-      <div class="bot">🤖</div>
-      <div>Video Search Agent<small>Ask anything. Find in your videos.</small></div>
-    </div>
-    <div class="spacer"></div>
-    <button class="btn primary" id="uploadBtn">⬆ Upload Video</button>
-    <button class="btn soon" disabled title="Coming soon · בקרוב"><span class="dot" id="liveDot"></span> Live Stream <i>soon</i></button>
-    <button class="btn soon" disabled title="Coming soon · בקרוב" aria-label="Settings, coming soon">⚙</button>
-    <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
-  </div>
+  <!-- ===== RAIL: the modes. A new mode = one more button here ===== -->
+  <nav class="rail" aria-label="מצבים">
+    <div class="brand" title="Video Search Agent">🤖</div>
+    <button class="railbtn active" id="navSearch" title="חיפוש בתוך סרטון מוקלט"><span class="ri">🔍</span><span>חיפוש<br>בסרטון</span></button>
+    <button class="railbtn" id="navLive" title="מצלמה חיה והתרעות"><span class="ri">📷<span class="dot" id="liveDot"></span></span><span>מצלמה<br>חיה</span></button>
+    <button class="railbtn" id="navLabel" title="תיוג סרטונים למדידת ההתרעות"><span class="ri">🏷</span><span>תיוג<br>סרטונים</span></button>
+    <div class="railfoot"><div class="srv" id="backendState" title="השרת (Python)"><span class="dot"></span>בודק…</div></div>
+  </nav>
 
-  <!-- ===== SIDEBAR ===== -->
-  <aside class="sidebar">
-    <nav class="nav">
-      <a href="#" class="soon" title="Coming soon · בקרוב">🏠 <span>Home</span><i>soon</i></a>
-      <a href="#" class="active">💬 <span>Chat Search</span></a>
-      <a href="#" class="soon" title="Coming soon · בקרוב">🎞 <span>Videos</span><i>soon</i></a>
-      <a href="#" class="soon" title="Coming soon · בקרוב">🔔 <span>Alerts</span><i>soon</i></a>
-      <a href="#" class="soon" title="Coming soon · בקרוב">🔖 <span>Bookmarks</span><i>soon</i></a>
-      <a href="#" class="soon" title="Coming soon · בקרוב">📷 <span>Cameras</span><i>soon</i></a>
-      <a href="#" class="soon" title="Coming soon · בקרוב">⚙ <span>Settings</span><i>soon</i></a>
-    </nav>
-    <div class="sysbox">
-      <div class="row"><span>Backend</span><span id="backendState">checking…</span></div>
-      <div class="row"><span>Engine</span><span id="engineName">—</span></div>
-      <div class="caps" id="caps"></div>
-      <div class="row"><span>Indexing</span><span id="procPct">0%</span></div>
-      <div class="meter"><i id="procBar" style="width:0%"></i></div>
-    </div>
-  </aside>
-
-  <!-- ===== CHAT PANE ===== -->
+  <!-- ===== CHAT ===== -->
   <section class="chatpane">
-    <div class="chathead">
-      <div class="bot">🤖</div>
-      <div><b>AI Video Search Agent</b><small>Your intelligent video assistant</small></div>
-    </div>
+    <header class="chathead">
+      <div class="avatar">🤖</div>
+      <div><b>העוזר</b><small id="chatSub">כתבי מה לחפש בסרטון</small></div>
+    </header>
     <div class="messages" id="messages">
-      <div class="msg bot">Hello! I can help you find anything in your videos. Upload a video, then describe what you are looking for — in English or Hebrew.
-אפשר לכתוב גם בעברית, למשל: "מצא איש שרץ עם כלב"<time id="nowTime"></time></div>
+      <div class="msg bot">היי! 👋 העלי סרטון וכתבי לי מה לחפש בו, בעברית או באנגלית.
+למשל: "מצא איש שרץ עם כלב"<time id="nowTime"></time></div>
     </div>
-    <div class="chips" id="chips">
-      <button class="chip">Show me all white cars</button>
-      <button class="chip">Find a person riding a bicycle</button>
-      <button class="chip">Find people entering the frame</button>
+    <div class="chips file-only" id="chips">
       <button class="chip">מצא איש שרץ עם כלב</button>
-      <button class="chip">Find a person wearing a red shirt between 0:10 and 1:30</button>
+      <button class="chip">כל המכוניות הלבנות</button>
+      <button class="chip">מישהו רוכב על אופניים</button>
+      <button class="chip">אנשים שנכנסים לפריים</button>
       <button class="chip">a woman pushing a stroller</button>
     </div>
+    <div class="chips live-only" id="liveChips">
+      <button class="chip">מישהו מרים יד</button>
+      <button class="chip">מישהו מרים סכין</button>
+      <button class="chip">מישהו מצית אש</button>
+      <button class="chip">מישהו חוטף תיק</button>
+      <button class="chip">יותר משני אנשים בחדר</button>
+    </div>
     <div class="inputrow">
-      <input id="queryInput" placeholder="Ask anything about your videos… / שאלו כל דבר על הסרטון…">
-      <button class="send" id="sendBtn" aria-label="Search">➤</button>
+      <input id="queryInput" placeholder="מה לחפש? למשל: איש עם חולצה אדומה">
+      <button class="send" id="sendBtn" aria-label="שליחה">➤</button>
     </div>
   </section>
 
-  <!-- ===== MAIN PANE ===== -->
+  <!-- ===== MAIN ===== -->
   <section class="mainpane">
-    <div class="demo-banner" id="demoBanner">
-      🧠 Upload a video — objects are detected <b>right in your browser</b> (TensorFlow.js COCO-SSD). Run the Python backend for YOLOv8 + ByteTrack, CLIP semantic search, the Claude query parser and clip export.
+    <div class="pagehead file-only">
+      <div><h1>חיפוש בסרטון</h1><p>מעלים סרטון, ושואלים בצ'אט מה למצוא בו</p></div>
+      <button class="btn primary" id="uploadBtn">⬆ העלאת סרטון</button>
+      <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
+    </div>
+    <div class="pagehead live-only">
+      <div><h1>מצלמה חיה</h1><p>בוחרים מצלמה, ומגדירים בצ'אט מתי להתריע</p></div>
     </div>
 
-    <div class="panel">
-      <div class="videohead">
-        <h3>Current Video <small id="videoName">— no video loaded</small></h3>
-        <div class="meta" id="videoMeta"></div>
-      </div>
+    <div class="card file-only">
+      <div class="videohead"><b id="videoName">עוד לא נטען סרטון</b><span class="meta" id="videoMeta"></span></div>
       <div class="videowrap">
         <video id="video" controls></video>
         <div class="overlay" id="overlay"></div>
         <div class="dropzone" id="dropzone">
           <div class="big">🎬</div>
-          <div><b>Drop a video file here</b> or click to browse<br>
-          גררו לכאן קובץ וידאו או לחצו לבחירה</div>
+          <div><b>גררי לכאן סרטון</b> או לחצי כדי לבחור קובץ</div>
         </div>
       </div>
-    </div>
-
-    <div class="panel">
-      <h3>Timeline</h3>
       <div class="timeline" id="timeline">
         <div class="tl-marks" id="tlMarks"></div>
         <div class="playhead" id="playhead" data-t="00:00" style="left:0"></div>
       </div>
       <div class="tl-labels" id="tlLabels"><span>00:00</span><span>—</span></div>
+      <div class="status" id="demoBanner">אפשר לעבוד גם בלי השרת: הזיהוי ירוץ בדפדפן (פחות מדויק).</div>
     </div>
 
-    <div class="panel">
-      <h3>Detected Objects <small id="objScope">(whole video)</small></h3>
-      <div class="objects" id="objects"></div>
+    <div class="card file-only">
+      <h3>מה יש בסרטון <small id="objScope"></small></h3>
+      <div class="objects" id="objects"><div class="empty" style="padding:6px">יופיע כאן אחרי שהסרטון ייסרק</div></div>
+    </div>
+
+    <details class="tech file-only">
+      <summary>פרטים טכניים</summary>
+      <div class="techbody">
+        <div class="row"><span>מנוע זיהוי</span><span id="engineName">—</span></div>
+        <div class="caps" id="caps"></div>
+        <div class="row"><span>סריקת הסרטון</span><span id="procPct">0%</span></div>
+        <div class="meter"><i id="procBar" style="width:0%"></i></div>
+      </div>
+    </details>
+
+    <div class="card live-only">
+      <div class="camrow">
+        <select id="camSelect" aria-label="מצלמה"><option value="">לחצי 🔄 כדי למצוא מצלמות</option></select>
+        <button class="btn icon" id="camRefresh" title="חיפוש מצלמות (גם טלפון שמחובר כמצלמת רשת)">🔄</button>
+        <button class="btn primary" id="camStart">▶ התחל</button>
+      </div>
+      <div class="videowrap" id="liveWrap">
+        <video id="liveVideo" autoplay muted playsinline></video>
+        <canvas class="overlay" id="liveCanvas"></canvas>
+        <div class="dropzone" id="livePlaceholder" style="cursor:default">
+          <ol class="steps">
+            <li><b>1</b>בוחרים מצלמה למעלה. 🔄 מוצא גם טלפון שמחובר כמצלמה</li>
+            <li><b>2</b>לוחצים ▶ התחל</li>
+            <li><b>3</b>כותבים בצ'אט מתי להתריע</li>
+          </ol>
+        </div>
+      </div>
+      <div class="livestatus" id="liveMeta"></div>
+      <div class="ruleshead">מתריעה כש…</div>
+      <div id="rulesList"></div>
+    </div>
+
+    <div class="pagehead label-only">
+      <div><h1>תיוג סרטונים</h1><p>מסמנים מתי קרה כל אירוע, כדי למדוד כמה טוב ההתרעות עובדות</p></div>
+      <button class="btn primary" id="lblOpen">📂 בחירת סרטון</button>
+      <input type="file" id="lblFile" accept="video/*,.mkv,.avi,.mov" hidden>
+    </div>
+    <div class="card label-only">
+      <div class="videohead"><b id="lblName">עוד לא נבחר סרטון</b><span class="meta" id="lblMeta"></span></div>
+      <div class="videowrap">
+        <video id="lblVideo" controls></video>
+        <div class="dropzone" id="lblDrop">
+          <div class="big">🏷</div>
+          <div><b>בחרי סרטון לתיוג</b><br>למשל סרטון שצילמת: הרמת סכין, הצתה, חטיפת תיק, או פעולות שרק נראות דומות</div>
+        </div>
+      </div>
+      <div class="timeline" id="lblTimeline"><div class="tl-marks" id="lblMarks"></div><div class="playhead" id="lblHead" data-t="00:00" style="left:0"></div></div>
+      <div class="lblbar">
+        <div class="lblkinds" id="lblKinds"></div>
+        <div class="lblbtns">
+          <button class="btn" id="lblStart">⏺ התחלה <kbd>S</kbd></button>
+          <button class="btn" id="lblEnd" disabled>⏹ סוף <kbd>E</kbd></button>
+        </div>
+      </div>
+      <div class="status" id="lblStatus">בחרי סרטון כדי להתחיל.</div>
+    </div>
+    <div class="card label-only">
+      <h3>האירועים בסרטון</h3>
+      <div id="lblEvents"><div class="rhint">עוד לא סימנת אירועים.</div></div>
+      <p class="lblnote">כל סוג אירוע שלא סימנת נחשב "לא קרה בסרטון הזה". כך המדידה סופרת גם התרעות שווא, ולכן חשוב לתייג את כל האירועים שבסרטון, לא רק חלק.</p>
+      <div class="lblsave">
+        <label><input type="checkbox" id="lblCopy" checked> להעתיק את הסרטון לתיקיית המדידה (backend/live/data/videos)</label>
+        <button class="btn primary" id="lblSave" disabled>💾 שמירת התיוג</button>
+      </div>
     </div>
   </section>
 
-  <!-- ===== RESULTS PANE ===== -->
+  <!-- ===== RESULTS / ALERTS ===== -->
   <aside class="resultspane">
-    <div class="reshead"><b>Search Results</b>
-      <div class="tools">
-        <button class="btn small" id="exportBtn" hidden title="Download all matches: frames + clips + results.json/csv">⬇ Export ZIP</button>
-        <span class="badge" id="matchBadge">0 matches</span>
+    <div class="live-only">
+      <div class="reshead"><b>התרעות</b>
+        <div class="tools">
+          <button class="btn small" id="clearAlerts" hidden>ניקוי</button>
+          <button class="btn small" id="soundBtn" title="צליל התרעה">🔊</button>
+          <span class="badge" id="alertBadge" hidden>0</span>
+        </div>
       </div>
+      <div id="alertsList"><div class="empty"><span class="big">🔔</span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div></div>
     </div>
-    <div id="results"><div class="empty">No search yet.<br>Upload a video and ask the agent to find something.</div></div>
-    <div class="summary" id="summary" hidden>
-      <b style="font-size:.8rem">Summary</b>
-      <div class="row"><span>Total Matches</span><span id="sumMatches">—</span></div>
-      <div class="row"><span>Time Range Searched</span><span id="sumRange">—</span></div>
-      <div class="row"><span>Searched Video</span><span id="sumVideo">—</span></div>
-      <div class="row"><span>Total Duration</span><span id="sumDur">—</span></div>
+    <div class="label-only">
+      <div class="reshead"><b>סרטונים מתויגים</b><span class="badge" id="lblBadge" hidden>0</span></div>
+      <div id="lblSaved"></div>
+      <details class="tech" style="margin-top:14px"><summary>איך מודדים?</summary>
+        <div class="techbody" style="direction:ltr;text-align:left;font-family:monospace;font-size:.72rem">
+          cd backend<br>python live/perceive.py --videos live/data/videos<br>python live/eval_alerts.py --gt live/data/labels.json
+        </div>
+      </details>
+    </div>
+    <div class="file-only">
+      <div class="reshead"><b>תוצאות</b>
+        <div class="tools">
+          <button class="btn small" id="exportBtn" hidden title="הורדת כל התוצאות: תמונות, קליפים, JSON ו-CSV">⬇ ZIP</button>
+          <span class="badge" id="matchBadge">0</span>
+        </div>
+      </div>
+      <div id="results"><div class="empty"><span class="big">🔎</span>עוד לא חיפשת.<br>העלי סרטון וכתבי בצ'אט מה למצוא.</div></div>
+      <div class="summary" id="summary" hidden>
+        <div class="row"><span>תוצאות</span><span id="sumMatches">—</span></div>
+        <div class="row"><span>טווח זמן</span><span id="sumRange">—</span></div>
+        <div class="row"><span>סרטון</span><span id="sumVideo">—</span></div>
+        <div class="row"><span>אורך</span><span id="sumDur">—</span></div>
+      </div>
     </div>
   </aside>
 </div>
@@ -378,7 +491,7 @@ const esc = s => String(s).replace(/[&<>"']/g,
   c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 document.getElementById('nowTime').textContent =
-  new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  new Date().toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
 
 /* ---------- 1. VIDEO INPUT MODULE ---------- */
 $('uploadBtn').onclick = () => $('fileInput').click();
@@ -394,7 +507,7 @@ dz.ondrop = e => {
   if (!f) return;
   const byExt = /\.(mp4|webm|mov|m4v|mkv|avi|ts)$/i.test(f.name);
   if (f.type.startsWith('video') || byExt) loadVideo(f);
-  else botSay('This does not look like a video file: ' + f.name);
+  else botSay('זה לא נראה כמו קובץ וידאו: ' + f.name);
 };
 
 function loadVideo(file){
@@ -404,18 +517,16 @@ function loadVideo(file){
                          engine: null, index: null, indexing: null });
   video.src = URL.createObjectURL(file);
   dz.style.display = 'none';
-  $('videoName').textContent = '— ' + file.name;
+  $('videoName').textContent = file.name;
   clearResults();
 
   video.onerror = () => {
     dz.style.display = 'flex';
     dz.innerHTML = `<div class="big">⚠️</div>
-      <div><b>The browser cannot play "${esc(file.name)}"</b><br>
-      הדפדפן לא מצליח לנגן את הקובץ — כנראה קידוד H.265 / AVI / DAV.<br>
-      המירו ל-MP4 (H.264) עם ffmpeg:<br>
-      <code style="direction:ltr;display:inline-block;margin-top:6px;background:#0e1124;padding:6px 10px;border-radius:8px">
-      ffmpeg -i "${esc(file.name)}" -c:v libx264 -preset fast output.mp4</code></div>`;
-    botSay('Could not decode the video. Convert it to MP4 (H.264) and try again.\nלא הצלחתי לנגן את הקובץ — צריך להמיר ל-MP4.');
+      <div><b>הדפדפן לא מצליח לנגן את "${esc(file.name)}"</b><br>
+      כנראה קידוד H.265 / AVI / DAV. אפשר להמיר ל-MP4 (H.264) עם ffmpeg:<br>
+      <code>ffmpeg -i "${esc(file.name)}" -c:v libx264 -preset fast output.mp4</code></div>`;
+    botSay('לא הצלחתי לנגן את הסרטון. צריך להמיר אותו ל-MP4 (H.264) ולנסות שוב.');
   };
 
   video.onloadedmetadata = () => {
@@ -424,7 +535,7 @@ function loadVideo(file){
       `${fmt(video.duration)} · ${(file.size/1048576).toFixed(1)} MB`;
     $('tlLabels').innerHTML =
       `<span>00:00</span><span>${fmt(video.duration/2)}</span><span>${fmt(video.duration)}</span>`;
-    botSay(`Video "${file.name}" loaded (${fmt(video.duration)}). I'm scanning it for objects — you can already ask what to look for.\nאני סורק את הסרטון — אפשר כבר לשאול מה לחפש.`);
+    botSay(`הסרטון נטען (${fmt(video.duration)}). אני סורקת אותו עכשיו, ואפשר כבר לכתוב מה לחפש.`);
     startIndexing(file, id);
   };
 }
@@ -519,9 +630,9 @@ function parseQuery(text){
   return found;
 }
 
-// The backend parser understands free text (Claude when an API key is set,
-// otherwise the same vocabulary rules as parseQuery). Local parsing is the
-// fallback when the backend is not running.
+// The backend parser (local vocabulary rules, Hebrew + English, knows the
+// classes found in this video). Parsing in the browser is the fallback when
+// the backend is not running. Nothing is sent to an outside service.
 async function parseAny(text){
   const local = parseQuery(text);
   if (state.engine !== 'backend') return { ...local, semantic: '', unknown: [], source: 'local' };
@@ -553,7 +664,7 @@ const API_CANDIDATES = [...new Set([
 async function backendAlive(){
   for (const base of API_CANDIDATES){
     try {
-      const r = await fetch(base + '/api', { signal: AbortSignal.timeout(1500) });
+      const r = await fetch(base + '/api', { signal: AbortSignal.timeout(4000) });
       if (!r.ok) continue;
       const caps = await r.json();
       if (!caps || !caps.ok) continue;
@@ -569,18 +680,18 @@ function renderCaps(){
   const c = state.caps;
   $('caps').innerHTML = !c ? '' : [
     ['YOLO', true], ['open-vocab', c.open_vocab], ['CLIP', c.clip],
-    ['Claude', c.llm_parser], ['ffmpeg', c.ffmpeg],
-  ].map(([n, on]) => `<span class="${on ? 'on' : ''}" title="${on ? 'enabled' : 'off'}">${n}</span>`).join('');
+    ['מודל שפה', c.nlu?.model], ['ffmpeg', c.ffmpeg],
+  ].map(([n, on]) => `<span class="${on ? 'on' : ''}" title="${on ? 'פעיל' : 'כבוי'}">${n}</span>`).join('');
 }
 const engineLabel = () => state.caps ? (state.caps.model || 'YOLO').replace('.pt', '') : 'YOLOv8';
 
 async function startIndexing(file, id){
   if (await backendAlive()){
-    $('backendState').innerHTML = '<span style="color:var(--ok)">● online</span>';
+    setServer(true);
     try {
       const fd = new FormData();
       fd.append('file', file, file.name);
-      setBanner('⏳ Backend connected — uploading video…', 'wait');
+      setBanner('⏳ מעלה את הסרטון לשרת…', 'wait');
       const r = await fetch(API + '/index', { method:'POST', body: fd });
       if (!r.ok) throw new Error('upload failed (' + r.status + ')');
       const { video: name, cached } = await r.json();
@@ -588,20 +699,20 @@ async function startIndexing(file, id){
       state.videoName = name;
       state.engine = 'backend';
       $('engineName').textContent = engineLabel();
-      if (cached) botSay('This video was already indexed — results are ready.\nהסרטון כבר אונדקס בעבר, אפשר לחפש מיד.');
+      if (cached) botSay('את הסרטון הזה כבר סרקתי בעבר, אפשר לחפש מיד.');
       state.indexing = pollStatus(name, id);
       return;
     } catch (e) {
       console.warn('backend failed, using in-browser detection', e);
     }
   } else {
-    $('backendState').innerHTML = '<span style="color:var(--text-dim)">● offline</span>';
+    setServer(false);
   }
   state.engine = 'browser';
   $('engineName').textContent = 'COCO-SSD';
   state.indexing = browserIndex(id).catch(e => {
     if (id !== state.loadId) return;
-    setBanner('⚠ Could not run in-browser detection: ' + esc(e.message || e), 'demo');
+    setBanner('⚠ הזיהוי בדפדפן נכשל: ' + esc(e.message || e), 'demo');
     throw e;
   });
 }
@@ -615,17 +726,14 @@ function pollStatus(name, id){
         const { status, progress, stage } = await r.json();
         setProgress(progress || 0);
         if (status === 'ready'){
-          const extras = [state.caps?.clip && 'CLIP semantic search', state.caps?.llm_parser && 'Claude query parser'].filter(Boolean);
-          setBanner(`✅ <b>Live mode:</b> indexed with ${esc(engineLabel())} + ByteTrack on the backend` +
-                    (extras.length ? ' · ' + extras.join(' · ') : '') + '.', 'ok');
+          setBanner('✅ הסרטון מוכן לחיפוש', 'ok');
           loadOverview();
           resolve();
         } else if (status === 'indexing'){
-          setBanner(`⏳ Backend is indexing the video with ${esc(engineLabel())}… ${Math.round((progress||0)*100)}%` +
-                    (stage ? ` <small>(${esc(stage)})</small>` : ''), 'wait');
+          setBanner(`⏳ סורקת את הסרטון… ${Math.round((progress||0)*100)}%`, 'wait');
           setTimeout(tick, 1500);
         } else {
-          setBanner('⚠ Backend error while indexing: ' + esc(status), 'demo');
+          setBanner('⚠ שגיאה בסריקת הסרטון: ' + esc(status), 'demo');
           reject(new Error(status));
         }
       } catch (e) { reject(e); }
@@ -642,12 +750,13 @@ function setProgress(p){
 function setBanner(html, kind){
   const b = $('demoBanner');
   b.innerHTML = html;
-  b.style.borderColor = kind === 'ok' ? 'rgba(61,220,151,.4)'
-                       : kind === 'wait' ? 'rgba(124,108,245,.4)'
-                       : 'rgba(76,201,240,.35)';
-  b.style.color = kind === 'ok' ? 'var(--ok)'
-                : kind === 'wait' ? 'var(--accent)'
-                : 'var(--accent-2)';
+  b.className = 'status ' + (kind || '');
+}
+
+// the server dot at the bottom of the rail
+function setServer(on){
+  $('backendState').innerHTML = `<span class="dot ${on ? 'green' : ''}"></span>${on ? 'שרת מחובר' : 'שרת כבוי'}`;
+  $('backendState').title = on ? 'השרת (Python) רץ' : 'השרת (Python) לא רץ: החיפוש ירוץ בדפדפן, והמצלמה החיה לא תעבוד';
 }
 
 /* ----- in-browser detector: TensorFlow.js COCO-SSD ----- */
@@ -667,7 +776,7 @@ function loadScript(src){
 
 function getDetector(){
   detectorPromise ??= (async () => {
-    setBanner('⏳ Loading the object-detection model (first time only, ~25 MB)…', 'wait');
+    setBanner('⏳ טוענת את מודל הזיהוי (רק בפעם הראשונה, כ-25MB)…', 'wait');
     await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
     // GPU (WebGL) is fastest; without it, WebAssembly is ~5-10x faster than plain JS
     if (!(await tf.setBackend('webgl').catch(() => false))){
@@ -732,13 +841,12 @@ async function browserIndex(id){
     const p = Math.min(1, (t + step) / D);
     setProgress(p);
     const eta = (performance.now() - t0) / 1000 / p * (1 - p);
-    setBanner(`🧠 Detecting objects in your browser (COCO-SSD)… ${Math.round(p*100)}%` +
-              (p > .03 ? ` · ~${Math.ceil(eta)}s left` : ''), 'wait');
+    setBanner(`⏳ סורקת את הסרטון בדפדפן… ${Math.round(p*100)}%` +
+              (p > .03 ? ` · עוד כ-${Math.ceil(eta)} שניות` : ''), 'wait');
   }
   state.index = { rows, W, H, duration: D };
   setProgress(1);
-  setBanner(`✅ <b>Ready:</b> ${new Set(rows.map(r => r[2] + r[1])).size} objects tracked in your browser (COCO-SSD, ${tf.getBackend()}). ` +
-            `For higher accuracy run the YOLOv8 backend locally.`, 'ok');
+  setBanner(`✅ הסרטון מוכן לחיפוש (זיהוי בדפדפן, ${new Set(rows.map(r => r[2] + r[1])).size} אובייקטים). לדיוק גבוה יותר אפשר להריץ את השרת.`, 'ok');
   loadOverview();
 }
 
@@ -902,7 +1010,8 @@ async function queryBackend(parsed, offset = 0, limit = PAGE){
         body: JSON.stringify({
           video: state.videoName, offset, limit,
           query: { objects: parsed.objects, colors: parsed.colors, actions: parsed.actions,
-                   timeRange: tr, semantic: parsed.semantic || '',
+                   object_colors: parsed.object_colors || {},
+                   timeRange: tr, minDuration: parsed.minDuration || null, semantic: parsed.semantic || '',
                    unknown: parsed.unknown || [], text: parsed.raw || '' },
         })
       });
@@ -911,7 +1020,7 @@ async function queryBackend(parsed, offset = 0, limit = PAGE){
         if (data && Array.isArray(data.results)) return data;
       }
     } catch { /* backend went away -> analyse in the browser instead */ }
-    botSay('The backend stopped responding — switching to in-browser detection.');
+    botSay('השרת הפסיק לענות, אז אני עוברת לזיהוי בדפדפן.');
     state.engine = 'browser';
     $('engineName').textContent = 'COCO-SSD';
     state.indexing = browserIndex(state.loadId);
@@ -929,30 +1038,41 @@ function addMsg(cls, text){
   d.className = 'msg ' + cls;
   d.textContent = text;
   const tm = document.createElement('time');
-  tm.textContent = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  tm.textContent = new Date().toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit'});
   d.appendChild(tm);
   $('messages').appendChild(d);
   $('messages').scrollTop = 1e9;
 }
 const botSay = t => addMsg('bot', t);
 
-const rangeText = r => !r ? 'Full video'
-  : r[1] === Infinity ? 'after ' + fmt(r[0]) : r.map(fmt).join(' – ');
+const rangeText = r => !r ? 'כל הסרטון'
+  : r[1] === Infinity ? 'אחרי ' + fmt(r[0]) : r.map(fmt).join(' – ');
 
+const WORD_HE = { person:'אדם', car:'מכונית', bus:'אוטובוס', truck:'משאית', bicycle:'אופניים', motorcycle:'אופנוע',
+  dog:'כלב', cat:'חתול', bag:'תיק', red:'אדום', white:'לבן', black:'שחור', gray:'אפור', blue:'כחול', green:'ירוק',
+  yellow:'צהוב', orange:'כתום', purple:'סגול', pink:'ורוד', brown:'חום', running:'רץ', walking:'הולך', moving:'בתנועה',
+  parked:'עומד', entering:'נכנס', exiting:'יוצא',
+  'going left':'שמאלה', 'going right':'ימינה', 'going up':'כלפי מעלה', 'going down':'כלפי מטה',
+  'on the left':'בצד שמאל', 'on the right':'בצד ימין', 'at the top':'למעלה', 'at the bottom':'למטה',
+  'in the center':'במרכז' };
+const he = w => WORD_HE[w] || w;
+// backend labels are "<colour> <class>": show them as "<class> <colour>" in Hebrew
+const heLabel = l => { const w = String(l).split(' ').map(he); return w.length === 2 && WORD_HE[String(l).split(' ')[0]] ? w[1] + ' ' + w[0] : w.join(' '); };
+
+// what the assistant understood, as small chips ("🔎 מחפשת: אדם · אדום · רץ")
 function addParsedCard(p){
-  const rows = [
-    ['Object',   p.objects.join(', ') || 'any'],
-    ['Attribute',p.colors.join(', ')  || '—'],
-    ['Action',   p.actions.join(', ') || '—'],
-    ['Time Range', rangeText(p.timeRange)],
-  ];
-  if (p.semantic) rows.push(['Visual (CLIP)', p.semantic]);
-  if (p.unknown && p.unknown.length) rows.push(['Not understood', p.unknown.join(', ')]);
-  const src = { llm: 'Claude', rules: 'rules (server)', local: 'rules (browser)' }[p.source] || p.source || '';
+  // the subject with its colour and action, then what it is near ("ליד מכונית לבנה")
+  const [subj, ...others] = p.objects;
+  const parts = [...(subj ? [subj] : []), ...p.colors, ...p.actions].map(he);
+  for (const o of others) parts.push('ליד ' + [o, ...((p.object_colors || {})[o] || [])].map(he).join(' '));
+  if (p.timeRange) parts.push('⏱ ' + rangeText(p.timeRange));
+  if (p.minDuration) parts.push('לפחות ' + p.minDuration + ' שנ׳');
+  if (p.semantic) parts.push('“' + p.semantic + '”');
+  if (!parts.length) return;
   const d = document.createElement('div');
-  d.className = 'parsed';
-  d.innerHTML = `<h4>✅ Parsed Query ${src ? `<span class="tag">${esc(src)}</span>` : ''}</h4>` +
-    rows.map(r=>`<div class="prow"><span>${r[0]}</span><span>${esc(r[1])}</span></div>`).join('');
+  d.className = 'understood';
+  d.innerHTML = '🔎 מחפשת: ' + parts.map(x => `<span>${esc(x)}</span>`).join('') +
+    (p.unknown && p.unknown.length ? `<span class="warn" title="מילים שלא הבנתי">❓ ${esc(p.unknown.join(', '))}</span>` : '');
   $('messages').appendChild(d);
   $('messages').scrollTop = 1e9;
 }
@@ -962,45 +1082,84 @@ async function runSearch(text){
   if (!text.trim() || searching) return;
   addMsg('user', text);
   if (!state.duration){
-    botSay('Please upload a video first 🙂\nקודם צריך להעלות סרטון');
+    botSay('קודם צריך להעלות סרטון 🙂');
     return;
   }
   searching = true;
   try {
     const id = state.loadId;
-    if (!state.indexing) botSay('Still preparing the video…');
+    if (!state.indexing) botSay('עוד מכינה את הסרטון…');
     while (!state.indexing && id === state.loadId) await new Promise(r => setTimeout(r, 200));
-    if (state.engine === 'browser' && !state.index) botSay('Still scanning the video — I will answer as soon as it is done…');
+    if (state.engine === 'browser' && !state.index) botSay('עוד סורקת את הסרטון, אענה ברגע שאסיים…');
     await state.indexing;
     if (id !== state.loadId) return;
+
+    // an action ("מישהו חוטף תיק")? the alert rules of the live mode answer it
+    if (state.engine === 'backend' && await searchEvents(text, id)) return;
 
     const parsed = await parseAny(text);
     addParsedCard(parsed);
     if (!parsed.objects.length && !parsed.colors.length && !parsed.actions.length && !parsed.semantic){
-      botSay("I didn't recognise an object in your question, so I'll show everything I detected.\n" +
+      botSay('לא זיהיתי בשאלה משהו שאני יודעת לחפש, אז אראה את כל מה שמצאתי.\n' +
              (state.engine === 'backend' && state.caps?.clip
-               ? 'Tip: describe what it looks like — with CLIP I can match free text too.'
-               : 'I can find: people, cars, buses, trucks, bicycles, motorcycles, dogs, cats and bags.'));
+               ? 'טיפ: אפשר לתאר איך זה נראה, ואחפש לפי התיאור.'
+               : 'אני יודעת למצוא: אנשים, מכוניות, אוטובוסים, משאיות, אופניים, אופנועים, כלבים, חתולים ותיקים.'));
+    } else if (parsed.unsupported === 'theft'){
+      botSay('גניבה עצמה (להחביא מוצר, לצאת בלי לשלם) אני עוד לא יודעת לזהות. אז אראה לך את כל האנשים בסרטון, ואפשר לעבור עליהם.\n' +
+             'מה שאני כן מזהה: "מישהו חוטף תיק", "מישהו מחזיק סכין", "מישהו מרים אקדח".');
     } else if (parsed.semantic && !(state.caps?.clip) && state.engine === 'backend'){
-      botSay('Part of your question needs CLIP semantic search, which is off on the server — I will match on the object classes only.');
+      botSay('חלק מהשאלה דורש חיפוש לפי תיאור (CLIP), שכבוי בשרת. אחפש רק לפי סוג האובייקט.');
     }
     const { total, results } = await queryBackend(parsed, 0);
     if (id !== state.loadId) return;
     state.matches = results; state.total = total; state.parsed = parsed; state.rawQuery = text;
     botSay(total
-      ? `I found ${total} match${total > 1 ? 'es' : ''}${total > results.length ? ` (showing the first ${results.length})` : ''}. Click a result to jump to it, or download it as an image / clip.`
-      : 'No matches found. Try a broader query (e.g. without a colour or action).\nלא נמצאו תוצאות — נסו שאילתה כללית יותר.');
+      ? `מצאתי ${total === 1 ? 'תוצאה אחת' : total + ' תוצאות'}${total > results.length ? ` (מוצגות ${results.length} הראשונות)` : ''}. לחיצה על תוצאה קופצת אליה בסרטון.`
+      : 'לא מצאתי. אפשר לנסות שאלה כללית יותר, למשל בלי צבע או פעולה.');
     renderResults(parsed);
   } catch (e) {
-    botSay('Search failed: ' + (e.message || e));
+    botSay('החיפוש נכשל: ' + (e.message || e));
   } finally {
     searching = false;
   }
 }
 
+/* actions in a recorded video: the server runs the live perception over the
+   video once (cached), then the same alert rule as the camera. -> true when
+   the sentence was an action and has been answered here. */
+async function searchEvents(text, id){
+  let out;
+  const ask = async () => (await fetch(API + '/events', { method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ video: state.videoName, text }) })).json();
+  try { out = await ask(); } catch { return false; }
+  if (!out || !out.event) return false;
+  const d = document.createElement('div');
+  d.className = 'understood';
+  d.innerHTML = `🎬 מחפשת פעולה: <span>${esc(out.rule.label)}</span>`;
+  $('messages').appendChild(d); $('messages').scrollTop = 1e9;
+  if (out.status !== 'ready'){
+    botSay('כדי למצוא פעולות אני עוברת על הסרטון עם מודל השלד. זה קורה פעם אחת לכל סרטון, ואחר כך כל פעולה נמצאת מיד.');
+    while (out.status !== 'ready' && id === state.loadId){
+      if (out.status === 'error'){ botSay('הניתוח נכשל: ' + (out.error || '')); return true; }
+      setBanner(`⏳ מנתחת תנועות בסרטון… ${Math.round((out.progress || 0) * 100)}%`, 'wait');
+      await new Promise(r => setTimeout(r, 1500));
+      try { out = await ask(); } catch { return true; }
+    }
+    if (id !== state.loadId) return true;
+    setBanner('✅ הסרטון מוכן לחיפוש, כולל פעולות', 'ok');
+  }
+  state.matches = out.results; state.total = out.total;
+  state.parsed = { objects: [], colors: [], actions: [], timeRange: null }; state.rawQuery = text;
+  botSay(out.total
+    ? `מצאתי ${out.total === 1 ? 'רגע אחד' : out.total + ' רגעים'} שבהם ${out.rule.label}. לחיצה על תוצאה קופצת אליה.`
+    : `לא מצאתי בסרטון רגע שבו ${out.rule.label}.`);
+  renderResults(state.parsed);
+  return true;
+}
+
 async function loadMore(){
   const btn = $('showMore');
-  if (btn) { btn.disabled = true; btn.textContent = 'Loading…'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'טוענת…'; }
   const id = state.loadId;
   const { results } = await queryBackend(state.parsed, state.matches.length);
   if (id !== state.loadId) return;
@@ -1008,17 +1167,22 @@ async function loadMore(){
   renderResults(state.parsed);
 }
 
-$('sendBtn').onclick = () => { runSearch($('queryInput').value); $('queryInput').value=''; };
+const submitChat = text => live.on ? addRule(text) : runSearch(text);
+$('sendBtn').onclick = () => { submitChat($('queryInput').value); $('queryInput').value=''; };
 $('queryInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter'){ runSearch(e.target.value); e.target.value=''; }
+  if (e.key === 'Enter'){ submitChat(e.target.value); e.target.value=''; }
+});
+$('liveChips').addEventListener('click', e => {
+  if (e.target.classList.contains('chip')) addRule(e.target.textContent);
 });
 $('chips').addEventListener('click', e => {
   if (e.target.classList.contains('chip')) runSearch(e.target.textContent);
 });
 
 /* ---------- 5. RESULT VISUALIZATION ---------- */
-const ICONS = { person:['🧍','Persons'], car:['🚗','Cars'], bus:['🚌','Buses'], truck:['🚚','Trucks'],
-  bicycle:['🚲','Bicycles'], motorcycle:['🏍','Motorcycles'], dog:['🐕','Dogs'], cat:['🐈','Cats'], bag:['🎒','Bags'] };
+const ICONS = { person:['🧍','אנשים'], car:['🚗','מכוניות'], bus:['🚌','אוטובוסים'], truck:['🚚','משאיות'],
+  bicycle:['🚲','אופניים'], motorcycle:['🏍','אופנועים'], dog:['🐕','כלבים'], cat:['🐈','חתולים'], bag:['🎒','תיקים'],
+  event:['🎬','פעולות'], scene:['🎞','סצנות'] };
 
 const iconOf = k => ICONS[k] || ['🔹', k.charAt(0).toUpperCase() + k.slice(1)];
 
@@ -1029,25 +1193,25 @@ function renderObjectCounts(segs, scope){
   $('objScope').textContent = scope;
   $('objects').innerHTML = keys.length
     ? keys.map(k => `<div class="objcard"><div class="ico">${iconOf(k)[0]}</div><b>${counts[k]}</b><span>${esc(iconOf(k)[1])}</span></div>`).join('')
-    : '<div class="empty" style="padding:6px">No objects detected yet.</div>';
+    : '<div class="empty" style="padding:6px">עוד לא זוהו אובייקטים.</div>';
 }
 
 // whole-video object counts once the index is ready
 async function loadOverview(){
   const { results: all } = await queryBackend({ objects: [], colors: [], actions: [], timeRange: null }, 0, 1000)
     .catch(() => ({ results: [] }));
-  if (!state.matches.length) renderObjectCounts(all, '(whole video)');
+  if (!state.matches.length) renderObjectCounts(all, 'בכל הסרטון');
   renderTimeline(all, 'overview');
 }
 
 function clearResults(){
-  $('results').innerHTML = '<div class="empty">No search yet.<br>Ask the agent to find something in the video.</div>';
-  $('matchBadge').textContent = '0 matches';
+  $('results').innerHTML = '<div class="empty"><span class="big">🔎</span>עוד לא חיפשת.<br>כתבי בצ\'אט מה למצוא בסרטון.</div>';
+  $('matchBadge').textContent = '0';
   $('exportBtn').hidden = true;
   state.total = 0; state.parsed = null;
   $('summary').hidden = true;
   $('tlMarks').innerHTML = '';
-  $('objects').innerHTML = '<div class="empty" style="padding:6px">Scanning…</div>';
+  $('objects').innerHTML = '<div class="empty" style="padding:6px">סורקת…</div>';
   overlay.innerHTML = '';
   setProgress(0);
 }
@@ -1071,27 +1235,26 @@ function renderResults(parsed){
   const box = $('results');
   box.innerHTML = '';
   const total = state.total || state.matches.length;
-  $('matchBadge').textContent = total + ' matches';
+  $('matchBadge').textContent = total;
   $('exportBtn').hidden = !(state.engine === 'backend' && state.matches.length);
   if (!state.matches.length)
-    box.innerHTML = '<div class="empty">No matches for this query.</div>';
+    box.innerHTML = '<div class="empty"><span class="big">🤷‍♀️</span>אין תוצאות לחיפוש הזה.</div>';
 
   const backend = state.engine === 'backend';
   state.matches.forEach((m, i) => {
     const card = document.createElement('div');
     card.className = 'rescard';
-    const tags = (m.score ? `<span class="tag sem" title="CLIP similarity">${(m.score*100).toFixed(0)}%</span>` : '') +
-                 (m.entity != null && m.entity !== m.track ? `<span class="tag" title="same object as track #${m.entity}">id ${m.entity}</span>` : '');
+    const tags = (m.score ? `<span class="tag sem" title="דמיון לתיאור (CLIP)">${(m.score*100).toFixed(0)}%</span>` : '') +
+                 (m.entity != null && m.entity !== m.track ? `<span class="tag" title="אותו אובייקט כמו #${m.entity}">#${m.entity}</span>` : '');
     card.innerHTML = `
-      <div class="thumb"><canvas data-i="${i}" width="148" height="108"></canvas></div>
+      <div class="thumb"><canvas data-i="${i}" width="168" height="120"></canvas></div>
       <div class="info">
         <b>${fmt(m.t)}${tags}</b>
-        ${esc(m.label || 'match')} · conf ${(m.conf*100).toFixed(0)}%<br>
-        Duration: ${m.dur.toFixed(0)}s
+        <span class="what">${esc(m.label ? heLabel(m.label) : 'תוצאה')}${m.context && m.context.length ? ' · ליד ' + esc([...new Set(m.context.map(c => heLabel(c.label || c.cls)))].join(', ')) : ''}</span> · ${m.dur.toFixed(0)} שנ'
         <div class="actions">
-          <button class="viewclip" data-i="${i}">▶ View</button>
-          <button data-dl="image" data-i="${i}" title="Download the frame with the box">🖼 Image</button>
-          ${backend ? `<button data-dl="clip" data-i="${i}" title="Download this clip (MP4, with the tracked box)">🎬 Clip</button>` : ''}
+          <button class="viewclip" data-i="${i}">▶ צפייה</button>
+          <button data-dl="image" data-i="${i}" title="הורדת התמונה עם המסגרת">🖼 תמונה</button>
+          ${backend ? `<button data-dl="clip" data-i="${i}" title="הורדת הקטע (MP4, עם מסגרת עוקבת)">🎬 קליפ</button>` : ''}
         </div>
       </div>`;
     box.appendChild(card);
@@ -1099,7 +1262,7 @@ function renderResults(parsed){
   if (state.matches.length < total){
     const more = document.createElement('button');
     more.className = 'btn showmore'; more.id = 'showMore';
-    more.textContent = `Show more (${state.matches.length} / ${total})`;
+    more.textContent = `עוד תוצאות (${state.matches.length} מתוך ${total})`;
     more.onclick = loadMore;
     box.appendChild(more);
   }
@@ -1112,7 +1275,8 @@ function renderResults(parsed){
 
   captureThumbs();
   renderTimeline(state.matches, 'matches');
-  renderObjectCounts(state.matches, '(in current search)');
+  if (state.matches.length) renderObjectCounts(state.matches, 'בחיפוש הנוכחי');
+  else loadOverview();          // nothing found: show what IS in the video instead of an empty panel
 
   $('summary').hidden = false;
   $('sumMatches').textContent = total;
@@ -1160,11 +1324,11 @@ function saveBlob(blob, name){
 const stem = () => (state.videoName || 'video').replace(/\.[^.]+$/, '');
 const tstamp = t => fmt(t).replace(/:/g, '-');
 
-async function withBusy(btn, label, fn){
+async function withBusy(btn, label, fn, onError){
   const old = btn.textContent;
   btn.disabled = true; btn.textContent = label;
   try { await fn(); }
-  catch (e) { botSay('Download failed: ' + (e.message || e)); }
+  catch (e) { (onError || (m => botSay('ההורדה נכשלה: ' + m)))(e.message || e); }
   finally { btn.disabled = false; btn.textContent = old; }
 }
 
@@ -1217,7 +1381,7 @@ async function downloadMatch(i, kind, btn){
   });
 }
 
-$('exportBtn').onclick = () => withBusy($('exportBtn'), '⏳ Rendering clips…', async () => {
+$('exportBtn').onclick = () => withBusy($('exportBtn'), '⏳ מכינה…', async () => {
   const r = await fetch(API + '/export', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ video: state.videoName, matches: state.matches,
@@ -1225,7 +1389,7 @@ $('exportBtn').onclick = () => withBusy($('exportBtn'), '⏳ Rendering clips…'
   });
   if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || 'export failed');
   saveBlob(await r.blob(), `${stem()}_results.zip`);
-  botSay(`Exported ${state.matches.length} matches as a ZIP (frames, clips, results.json, results.csv).`);
+  botSay(`הורדתי ${state.matches.length} תוצאות כקובץ ZIP (תמונות, קליפים, results.json, results.csv).`);
 });
 
 function seekTo(t){ video.currentTime = Math.max(0, t); drawOverlay(); }
@@ -1277,8 +1441,19 @@ function drawOverlay(){
     el.className = 'bbox' + (m.cls !== state.matches[0].cls ? ' alt' : '');
     el.style.cssText = `left:${ox + b.x/100*pw}px;top:${oy + b.y/100*phh}px;` +
                        `width:${b.w/100*pw}px;height:${b.h/100*phh}px`;
-    el.innerHTML = `<label>${esc(m.label || m.cls || 'object')} #${m.track ?? i+1}</label>`;
+    el.innerHTML = `<label>${esc(heLabel(m.label || m.cls || 'object'))} #${m.track ?? i+1}</label>`;
     overlay.appendChild(el);
+    // what it was next to ("ליד הרכב הלבן"), in the second colour
+    for (const c of m.context || []){
+      const cb = boxAt(c, ct);
+      if (!cb) continue;
+      const ce = document.createElement('div');
+      ce.className = 'bbox alt';
+      ce.style.cssText = `left:${ox + cb.x/100*pw}px;top:${oy + cb.y/100*phh}px;` +
+                         `width:${cb.w/100*pw}px;height:${cb.h/100*phh}px`;
+      ce.innerHTML = `<label>${esc(heLabel(c.label || c.cls))}</label>`;
+      overlay.appendChild(ce);
+    }
   });
 }
 video.addEventListener('timeupdate', drawOverlay);
@@ -1292,12 +1467,533 @@ $('timeline').addEventListener('click', e => {
   seekTo((e.clientX - r.left) / r.width * state.duration);
 });
 
+/* =====================================================================
+   LIVE MODE — a camera of this computer (or a phone connected as a webcam)
+   ---------------------------------------------------------------------
+   The browser opens the camera, sends one JPEG at a time to the backend
+   (WebSocket /live/ws) and waits for the answer before sending the next, so
+   the view never falls behind the camera. The backend returns the people
+   (pose skeleton), the objects (knife / gun / ...) and the alerts of the
+   rules the user wrote in the chat (POST /live/rules).
+   ===================================================================== */
+const live = {
+  on: false, stream: null, ws: null, running: false,
+  rules: [], progress: {}, alerts: [], last: null,
+  tShown: 0, fps: 0, sound: true, greeted: false,
+};
+const liveVideo = $('liveVideo'), liveCanvas = $('liveCanvas'), grab = document.createElement('canvas');
+const SEND_W = 640;                                   // frames are scaled down to this width
+const SKELETON = [[5,7],[7,9],[6,8],[8,10],[5,6],[5,11],[6,12],[11,12],[11,13],[13,15],[12,14],[14,16]];
+const OBJ_HE = { knife: 'סכין', gun: 'נשק', fire: 'אש', smoke: 'עשן', 'cell phone': 'טלפון',
+                 scissors: 'מספריים', 'baseball bat': 'מחבט', bottle: 'בקבוק', cup: 'כוס' };
+const isHe = t => /[֐-׿]/.test(t);
+
+// modes: 'search' | 'live' | 'label'. Search and live each keep their own conversation.
+let mode = 'search';
+const chats = { search: null, live: null };
+function setMode(m){
+  if (m === true) m = 'live';
+  if (m === false) m = 'search';
+  if (m === mode) return;
+  const was = mode;
+  if (was in chats) chats[was] = $('messages').innerHTML;
+  if (m in chats){ $('messages').innerHTML = chats[m] || ''; $('messages').scrollTop = 1e9; }
+  mode = m;
+  live.on = m === 'live';
+  document.body.classList.toggle('live', m === 'live');
+  document.body.classList.toggle('label', m === 'label');
+  $('navSearch').classList.toggle('active', m === 'search');
+  $('navLive').classList.toggle('active', m === 'live');
+  $('navLabel').classList.toggle('active', m === 'label');
+  $('chatSub').textContent = m === 'live' ? 'כתבי לי מתי להתריע' : 'כתבי מה לחפש בסרטון';
+  $('queryInput').placeholder = m === 'live' ? 'מתי להתריע? למשל: מישהו מרים יד' : 'מה לחפש? למשל: איש עם חולצה אדומה';
+  if (was === 'live') stopCamera();
+  if (was === 'label' && !lblVideo.paused) lblVideo.pause();
+  if (m === 'live'){
+    if (!live.greeted){
+      live.greeted = true;
+      botSay('היי! 👋 בחרי מצלמה ולחצי התחל, ואז פשוט כתבי לי מתי להתריע לך.\nלמשל: "מישהו מרים יד", "מישהו מרים סכין" או "יותר משני אנשים בחדר".');
+    }
+    listCameras(false);
+    renderRules();
+    loadRules();
+  }
+  if (m === 'label') labelOpen();
+}
+
+/* ---------- cameras ---------- */
+async function listCameras(ask){
+  const sel = $('camSelect');
+  if (!navigator.mediaDevices?.enumerateDevices){
+    sel.innerHTML = '<option value="">אין גישה למצלמה בדף הזה</option>';
+    botSay('הדפדפן לא מאפשר מצלמה בדף הזה. צריך לפתוח את הממשק דרך הכתובת http://localhost:8000');
+    return;
+  }
+  try {
+    let cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    // camera names stay hidden until the user allows the camera once
+    if (ask && (!cams.length || !cams[0].label)){
+      const s = await navigator.mediaDevices.getUserMedia({ video: true });
+      s.getTracks().forEach(t => t.stop());
+      cams = (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'videoinput');
+    }
+    const prev = sel.value;
+    sel.innerHTML = cams.length
+      ? cams.map((c, i) => `<option value="${esc(c.deviceId)}">📷 ${esc(c.label || 'מצלמה ' + (i + 1))}</option>`).join('')
+      : '<option value="">לא נמצאו מצלמות</option>';
+    if (cams.some(c => c.deviceId === prev)) sel.value = prev;
+    if (ask && !cams.length) botSay('לא מצאתי מצלמות. חברי מצלמה (או את הטלפון כמצלמת רשת) ולחצי שוב 🔄');
+  } catch (e){
+    botSay('צריך לאשר לדפדפן גישה למצלמה 🙂 (' + (e.message || e) + ')');
+  }
+}
+$('camRefresh').onclick = () => listCameras(true);
+navigator.mediaDevices?.addEventListener?.('devicechange', () => live.on && listCameras(false));
+$('camSelect').onchange = () => { if (live.running) startCamera(); };
+$('camStart').onclick = () => live.running ? stopCamera() : startCamera();
+
+async function needBackend(){
+  if (state.caps || await backendAlive()) return true;
+  botSay('השרת לא רץ, ובלעדיו אני לא יכולה לצפות במצלמה.\nבחלון cmd, בתיקייה backend:  uvicorn main:app --port 8000\nואז לפתוח את http://localhost:8000');
+  return false;
+}
+
+async function startCamera(){
+  if (!(await needBackend())) return;
+  stopCamera(true);
+  try {
+    const id = $('camSelect').value;
+    live.stream = await navigator.mediaDevices.getUserMedia({
+      video: { ...(id ? { deviceId: { exact: id } } : {}), width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false });
+  } catch (e){
+    botSay('לא הצלחתי לפתוח את המצלמה. אולי Zoom / Teams משתמשים בה, או שהגישה לא אושרה.');
+    return;
+  }
+  liveVideo.srcObject = live.stream;
+  await liveVideo.play().catch(() => {});
+  $('livePlaceholder').style.display = 'none';
+  $('camStart').textContent = '■ עצור';
+  $('liveDot').classList.add('green');
+  live.running = true;
+  setStatus('מתחבר…');
+  listCameras(false);             // names are visible now that the camera is allowed
+  connectWs();
+}
+
+function stopCamera(keepView){
+  live.running = false;
+  if (live.ws){ live.ws.onclose = null; live.ws.close(); live.ws = null; }
+  if (live.stream){ live.stream.getTracks().forEach(t => t.stop()); live.stream = null; }
+  liveVideo.srcObject = null;
+  live.last = null; live.tShown = 0; live.fps = 0;
+  drawLive();
+  $('camStart').textContent = '▶ התחל';
+  $('liveDot').classList.remove('green');
+  setStatus('');
+  if (!keepView) $('livePlaceholder').style.display = 'flex';
+}
+
+function setStatus(html, title){
+  $('liveMeta').innerHTML = html;
+  $('liveMeta').title = title || '';
+}
+
+/* ---------- frames to the server ---------- */
+function connectWs(){
+  const ws = new WebSocket(API.replace(/^http/, 'ws') + '/live/ws');
+  ws.binaryType = 'arraybuffer';
+  live.ws = ws;
+  ws.onopen = () => { setStatus('טוען מודלים… (בפעם הראשונה זה לוקח כמה שניות)'); sendFrame(); };
+  ws.onmessage = e => {
+    let out; try { out = JSON.parse(e.data); } catch { out = { error: 'bad answer' }; }
+    if (out.error) setStatus('⚠ שגיאה בשרת', out.error);
+    else onResult(out);
+    sendFrame();
+  };
+  ws.onclose = () => {
+    if (!live.running) return;
+    setStatus('החיבור לשרת נותק, מתחבר מחדש…');
+    setTimeout(() => live.running && connectWs(), 2000);
+  };
+}
+
+function sendFrame(){
+  const ws = live.ws;
+  if (!live.running || !ws || ws.readyState !== 1) return;
+  const v = liveVideo;
+  if (!v.videoWidth){ setTimeout(sendFrame, 100); return; }
+  const sc = Math.min(1, SEND_W / v.videoWidth);
+  grab.width = Math.round(v.videoWidth * sc); grab.height = Math.round(v.videoHeight * sc);
+  grab.getContext('2d').drawImage(v, 0, 0, grab.width, grab.height);
+  grab.toBlob(b => {
+    if (b && live.ws === ws && ws.readyState === 1) ws.send(b);
+    else if (live.running) setTimeout(sendFrame, 100);
+  }, 'image/jpeg', 0.75);
+}
+
+function onResult(out){
+  const now = performance.now();
+  if (live.tShown) live.fps = live.fps ? 0.85 * live.fps + 0.15 * 1000 / (now - live.tShown) : 1000 / (now - live.tShown);
+  live.tShown = now;
+  live.last = out;
+  live.progress = out.progress || {};
+  const n = out.persons.length;
+  setStatus(`<span class="dot green"></span> בשידור · ${n === 0 ? 'אין אנשים' : n === 1 ? 'אדם אחד' : n + ' אנשים'}` +
+            (live.fps && live.fps < 3 ? ' · <span style="color:#f5a524">איטי</span>' : ''),
+            `${live.fps.toFixed(1)} fps · ${out.ms} ms per frame`);
+  drawLive();
+  renderRuleProgress();
+  (out.alerts || []).forEach(a => onAlert(a, out));
+}
+
+/* ---------- drawing ---------- */
+function pictureRect(){
+  const fw = liveCanvas.clientWidth, fh = liveCanvas.clientHeight;
+  const ar = (liveVideo.videoWidth / liveVideo.videoHeight) || 16/9;
+  const pw = Math.min(fw, fh * ar), ph = Math.min(fh, fw / ar);
+  return { fw, fh, ox: (fw - pw) / 2, oy: (fh - ph) / 2, pw, ph };
+}
+
+function drawLive(){
+  const dpr = window.devicePixelRatio || 1;
+  const { fw, fh, ox, oy, pw, ph } = pictureRect();
+  liveCanvas.width = fw * dpr; liveCanvas.height = fh * dpr;
+  const g = liveCanvas.getContext('2d');
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, fw, fh);
+  const out = live.last;
+  if (!out || !out.w) return;
+  const sx = pw / out.w, sy = ph / out.h;
+  const X = x => ox + x * sx, Y = y => oy + y * sy;
+  g.font = '600 12px Segoe UI, system-ui, sans-serif';
+
+  // people: a thin, quiet skeleton
+  g.lineWidth = 2; g.lineCap = 'round';
+  g.strokeStyle = 'rgba(61,220,151,.85)';
+  out.persons.forEach(p => {
+    const k = p.kpts;
+    g.beginPath();
+    for (const [a, b] of SKELETON){
+      if (k[a][2] < .3 || k[b][2] < .3) continue;
+      g.moveTo(X(k[a][0]), Y(k[a][1])); g.lineTo(X(k[b][0]), Y(k[b][1]));
+    }
+    g.stroke();
+  });
+  // objects: what the alerts are about
+  for (const o of out.objects){
+    const [x1, y1, x2, y2] = o.box;
+    g.strokeStyle = '#f0564c'; g.lineWidth = 2.5;
+    g.strokeRect(X(x1), Y(y1), (x2 - x1) * sx, (y2 - y1) * sy);
+    tagAt(g, OBJ_HE[o.cls] || o.cls, X(x1), Y(y1), '#f0564c');
+  }
+}
+
+function tagAt(g, text, x, y, color){
+  const w = g.measureText(text).width + 10;
+  y = Math.max(y, 18);
+  g.fillStyle = color; g.fillRect(x, y - 18, w, 18);
+  g.fillStyle = '#fff'; g.fillText(text, x + 5, y - 5);
+}
+window.addEventListener('resize', () => live.on && drawLive());
+
+/* ---------- alerts ---------- */
+let audioCtx = null;
+function beep(){
+  if (!live.sound) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    [0, .22].forEach(dt => {
+      const o = audioCtx.createOscillator(), gn = audioCtx.createGain();
+      o.frequency.value = 880; o.type = 'square'; gn.gain.value = .06;
+      o.connect(gn); gn.connect(audioCtx.destination);
+      o.start(audioCtx.currentTime + dt); o.stop(audioCtx.currentTime + dt + .15);
+    });
+  } catch { /* no audio */ }
+}
+
+function snapshot(a, out){
+  // the frame that was sent (grab still holds it) with the alert's box on it
+  const c = document.createElement('canvas');
+  c.width = grab.width; c.height = grab.height;
+  const g = c.getContext('2d');
+  g.drawImage(grab, 0, 0);
+  if (a.box){
+    const s = c.width / out.w, [x1, y1, x2, y2] = a.box;
+    g.strokeStyle = '#f0564c'; g.lineWidth = 3;
+    g.strokeRect(x1 * s, y1 * s, (x2 - x1) * s, (y2 - y1) * s);
+  }
+  return c.toDataURL('image/jpeg', 0.8);
+}
+
+function onAlert(a, out){
+  live.alerts.unshift({ ...a, time: new Date(), img: snapshot(a, out) });
+  beep();
+  const wrap = $('liveWrap');
+  wrap.classList.remove('alarm'); void wrap.offsetWidth; wrap.classList.add('alarm');
+  renderAlerts();
+}
+
+function renderAlerts(){
+  const n = live.alerts.length;
+  $('alertBadge').textContent = n;
+  $('alertBadge').hidden = !n;
+  $('clearAlerts').hidden = !n;
+  $('alertsList').innerHTML = !n
+    ? '<div class="empty"><span class="big">🔔</span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div>'
+    : live.alerts.slice(0, 100).map((a, i) => `
+      <div class="alertcard" data-i="${i}" title="לחיצה מורידה את התמונה">
+        <img src="${a.img}" alt="">
+        <div><b>${esc(a.label || a.description)}</b><small>${a.time.toLocaleTimeString('he-IL', {hour:'2-digit', minute:'2-digit', second:'2-digit'})}</small></div>
+      </div>`).join('');
+}
+$('alertsList').addEventListener('click', e => {
+  const card = e.target.closest('.alertcard');
+  if (!card) return;
+  const a = live.alerts[+card.dataset.i], link = document.createElement('a');
+  link.href = a.img; link.download = `alert_${a.time.toISOString().replace(/[:.]/g, '-')}.jpg`; link.click();
+});
+$('clearAlerts').onclick = () => { live.alerts = []; renderAlerts(); };
+$('soundBtn').onclick = () => { live.sound = !live.sound; $('soundBtn').textContent = live.sound ? '🔊' : '🔇'; };
+
+/* ---------- rules from the chat ---------- */
+async function loadRules(){
+  if (!state.caps && !(await backendAlive())) return;
+  try {
+    live.rules = (await (await fetch(API + '/live/rules')).json()).rules || [];
+    renderRules();
+  } catch { /* server without live mode */ }
+}
+
+let addingRule = false;
+async function addRule(text){
+  if (!text.trim() || addingRule) return;
+  addMsg('user', text);
+  if (!(await needBackend())) return;
+  addingRule = true;
+  const he = isHe(text);
+  try {
+    const r = await fetch(API + '/live/rules', { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    if (!r.ok) throw new Error('server ' + r.status);
+    const out = await r.json();
+    if (!out.rule){
+      botSay((out.reason || (he ? 'לא הצלחתי להבין על מה להתריע 🤔' : "I couldn't tell what to alert you about 🤔")) + '\n' +
+        (he ? 'אפשר לנסות למשל: "מישהו מרים סכין", "מישהו מצית אש", "מישהו חוטף תיק", "מישהו מרים יד", "יותר משני אנשים בחדר"'
+            : 'Try for example: "someone raises a knife", "someone starts a fire", "someone snatches a bag", "hands up"'));
+      return;
+    }
+    if (out.new === false){
+      botSay(he ? 'אני כבר מתריעה על זה 👍' : "I'm already watching for that 👍");
+      return;
+    }
+    live.rules.push(out.rule);
+    botSay('✅ ' + out.rule.description + (live.running ? '' : he ? '\nלחצי ▶ התחל כדי שאתחיל לצפות.' : '\nPress ▶ to start watching.'));
+    renderRules();
+  } catch (e){
+    botSay((he ? 'משהו השתבש, נסי שוב. ' : 'Something went wrong, try again. ') + '(' + (e.message || e) + ')');
+  } finally {
+    addingRule = false;
+  }
+}
+
+function renderRules(){
+  $('rulesList').innerHTML = !live.rules.length
+    ? '<span class="rhint">עוד לא הגדרת התרעות. כתבי בצ\'אט מתי להתריע.</span>'
+    : live.rules.map(r => `
+      <span class="rpill" data-id="${esc(r.id)}" title="${esc(r.description)} · “${esc(r.text)}”">
+        🔔 ${esc(r.label || r.description)}<i></i>
+        <button title="להסיר" aria-label="להסיר" data-del="${esc(r.id)}">✕</button>
+      </span>`).join('');
+  renderRuleProgress();
+}
+
+function renderRuleProgress(){
+  document.querySelectorAll('#rulesList .rpill').forEach(el => {
+    const p = live.progress[el.dataset.id] || 0;
+    el.querySelector('i').style.width = (p * 100) + '%';
+    el.classList.toggle('hot', p >= 1);
+  });
+}
+
+$('rulesList').addEventListener('click', async e => {
+  const id = e.target.dataset?.del;
+  if (!id) return;
+  try { await fetch(`${API}/live/rules/${encodeURIComponent(id)}`, { method: 'DELETE' }); } catch {}
+  live.rules = live.rules.filter(r => r.id !== id);
+  renderRules();
+});
+
+/* =====================================================================
+   LABELLING MODE — mark when each event happens in our own videos, so the
+   live alerts can be measured (live/perceive.py + live/eval_alerts.py).
+   The video stays in the browser; only the labels go to the server
+   (and, if asked, a copy of the video into backend/live/data/videos).
+   ===================================================================== */
+const lbl = { file: null, name: null, duration: 0, kind: null, pending: null, events: [], scen: {}, saved: {} };
+const lblVideo = $('lblVideo');
+const LBL_COLORS = ['#ef6f6c', '#8f86f2', '#62c7dd', '#e8b45a', '#5ccf9e', '#d77fd0', '#9aa0b4'];
+const scenColor = s => LBL_COLORS[Object.keys(lbl.scen).indexOf(s) % LBL_COLORS.length];
+
+async function labelOpen(){
+  if (!(await backendAlive())){
+    lblStatus('התיוג נשמר בשרת, וצריך שהשרת ירוץ (uvicorn main:app --port 8000).', 'demo');
+    return;
+  }
+  try {
+    const d = await (await fetch(API + '/labels')).json();
+    lbl.scen = d.scenarios || {}; lbl.saved = d.videos || {};
+  } catch { lblStatus('לא הצלחתי לקרוא את התיוגים מהשרת', 'demo'); return; }
+  if (!lbl.kind || !(lbl.kind in lbl.scen)) lbl.kind = Object.keys(lbl.scen)[0];
+  renderKinds(); renderSaved();
+}
+
+function lblStatus(html, kind){ const b = $('lblStatus'); b.innerHTML = html; b.className = 'status ' + (kind || ''); }
+
+function renderKinds(){
+  $('lblKinds').innerHTML = Object.entries(lbl.scen).map(([k, name]) =>
+    `<button class="kind ${k === lbl.kind ? 'on' : ''}" data-k="${esc(k)}" style="--c:${scenColor(k)}">${esc(name)}</button>`).join('');
+}
+$('lblKinds').addEventListener('click', e => {
+  const k = e.target.closest('.kind')?.dataset.k;
+  if (!k) return;
+  lbl.kind = k; renderKinds();
+  if (lbl.pending){ lbl.pending.scenario = k; lblStatus(`מסמנת <b>${esc(lbl.scen[k])}</b> מ-${fmt(lbl.pending.start)}… לחצי סוף (E)`, 'wait'); }
+});
+
+$('lblOpen').onclick = () => $('lblFile').click();
+$('lblDrop').onclick = () => $('lblFile').click();
+$('lblFile').onchange = e => e.target.files[0] && lblLoad(e.target.files[0]);
+function lblLoad(file){
+  if (lblVideo.src) URL.revokeObjectURL(lblVideo.src);
+  lbl.file = file; lbl.name = file.name; lbl.pending = null;
+  const prev = lbl.saved[file.name];
+  lbl.events = prev ? prev.queries.flatMap(q => q.expected.map(([s, e]) => ({ scenario: q.scenario, start: s, end: e }))) : [];
+  lblVideo.src = URL.createObjectURL(file);
+  $('lblDrop').style.display = 'none';
+  $('lblName').textContent = file.name;
+  lblVideo.onloadedmetadata = () => {
+    lbl.duration = lblVideo.duration;
+    $('lblMeta').textContent = fmt(lbl.duration);
+    renderEvents();
+    lblStatus(prev ? `לסרטון הזה כבר יש תיוג (${lbl.events.length} אירועים). אפשר להוסיף, למחוק ולשמור שוב.`
+                   : 'בחרי סוג אירוע, הריצי את הסרטון, ולחצי <b>התחלה</b> כשהאירוע מתחיל ו<b>סוף</b> כשהוא נגמר.');
+  };
+  lblVideo.onerror = () => lblStatus('הדפדפן לא מצליח לנגן את הסרטון. צריך להמיר ל-MP4 (H.264).', 'demo');
+  $('lblSave').disabled = false;
+}
+
+function lblMarkStart(){
+  if (!lbl.duration || !lbl.kind) return;
+  lbl.pending = { scenario: lbl.kind, start: lblVideo.currentTime };
+  $('lblEnd').disabled = false;
+  lblStatus(`מסמנת <b>${esc(lbl.scen[lbl.kind])}</b> מ-${fmt(lbl.pending.start)}… לחצי סוף (E) כשהאירוע נגמר`, 'wait');
+}
+function lblMarkEnd(){
+  const p = lbl.pending;
+  if (!p) return;
+  const t = lblVideo.currentTime;
+  if (t <= p.start + 0.1){ lblStatus('הסוף חייב להיות אחרי ההתחלה. הריצי את הסרטון קדימה ולחצי שוב.', 'demo'); return; }
+  lbl.events.push({ ...p, end: t });
+  lbl.pending = null; $('lblEnd').disabled = true;
+  lblStatus(`✓ נוסף: ${esc(lbl.scen[p.scenario])} ${fmt(p.start)}–${fmt(t)}. אל תשכחי לשמור.`, 'ok');
+  renderEvents();
+}
+$('lblStart').onclick = lblMarkStart;
+$('lblEnd').onclick = lblMarkEnd;
+document.addEventListener('keydown', e => {
+  if (mode !== 'label' || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if (e.key === 's' || e.key === 'S' || e.key === 'ד'){ e.preventDefault(); lblMarkStart(); }
+  if (e.key === 'e' || e.key === 'E' || e.key === 'ק'){ e.preventDefault(); lblMarkEnd(); }
+  if (e.key === ' ' && lbl.duration){ e.preventDefault(); lblVideo.paused ? lblVideo.play() : lblVideo.pause(); }
+});
+
+function renderEvents(){
+  const ev = [...lbl.events].map((e, i) => ({ ...e, i })).sort((a, b) => a.start - b.start);
+  $('lblEvents').innerHTML = !ev.length
+    ? '<div class="rhint">עוד לא סימנת אירועים. אם לא קורה כלום בסרטון, זה גם תיוג תקין: שמרי אותו כך, והוא ימדוד התרעות שווא.</div>'
+    : ev.map(e => `
+      <div class="lblev" data-i="${e.i}">
+        <span class="sw" style="background:${scenColor(e.scenario)}"></span>
+        <b>${esc(lbl.scen[e.scenario] || e.scenario)}</b>
+        <span class="tm">${fmt(e.start)} – ${fmt(e.end)}</span>
+        <button data-seek="${e.start}" title="קפיצה לאירוע">▶</button>
+        <button data-del="${e.i}" title="מחיקה">✕</button>
+      </div>`).join('');
+  $('lblMarks').innerHTML = lbl.duration ? lbl.events.map(e =>
+    `<div class="tl-match" style="left:${e.start / lbl.duration * 100}%;width:${(e.end - e.start) / lbl.duration * 100}%;background:${scenColor(e.scenario)}"></div>`).join('') : '';
+}
+$('lblEvents').addEventListener('click', e => {
+  const s = e.target.dataset?.seek, d = e.target.dataset?.del;
+  if (s != null){ lblVideo.currentTime = +s; lblVideo.play(); }
+  if (d != null){ lbl.events.splice(+d, 1); renderEvents(); lblStatus('האירוע נמחק. אל תשכחי לשמור.'); }
+});
+lblVideo.addEventListener('timeupdate', () => {
+  if (!lbl.duration) return;
+  const h = $('lblHead'); h.style.left = (lblVideo.currentTime / lbl.duration * 100) + '%'; h.dataset.t = fmt(lblVideo.currentTime);
+});
+$('lblTimeline').addEventListener('click', e => {
+  if (!lbl.duration) return;
+  const r = e.currentTarget.getBoundingClientRect();
+  lblVideo.currentTime = (e.clientX - r.left) / r.width * lbl.duration;
+});
+
+$('lblSave').onclick = () => withBusy($('lblSave'), '⏳ שומרת…', async () => {
+  if (!lbl.name) return;
+  if (lbl.pending){ lblStatus('יש אירוע שהתחלת ולא סיימת. לחצי סוף (E) או בחרי סוג אחר.', 'demo'); return; }
+  if ($('lblCopy').checked && !lbl.saved[lbl.name]?.file_copied){
+    const fd = new FormData(); fd.append('file', lbl.file, lbl.name);
+    const u = await fetch(API + '/labels/video', { method: 'POST', body: fd });
+    if (!u.ok) throw new Error('העתקת הסרטון נכשלה');
+  }
+  const r = await fetch(API + '/labels', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ video: lbl.name, duration: lbl.duration, events: lbl.events }) });
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || 'השמירה נכשלה');
+  await labelOpen();
+  lblStatus(`✅ נשמר: ${lbl.events.length} אירועים ב-${esc(lbl.name)}`, 'ok');
+}, msg => lblStatus('⚠ ' + esc(msg), 'demo'));
+
+function renderSaved(){
+  const v = Object.entries(lbl.saved);
+  $('lblBadge').textContent = v.length; $('lblBadge').hidden = !v.length;
+  $('lblSaved').innerHTML = !v.length
+    ? '<div class="empty"><span class="big">🏷</span>עוד אין סרטונים מתויגים.</div>'
+    : v.map(([name, x]) => {
+        const n = x.queries.reduce((a, q) => a + q.expected.length, 0);
+        const kinds = x.queries.filter(q => q.expected.length).map(q => lbl.scen[q.scenario] || q.scenario);
+        return `<div class="lblsaved">
+          <div><b>${esc(name)}</b><small>${n ? n + ' אירועים: ' + esc(kinds.join(', ')) : 'בלי אירועים (בודק התרעות שווא)'}
+          · ${fmt(x.duration || 0)}${x.file_copied ? '' : ' · ⚠ הסרטון לא הועתק'}</small></div>
+          <button data-delv="${esc(name)}" title="מחיקת התיוג">✕</button></div>`;
+      }).join('');
+}
+$('lblSaved').addEventListener('click', async e => {
+  const v = e.target.dataset?.delv;
+  if (!v || !confirmDelete(v)) return;
+  await fetch(`${API}/labels/${encodeURIComponent(v)}`, { method: 'DELETE' });
+  await labelOpen();
+});
+// a second click within 3 s confirms (no browser dialogs)
+let delArmed = null;
+function confirmDelete(v){
+  if (delArmed === v){ delArmed = null; return true; }
+  delArmed = v; lblStatus(`ללחוץ שוב על ✕ כדי למחוק את התיוג של ${esc(v)}`, 'demo');
+  setTimeout(() => { if (delArmed === v) delArmed = null; }, 3000);
+  return false;
+}
+
+$('navSearch').onclick = () => setMode('search');
+$('navLive').onclick = () => setMode('live');
+$('navLabel').onclick = () => setMode('label');
+
+
 // the side menu has no pages yet: keep "#" links from jumping to the top
 document.querySelectorAll('.nav a').forEach(a => a.addEventListener('click', e => e.preventDefault()));
 
-backendAlive().then(ok => $('backendState').innerHTML = ok
-  ? '<span style="color:var(--ok)">● online</span>'
-  : '<span style="color:var(--text-dim)">● offline</span>');
+// the server may still be starting (the first /api call loads the models): keep asking
+(function watchServer(){
+  backendAlive().then(ok => { setServer(ok); if (!ok) setTimeout(watchServer, 4000); });
+})();
 </script>
 </body>
 </html>

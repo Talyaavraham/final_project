@@ -1,0 +1,47 @@
+===== conf 0.25
+knife        object only          49   2.16     46      8   17.4%    197    186     86.2    6.4s
+knife        holds knife          49   2.16     46     11   23.9%    285    271    125.6    2.8s
+knife        raises knife         49   2.16     46      1    2.2%     90     89     41.3    6.9s
+weapon       object only          52   2.34     81     25   30.9%    128     83     35.4    3.6s
+weapon       holds gun            52   2.34     81     23   28.4%    171    126     53.8    4.2s
+weapon       raises gun           52   2.34     81      6    7.4%     38     28     12.0    4.1s
+
+===== conf 0.35
+knife        object only          49   2.16     46      3    6.5%     85     81     37.5    8.9s
+knife        holds knife          49   2.16     46      6   13.0%    142    136     63.0    4.0s
+knife        raises knife         49   2.16     46      1    2.2%     41     40     18.5    6.9s
+weapon       object only          52   2.34     81     15   18.5%     58     36     15.4    3.3s
+weapon       holds gun            52   2.34     81     18   22.2%     92     62     26.5    4.6s
+weapon       raises gun           52   2.34     81      5    6.2%     20     13      5.5    4.3s
+
+===== conf 0.45
+knife        object only          49   2.16     46      1    2.2%     24     23     10.7    2.9s
+knife        holds knife          49   2.16     46      3    6.5%     63     60     27.8    6.9s
+knife        raises knife         49   2.16     46      1    2.2%     18     17      7.9    6.9s
+weapon       object only          52   2.34     81      7    8.6%     25     16      6.8    3.2s
+weapon       holds gun            52   2.34     81     14   17.3%     50     31     13.2    5.5s
+weapon       raises gun           52   2.34     81      2    2.5%      8      6      2.6    4.4s
+
+===== conf 0.55
+knife        object only          49   2.16     46      1    2.2%      5      4      1.9    5.6s
+knife        holds knife          49   2.16     46      1    2.2%     15     14      6.5    7.4s
+knife        raises knife         49   2.16     46      0    0.0%      2      2      0.9       —
+weapon       object only          52   2.34     81      0    0.0%      1      1      0.4       —
+weapon       holds gun            52   2.34     81     11   13.6%     23     11      4.7    4.9s
+weapon       raises gun           52   2.34     81      0    0.0%      0      0      0.0       —
+
+===== conf 0.65
+knife        object only          49   2.16     46      0    0.0%      0      0      0.0       —
+knife        holds knife          49   2.16     46      0    0.0%      4      4      1.9       —
+knife        raises knife         49   2.16     46      0    0.0%      0      0      0.0       —
+weapon       object only          52   2.34     81      0    0.0%      1      1      0.4       —
+weapon       holds gun            52   2.34     81      4    4.9%      6      1      0.4   13.0s
+weapon       raises gun           52   2.34     81      0    0.0%      0      0      0.0       —
+
+===== conf 0.75
+knife        object only          49   2.16     46      0    0.0%      0      0      0.0       —
+knife        holds knife          49   2.16     46      0    0.0%      1      1      0.5       —
+knife        raises knife         49   2.16     46      0    0.0%      0      0      0.0       —
+weapon       object only          52   2.34     81      0    0.0%      0      0      0.0       —
+weapon       holds gun            52   2.34     81      0    0.0%      0      0      0.0       —
+weapon       raises gun           52   2.34     81      0    0.0%      0      0      0.0       —

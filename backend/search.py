@@ -139,16 +139,62 @@ def merge_entities(segments, threshold=0.88):
 
 
 # -------------------------------------------------------------- filtering
-def action_ok(s, actions):
+MIN_TRAVEL = 10.0   # % of the frame width the box centre must travel to be "going left / right / up / down"
+ZONE_SHARE = 0.3    # share of its detections an object must have in a zone to be "on the left", "at the top"...
+ZONES = {           # centre of the box, in % of the frame
+    "on the left": lambda cx, cy: cx < 40,
+    "on the right": lambda cx, cy: cx > 60,
+    "at the top": lambda cx, cy: cy < 40,
+    "at the bottom": lambda cx, cy: cy > 60,
+    "in the center": lambda cx, cy: 25 <= cx <= 75 and 25 <= cy <= 75,
+}
+
+
+def travel(s, W=16, H=9):
+    """Net movement of the box centre, first detection to last: (dx, dy) in % of the frame WIDTH (right, down = +)."""
+    path = s.get("path") or []
+    if len(path) < 2:
+        return 0.0, 0.0
+    a, b = path[0], path[-1]
+    return (b[1] + b[3] / 2) - (a[1] + a[3] / 2), ((b[2] + b[4] / 2) - (a[2] + a[4] / 2)) * H / W
+
+
+def heading(s, W=16, H=9):
+    """The directions the object travels in: a diagonal counts for both of its axes."""
+    dx, dy = travel(s, W, H)
+    out = set()
+    if abs(dx) >= MIN_TRAVEL and abs(dx) >= abs(dy) / 2:
+        out.add("going right" if dx > 0 else "going left")
+    if abs(dy) >= MIN_TRAVEL and abs(dy) >= abs(dx) / 2:
+        out.add("going down" if dy > 0 else "going up")
+    return out
+
+
+def in_zone(s, zone):
+    path = s.get("path") or []
+    inside = sum(1 for _, x, y, w, h in path if ZONES[zone](x + w / 2, y + h / 2))
+    return bool(path) and inside / len(path) >= ZONE_SHARE
+
+
+def action_ok(s, actions, W=16, H=9):
     checks = {
-        "running": s["speed"] >= RUN_SPEED,
-        "walking": MOVE_SPEED <= s["speed"] < RUN_SPEED,
-        "moving": s["speed"] >= MOVE_SPEED,
-        "parked": s["speed"] < MOVE_SPEED,
-        "entering": s["entering"],
-        "exiting": s["exiting"],
+        "running": lambda: s["speed"] >= RUN_SPEED,
+        "walking": lambda: MOVE_SPEED <= s["speed"] < RUN_SPEED,
+        "moving": lambda: s["speed"] >= MOVE_SPEED,
+        "parked": lambda: s["speed"] < MOVE_SPEED,
+        "entering": lambda: s["entering"],
+        "exiting": lambda: s["exiting"],
     }
-    return all(checks.get(a, True) for a in actions)
+    for a in actions:
+        if a in ZONES:
+            ok = in_zone(s, a)
+        elif a.startswith("going "):
+            ok = a in heading(s, W, H)
+        else:
+            ok = checks.get(a, lambda: True)()
+        if not ok:
+            return False
+    return True
 
 
 def box_at(path, t):
@@ -194,22 +240,55 @@ def near(a, b, max_dist=NEAR_DIST, W=16, H=9):
     return best <= max_dist
 
 
-def filter_segments(segments, objects, colors, actions, time_range,
-                    require_near=True, W=16, H=9):
+def with_context(segments, objects, W=16, H=9, require_near=True):
     """
-    objects   : list of class names, first one is the subject
-    colors    : apply to the subject (or to everything when no objects)
-    actions   : same
-    time_range: [lo, hi] in seconds or None
+    "someone next to the white car": the answer is the PEOPLE. The segments of
+    the other objects (the car) are not results of their own, they are the
+    context of each person: a result's "context" lists the segments it was
+    near, so the interface can draw the car next to the person. Without this
+    the car came back as a result too, shown at the start of its own track,
+    when nobody was next to it yet.
+    No subject segment among the results (CLIP scenes, ...): unchanged.
+    """
+    if len(objects) < 2:
+        return segments
+    subject = objects[0]
+    subj = [s for s in segments if s["cls"] == subject]
+    if not subj:
+        return segments
+    others = [s for s in segments if s["cls"] != subject and s["cls"] in objects]
+    out = []
+    for s in subj:
+        ctx = [o for o in others if (near(s, o, W=W, H=H) if require_near else overlaps(s, o))]
+        out.append({**s, "context": [{"cls": o["cls"], "color": o["color"], "box": o["box"], "path": o["path"],
+                                      "t": o["t"], "dur": o["dur"]} for o in ctx]})
+    out += [s for s in segments if s["cls"] not in objects]       # scenes etc. stay
+    return sorted(out, key=lambda s: s["t"])
+
+
+def filter_segments(segments, objects, colors, actions, time_range,
+                    require_near=True, W=16, H=9, object_colors=None, min_duration=None):
+    """
+    objects      : list of class names, first one is the subject
+    colors       : apply to the subject (or to everything when no objects)
+    actions      : same (speed, entering / exiting, direction of travel, zone of the frame)
+    time_range   : [lo, hi] in seconds or None
+    object_colors: colours of the other objects ({"car": ["white"]}: "someone
+                   walking next to the WHITE car")
+    min_duration : the subject stays in view at least this many seconds ("for more than 30 seconds")
     """
     main = objects[0] if objects else None
+    object_colors = object_colors or {}
 
     def attrs_ok(s):
         if main and s["cls"] != main:
-            return True
+            want = object_colors.get(s["cls"])
+            return not want or s["color"] in want
         if colors and s["color"] not in colors:
             return False
-        return action_ok(s, actions)
+        if min_duration and s["dur"] < min_duration:
+            return False
+        return action_ok(s, actions, W, H)
 
     segments = [s for s in segments if attrs_ok(s)]
     if time_range:
@@ -342,7 +421,8 @@ def semantic_rank(segments, text_vec, min_score=MIN_SEMANTIC):
 
 # ------------------------------------------------------------------ query
 def run_query(segments, frames, objects=(), colors=(), actions=(), time_range=None,
-              semantic="", unknown=(), embed=None, near=True, W=16, H=9):
+              semantic="", unknown=(), embed=None, near=True, W=16, H=9, object_colors=None,
+              min_duration=None):
     """
     The whole answer to one structured query, without a server or a model:
 
@@ -368,7 +448,8 @@ def run_query(segments, frames, objects=(), colors=(), actions=(), time_range=No
 
     def detector(objs):
         cand = [s for s in segments if not objs or s["cls"] in objs]
-        return filter_segments(cand, objs, colors, actions, time_range, require_near=near, W=W, H=H)
+        return filter_segments(cand, objs, colors, actions, time_range, require_near=near, W=W, H=H,
+                               object_colors=object_colors, min_duration=min_duration)
 
     events = [o for o in objects if o in EVENT_CLASSES]
     hits = detector(objects)

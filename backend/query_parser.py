@@ -1,14 +1,11 @@
 """
 Natural-language query -> structured query.
 
-Two parsers, used in this order:
-  1. Claude (Anthropic SDK)  — handles free Hebrew/English, negation,
-                               "two people", "a woman with a stroller", ...
-                               Needs ANTHROPIC_API_KEY (or `ant auth login`).
-  2. Rule-based vocabulary   — offline fallback, same behaviour as the
-                               original front-end parser.
+Rule-based vocabulary (Hebrew + English), runs locally: nothing is sent to
+an outside service. (An earlier version could call the Claude API; it was
+removed so that the whole system runs on our own models.)
 
-Both return:
+Returns:
   {
     "objects":   ["person", "dog"],      # detector classes, subject first
     "colors":    ["red"],                # of the subject
@@ -16,7 +13,7 @@ Both return:
     "timeRange": [lo, hi] | None,        # seconds, hi may be None (= end)
     "semantic":  "a woman pushing a stroller" | "",   # free text for CLIP
     "unknown":   ["stroller"],           # words we could not map to a class
-    "source":    "llm" | "rules",
+    "source":    "rules",
   }
 """
 
@@ -116,18 +113,58 @@ VOCAB_ACTIONS = {
                  "נכנסת", "נכנסים", "מגיע"],
     "exiting": ["exiting", "exit", "leaving", "leaves", "יוצא", "יוצאת",
                 "יוצאים", "עוזב"],
+    # direction of travel in the image (search.heading)
+    "going left": ["to the left", "leftward", "leftwards", "moving left", "going left", "heading left",
+                   "walking left", "running left", "driving left", "שמאלה", "לכיוון שמאל", "לשמאל"],
+    "going right": ["to the right", "rightward", "rightwards", "moving right", "going right", "heading right",
+                    "walking right", "running right", "driving right", "ימינה", "לכיוון ימין", "לימין"],
+    "going up": ["going up", "moving up", "upward", "upwards", "כלפי מעלה", "עולה", "עולים"],
+    "going down": ["going down", "moving down", "downward", "downwards", "כלפי מטה", "יורד", "יורדת", "יורדים"],
+    # where in the frame the object is (search.ZONES)
+    "on the left": ["on the left", "at the left", "left side", "left part", "left half", "left of the frame",
+                    "צד שמאל", "משמאל", "בשמאל"],
+    "on the right": ["on the right", "at the right", "right side", "right part", "right half", "right of the frame",
+                     "צד ימין", "מימין", "בימין"],
+    "at the top": ["at the top", "top of the frame", "top part", "top half", "upper part", "upper half",
+                   "בחלק העליון", "חלק עליון", "למעלה"],
+    "at the bottom": ["at the bottom", "bottom of the frame", "bottom part", "bottom half", "lower part",
+                      "lower half", "בחלק התחתון", "חלק תחתון", "למטה"],
+    "in the center": ["in the center", "in the centre", "in the middle", "center of the frame",
+                      "במרכז", "באמצע"],
 }
+# "for more than 30 seconds", "at least 2 minutes", "יותר מ-30 שניות", "יותר מדקה" -> minDuration
+_LONGER = r"(?:for\s+)?(?:more than|longer than|over|at least|יותר מ|לפחות|מעל)"
+DWELL = re.compile(_LONGER + r"[\s-]*(\d+(?:\.\d+)?)\s*(seconds?|secs?|minutes?|mins?|שניות|שנייה|שניה|דקות|דקה)",
+                   re.IGNORECASE)
+DWELL_MINUTE = re.compile(_LONGER + r"[\s-]*(?:(?:a|one)\s+minute|דקה)", re.IGNORECASE)
 ACTIONS = list(VOCAB_ACTIONS)
 COLORS = list(VOCAB_COLORS)
 
 HE_PREFIX = re.compile(r"^[הוושבלמכ]")
-STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to",
+STOP = {"a", "an", "the", "with", "and", "or", "in", "on", "at", "of", "to", "from", "someone", "somebody", "מישהו",
         "find", "show", "me", "all", "any", "is", "are", "that", "who", "where",
         "את", "עם", "של", "על", "מצא", "תמצא", "תראה", "לי", "כל", "ש", "ו",
+        "frame", "screen", "image", "פריים", "הפריים", "בפריים", "מסך", "המסך", "במסך",
         # clothing words: the colour already describes them
         "shirt", "shirts", "jacket", "coat", "pants", "dress", "clothes",
         "wearing", "wears", "dressed", "חולצה", "מעיל", "מכנסיים", "שמלה",
-        "לובש", "לובשת", "בגדים"}
+        "לובש", "לובשת", "בגדים",
+        # where one thing is relative to another: the multi-object search already means "together, near"
+        "next", "near", "nearby", "beside", "around", "close", "ליד", "שליד", "קרוב", "לצד", "בקרבת", "מול", "משהו", "something"}
+# "משהו שהולך" (literally "something that walks") is how people often write "someone": with an
+# action of a person it is a person
+SOMETHING = {"משהו", "something"}
+# Theft itself (hiding an item, walking out without paying) is not something the detectors or the rules
+# can see. A question about it is answered with the people in the video, and the reply says so
+# ("unsupported": "theft"), instead of an empty answer. Snatching a bag is an action the system does
+# know: alert_rules.SNATCH_WORDS, answered by /events before this parser is asked.
+THEFT = {"גונב", "גונבת", "גונבים", "שגונב", "שגונבת", "שגונבים", "גנב", "גנבה", "גנבים", "הגנב", "גניבה",
+         "גניבות", "שודד", "שודדת", "שוד", "מעלים", "מחביא", "מחביאה", "שמחביא", "שמחביאה",
+         "steal", "steals", "stealing", "stole", "thief", "thieves", "theft", "shoplift", "shoplifting",
+         "shoplifter", "rob", "robs", "robbing", "robber", "robbery", "hiding", "hides", "conceal", "conceals"}
+# places: the camera is already there ("someone stealing from the store")
+PLACE_WORDS = {"חנות", "החנות", "מהחנות", "בחנות", "לחנות", "מדף", "המדף", "מהמדף", "מהמדפים", "מדפים", "בחנויות",
+               "store", "shop", "shelf", "shelves", "supermarket", "סופר", "מהסופר", "בסופר"}
 
 
 def tokenize(text: str):
@@ -179,10 +216,15 @@ def english_phrase(objects, colors, actions) -> str:
 
 def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     """Vocabulary parser. `classes`: classes present in the video (optional)."""
+    found = {"objects": [], "colors": [], "actions": [], "timeRange": None, "minDuration": None,
+             "semantic": "", "unknown": [], "source": "rules"}
+    m = DWELL.search(text) or DWELL_MINUTE.search(text)
+    if m:       # taken out of the sentence, so "more", "seconds" do not become words for CLIP
+        unit = m.group(2).lower() if m.re is DWELL else "minute"
+        found["minDuration"] = float(m.group(1) if m.re is DWELL else 1) * (60 if unit[0] in "mד" else 1)
+        text = (text[:m.start()] + " " + text[m.end():]).strip()
     tokens = tokenize(text)
     lower = text.lower()
-    found = {"objects": [], "colors": [], "actions": [], "timeRange": None,
-             "semantic": "", "unknown": [], "source": "rules"}
     positions = {}
     for cls, words in VOCAB_OBJECTS.items():
         pos = [p for p in (_match_word(tokens, w) for w in words) if p >= 0]
@@ -207,6 +249,33 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     for key, words in VOCAB_ACTIONS.items():
         if any(_match_word(tokens, w) >= 0 for w in words):
             found["actions"].append(key)
+    found["object_colors"] = {}
+    something = [i for i, t in enumerate(tokens) if t in SOMETHING | {"מישהו", "someone", "somebody"}]
+    theft = [i for i, t in enumerate(tokens) if t in THEFT]
+    if theft:
+        found["unsupported"] = "theft"
+        if "person" not in positions:
+            positions["person"] = min(something + theft)
+            found["objects"] = sorted(positions, key=positions.get)
+    elif something and not found["objects"] and not found["colors"]:
+        # "משהו שמסתובב" (an action the parser does not know) is still about a person: show the people
+        positions["person"] = something[0]
+        found["objects"] = ["person"]
+    if something and found["actions"] and "person" not in positions:
+        positions["person"] = something[0]
+        found["objects"] = sorted(positions, key=positions.get)
+    # who does the action and what has the colour can be different objects:
+    # "someone walking next to the white car" = a walking PERSON near a WHITE CAR.
+    # The actor is the object named first; the colour stays on the object it
+    # stands next to (object_colors), and the actor becomes the subject.
+    if len(found["objects"]) > 1 and found["actions"] and color_pos:
+        actor = min(positions, key=positions.get)
+        p = min(color_pos.values())
+        owner = min(positions, key=lambda c: abs(positions[c] - p))
+        if owner != actor:
+            found["objects"] = [actor] + [o for o in sorted(positions, key=positions.get) if o != actor]
+            found["object_colors"] = {owner: found["colors"]}
+            found["colors"] = []
 
     if classes:
         found["objects"] = [CLASS_FALLBACK.get(c, c)
@@ -239,7 +308,7 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     for tok in tokens:
         base = tok[1:] if HE_PREFIX.match(tok) and tok[1:] in known else tok
         if base not in known and base not in STOP and len(base) > 2 \
-                and not base.isdigit():
+                and not base.isdigit() and tok not in THEFT and tok not in PLACE_WORDS:
             found["unknown"].append(tok)
     # CLIP reads English only: a Hebrew sentence is rebuilt from the words we know
     phrase = text.strip()
@@ -264,129 +333,7 @@ def parse_rules(text: str, classes: Optional[list[str]] = None) -> dict:
     return found
 
 
-# ------------------------------------------------------------- Claude LLM
-MODEL = os.environ.get("CLAUDE_MODEL", "claude-opus-5-5")
-
-SCHEMA = {
-    "type": "object",
-    "properties": {
-        "objects": {"type": "array", "items": {"type": "string"},
-                    "description": "Detector classes to look for, the subject "
-                                   "of the sentence first. Only values from "
-                                   "the allowed class list."},
-        "colors": {"type": "array", "items": {"type": "string", "enum": COLORS},
-                   "description": "Colour of the subject's clothes / body."},
-        "actions": {"type": "array", "items": {"type": "string", "enum": ACTIONS}},
-        "time_start": {"type": ["number", "null"],
-                       "description": "Start of the time window in seconds, "
-                                      "or null"},
-        "time_end": {"type": ["number", "null"],
-                     "description": "End of the time window in seconds, or null"},
-        "semantic": {"type": "string",
-                     "description": "Short English description of the visual "
-                                    "appearance that the class list cannot "
-                                    "express (e.g. 'a woman pushing a "
-                                    "stroller', 'a man wearing a hat'). "
-                                    "Empty string when the classes, colours "
-                                    "and actions already cover the query."},
-        "unknown": {"type": "array", "items": {"type": "string"},
-                    "description": "Query terms that do not map to any class."},
-    },
-    "required": ["objects", "colors", "actions", "time_start", "time_end",
-                 "semantic", "unknown"],
-    "additionalProperties": False,
-}
-
-SYSTEM = """You turn a user's request to search inside a video (Hebrew or English)
-into a structured query for an object detector.
-
-Allowed detector classes: {classes}
-Colours: {colors}
-Actions: {actions}  (running/walking/moving/parked = speed of the object,
-entering/exiting = the object enters or leaves the frame)
-
-Rules:
-- "objects" must only contain allowed classes. Map synonyms (man, woman, kid,
-  pedestrian, איש, ילדה -> person; אוטו, רכב -> car; backpack, suitcase -> bag).
-- The subject of the sentence goes first: "a man in red with a dog" ->
-  objects ["person","dog"], colors ["red"].
-- "riding a bicycle" is person + bicycle.
-- Time expressions in the user's text are video timestamps ("after 1:30",
-  "בין 0:10 ל-2:00"). Convert to seconds. "at 1:30" -> 85 to 95.
-- Put in "semantic" an English phrase describing anything visual that the
-  classes/colours/actions do not capture (clothing items, age, objects that
-  are not in the list, "holding a phone", ...). Otherwise "".
-- Put the words you could not map in "unknown".
-"""
-
-
-def llm_available() -> bool:
-    try:
-        import anthropic  # noqa: F401
-    except ImportError:
-        return False
-    return bool(os.environ.get("ANTHROPIC_API_KEY")
-                or os.environ.get("ANTHROPIC_AUTH_TOKEN")
-                or os.environ.get("ANTHROPIC_PROFILE")
-                or os.path.exists(os.path.expanduser("~/.config/anthropic")))
-
-
-def parse_llm(text: str, classes: list[str]) -> Optional[dict]:
-    """Returns the parsed query, or None when Claude cannot be used."""
-    try:
-        import anthropic
-    except ImportError:
-        return None
-    client = anthropic.Anthropic(timeout=20.0, max_retries=1)
-    try:
-        response = client.messages.create(
-            model=MODEL,
-            max_tokens=1024,
-            system=SYSTEM.format(classes=", ".join(classes),
-                                 colors=", ".join(COLORS),
-                                 actions=", ".join(ACTIONS)),
-            messages=[{"role": "user", "content": text}],
-            output_config={"effort": "low",
-                           "format": {"type": "json_schema", "schema": SCHEMA}},
-        )
-    except anthropic.AuthenticationError:
-        return None
-    except anthropic.RateLimitError:
-        return None
-    except anthropic.APIStatusError:
-        return None
-    except anthropic.APIConnectionError:
-        return None
-    if response.stop_reason != "end_turn":   # refusal / max_tokens -> rules
-        return None
-    raw = next((b.text for b in response.content if b.type == "text"), "")
-    try:
-        data = json.loads(raw)
-    except json.JSONDecodeError:
-        return None
-
-    allowed = set(classes)
-    objects = [o for o in data.get("objects", []) if o in allowed]
-    lo, hi = data.get("time_start"), data.get("time_end")
-    time_range = None
-    if lo is not None or hi is not None:
-        time_range = [float(lo or 0), None if hi is None else float(hi)]
-    return {
-        "objects": objects,
-        "colors": [c for c in data.get("colors", []) if c in COLORS],
-        "actions": [a for a in data.get("actions", []) if a in ACTIONS],
-        "timeRange": time_range,
-        "semantic": (data.get("semantic") or "").strip(),
-        "unknown": list(data.get("unknown") or []),
-        "source": "llm",
-    }
-
-
 def parse(text: str, classes: Optional[list[str]] = None) -> dict:
-    """Claude when available, otherwise the rule-based parser."""
+    """The local rule-based parser."""
     classes = classes or list(VOCAB_OBJECTS)
-    if llm_available():
-        result = parse_llm(text, classes)
-        if result is not None:
-            return result
     return parse_rules(text, classes)

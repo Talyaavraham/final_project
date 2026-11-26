@@ -12,7 +12,7 @@ httpx                # evaluate.py
 # optional — semantic search (CLIP) and entity merging; ~600 MB download on first use
 torch
 transformers
-# optional — natural-language query parsing with Claude (needs ANTHROPIC_API_KEY)
-anthropic
+# our own language model for alert requests (nlu/): training + the hashing model
+scikit-learn
 # tests
 pytest
