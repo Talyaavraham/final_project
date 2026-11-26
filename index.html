@@ -3,196 +3,295 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Video Search Agent</title>
+<title>Security AI · Video Search Agent</title>
+<link rel="icon" id="favicon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&text=SecurityAI%20&display=swap" rel="stylesheet">
 <style>
 /* =====================================================================
-   Look: soft dark, calm. Few borders, more space, one accent colour.
-   Layout (right to left): rail of modes | chat | main | results
+   Look: Security AI. Deep navy, one blue for action and selection; red is
+   kept for threats (knife, gun, fire, smoke) and for alerts.
+   Layout: a bar on top (logo, modes, server), and under it, right to left:
+   the assistant | counts, video and timeline | results
    ===================================================================== */
 :root{
-  --bg:#15171f;
-  --panel:#1b1e28;
-  --panel-2:#222532;
-  --card:#262a38;
-  --border:rgba(255,255,255,.06);
-  --border-2:rgba(255,255,255,.11);
-  --accent:#8f86f2;
-  --accent-soft:rgba(143,134,242,.14);
-  --accent-2:#62c7dd;
-  --danger:#ef6f6c;
-  --danger-soft:rgba(239,111,108,.12);
-  --ok:#5ccf9e;
-  --warn:#e8b45a;
-  --text:#e8e9ef;
-  --text-dim:#9399ad;
-  --text-faint:#666c80;
-  --radius:16px;
-  --shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.18);
+  --bg:#070b17;
+  --panel:#0c1324;
+  --panel-2:#111a30;
+  --card:#17223d;
+  --border:rgba(110,150,255,.14);
+  --border-2:rgba(110,150,255,.28);
+  --accent:#2d6bf0;
+  --accent-ink:#62a6ff;            /* the blue as text and icons on the dark ground */
+  --accent-soft:rgba(45,107,240,.16);
+  --accent-2:#38c6e8;
+  --danger:#ef4444;
+  --danger-ink:#ff7676;
+  --danger-soft:rgba(239,68,68,.13);
+  --ok:#34d399;
+  --warn:#f5b544;
+  --text:#eef2fb;
+  --text-dim:#a3aecb;
+  --text-faint:#7d8aab;
+  --radius:14px;
+  --bar:68px;
   font-size:15px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
+html{color-scheme:dark;scrollbar-width:thin;scrollbar-color:rgba(110,150,255,.28) transparent}
 body{
   background:var(--bg);color:var(--text);
-  font-family:"Rubik","Segoe UI","Heebo",system-ui,-apple-system,Arial,sans-serif;
-  height:100vh;overflow:hidden;line-height:1.5;
+  font-family:"Rubik","Heebo","Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  height:100vh;overflow:hidden;line-height:1.5;font-variant-numeric:tabular-nums;
 }
-button{font-family:inherit}
-.app{display:grid;grid-template-columns:84px 340px 1fr 320px;height:100vh}
-.rail,.chatpane,.mainpane,.resultspane{height:100vh;overflow-y:auto}
+::selection{background:rgba(45,107,240,.6);color:#fff}
+button,input,select{font-family:inherit}
+input,select{caret-color:var(--accent-ink);accent-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent-ink);outline-offset:2px}
+.ic{width:18px;height:18px;flex:none;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;pointer-events:none}
+
+.app{
+  display:grid;height:100vh;
+  grid-template-columns:320px minmax(0,1fr) 340px;
+  grid-template-rows:var(--bar) minmax(0,1fr);
+  grid-template-areas:"top top top" "chat main res";
+}
+.topbar{grid-area:top}
+.resultspane{grid-area:res}
+.mainpane{grid-area:main}
+.chatpane{grid-area:chat}
+.chatpane,.mainpane{overflow-y:auto;min-height:0}
+
+/* ---------- top bar: logo, one button per mode (new modes = one more button), server ---------- */
+.topbar{display:flex;align-items:center;gap:28px;padding:0 22px;background:var(--panel);border-bottom:1px solid var(--border)}
+.logo{display:flex;align-items:center;gap:10px;direction:ltr;flex:none}
+.logo img{height:54px;width:auto;display:block}
+.logo b{font-family:"Montserrat","Rubik","Segoe UI",sans-serif;font-weight:700;font-size:1.32rem;letter-spacing:-.02em;white-space:nowrap}
+.logo b span{color:#3f9dff}
+.tabs{display:flex;gap:6px;align-items:center}
+.tab{
+  position:relative;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
+  border:1px solid transparent;border-radius:10px;background:transparent;color:var(--text-dim);
+  font-size:.92rem;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s;
+}
+.tab:hover{color:var(--text);background:var(--panel-2)}
+.tab.active{color:var(--text);background:var(--accent-soft);border-color:var(--border-2);font-weight:500}
+.tab.active .ic{color:var(--accent-ink)}
+.tab.active::after{content:"";position:absolute;inset-inline:14px;bottom:-15px;height:2px;border-radius:2px;background:var(--accent-ink)}
+.tab .dot:not(.green){display:none}
+.srv{margin-inline-start:auto;display:inline-flex;align-items:center;gap:8px;font-size:.8rem;color:var(--text-dim);padding:6px 12px;border:1px solid var(--border);border-radius:20px;white-space:nowrap}
 
 /* ---------- buttons ---------- */
 .btn{
   border:1px solid var(--border-2);background:var(--panel-2);color:var(--text);
-  padding:9px 16px;border-radius:12px;cursor:pointer;font-size:.88rem;
-  display:inline-flex;align-items:center;gap:8px;transition:.15s;white-space:nowrap;
+  padding:9px 16px;border-radius:10px;cursor:pointer;font-size:.88rem;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;
+  transition:background .15s,border-color .15s;
 }
-.btn:hover{border-color:var(--accent);background:var(--accent-soft)}
-.btn:focus-visible,.railbtn:focus-visible,.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
-.btn.primary:hover{filter:brightness(1.08)}
-.btn.small{padding:5px 11px;font-size:.78rem;border-radius:9px}
-.btn.icon{padding:9px 12px}
+.btn:hover{border-color:var(--accent-ink);background:var(--accent-soft)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.primary{background:var(--accent);border-color:#5a8dff;color:#fff;font-weight:500;box-shadow:0 8px 20px -8px rgba(45,107,240,.8)}
+.btn.primary:hover{background:#2560e0}
+.btn.small{padding:5px 10px;font-size:.78rem;border-radius:8px}
+.btn.small .ic{width:15px;height:15px}
+.btn.icon{padding:9px 11px}
+.btn.wide{width:100%;padding:12px 16px;font-size:.95rem}
+.btn.out{background:var(--accent-soft);border-color:var(--accent)}
+.btn.out:hover{background:rgba(45,107,240,.28)}
 .btn[hidden]{display:none}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--text-faint);display:inline-block;flex-shrink:0}
-.dot.green{background:var(--ok);box-shadow:0 0 0 3px rgba(92,207,158,.18)}
+.dot.green{background:var(--ok);box-shadow:0 0 0 3px rgba(52,211,153,.18)}
 
-/* ---------- rail: one button per mode (new modes = one more button) ---------- */
-.rail{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;gap:6px;padding:16px 8px}
-.brand{width:44px;height:44px;border-radius:14px;background:var(--accent);display:grid;place-items:center;font-size:22px;margin-bottom:14px}
-.railbtn{
-  width:100%;border:none;background:transparent;color:var(--text-dim);cursor:pointer;
-  border-radius:14px;padding:10px 4px;display:flex;flex-direction:column;align-items:center;gap:4px;
-  font-size:.72rem;line-height:1.25;transition:.15s;
-}
-.railbtn .ri{font-size:20px;position:relative}
-.railbtn .ri .dot{position:absolute;top:-1px;left:-5px;width:7px;height:7px}
-.railbtn .ri .dot:not(.green){display:none}
-.railbtn:hover{background:var(--panel-2);color:var(--text)}
-.railbtn.active{background:var(--accent-soft);color:var(--text)}
-.railbtn.active .ri{filter:none}
-.railfoot{margin-top:auto;font-size:.68rem;color:var(--text-dim);text-align:center}
-.srv{display:flex;flex-direction:column;align-items:center;gap:5px}
-
-/* ---------- chat ---------- */
-.chatpane{background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column}
-.chathead{padding:18px 18px 14px;display:flex;gap:12px;align-items:center;border-bottom:1px solid var(--border)}
-.avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;font-size:19px}
-.chathead b{font-size:.98rem;font-weight:600}
+/* ---------- the assistant ---------- */
+.chatpane{background:var(--panel);border-inline-end:1px solid var(--border);display:flex;flex-direction:column}
+.sidehead{padding:16px 16px 0}
+.chathead{padding:16px 18px 12px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--border)}
+.avatar{width:34px;height:34px;border-radius:10px;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.chathead b{font-size:.96rem;font-weight:600;display:block;line-height:1.3}
 .chathead small{color:var(--text-dim);font-size:.78rem;display:block}
-.messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px}
+.messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;min-height:120px}
 .msg{
-  max-width:90%;padding:10px 14px;border-radius:16px;font-size:.9rem;line-height:1.55;
+  max-width:92%;padding:9px 13px;border-radius:14px;font-size:.9rem;line-height:1.55;
   white-space:pre-wrap;unicode-bidi:plaintext;text-align:start;
 }
-.msg.bot{background:var(--panel-2);align-self:flex-start;border-start-start-radius:6px}
-.msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-start-end-radius:6px}
+.msg.bot{background:var(--panel-2);border:1px solid var(--border);align-self:flex-start;border-start-start-radius:5px}
+.msg.user{background:var(--accent);color:#fff;align-self:flex-end;border-start-end-radius:5px}
 .msg.alert{background:var(--danger-soft);color:var(--text);align-self:flex-start}
-.msg time{display:block;font-size:.68rem;opacity:.55;margin-top:4px}
+.msg time{display:block;font-size:.68rem;opacity:.7;margin-top:3px}
 /* what the assistant understood from a search: a row of small chips */
-.understood{align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.78rem;color:var(--text-dim);max-width:90%}
-.understood span{background:var(--accent-soft);color:var(--text);border-radius:8px;padding:3px 9px;unicode-bidi:plaintext}
-.understood span.warn{background:rgba(232,180,90,.14)}
-.chips{padding:0 18px 10px;display:flex;flex-wrap:wrap;gap:7px}
+.understood{align-self:flex-start;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.78rem;color:var(--text-dim);max-width:92%}
+.understood span{background:var(--accent-soft);color:var(--text);border-radius:7px;padding:2px 9px;unicode-bidi:plaintext}
+.understood span.warn{background:rgba(245,181,68,.16)}
+.chips{padding:0 16px 10px;display:flex;flex-wrap:wrap;gap:6px}
 .chip{
   border:1px solid var(--border-2);background:transparent;color:var(--text-dim);
-  padding:6px 12px;border-radius:20px;font-size:.8rem;cursor:pointer;transition:.15s;unicode-bidi:plaintext;
+  padding:5px 11px;border-radius:20px;font-size:.8rem;cursor:pointer;unicode-bidi:plaintext;
+  transition:background .15s,color .15s,border-color .15s;
 }
-.chip:hover{border-color:var(--accent);color:var(--text);background:var(--accent-soft)}
-.inputrow{padding:14px 16px 18px;display:flex;gap:8px}
+.chip:hover{border-color:var(--accent-ink);color:var(--text);background:var(--accent-soft)}
+.inputrow{padding:12px 16px 16px;display:flex;gap:8px;border-top:1px solid var(--border)}
 .inputrow input{
-  flex:1;background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
-  border-radius:14px;padding:12px 14px;font-size:.92rem;direction:auto;font-family:inherit;
+  flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
+  border-radius:12px;padding:11px 13px;font-size:.92rem;direction:auto;
 }
 .inputrow input::placeholder{color:var(--text-faint)}
-.inputrow input:focus{outline:none;border-color:var(--accent)}
-.send{width:46px;height:46px;border-radius:14px;background:var(--accent);border:none;color:#fff;font-size:18px;cursor:pointer;flex-shrink:0;transform:scaleX(-1)}
-.send:hover{filter:brightness(1.1)}
+.inputrow input:focus{outline:none;border-color:var(--accent-ink)}
+.send{width:44px;height:44px;border-radius:12px;background:var(--accent);border:none;color:#fff;cursor:pointer;flex-shrink:0;display:grid;place-items:center;transition:background .15s}
+.send:hover{background:#2560e0}
 
 /* ---------- main ---------- */
-.mainpane{padding:22px 26px;display:flex;flex-direction:column;gap:16px}
-.pagehead{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.pagehead h1{font-size:1.35rem;font-weight:600}
+.mainpane{padding:16px 24px 20px;display:flex;flex-direction:column;gap:12px}
+.pagehead{display:flex;align-items:center;gap:14px}
+.pagehead > .ic{width:42px;height:42px;stroke-width:1.3;color:var(--accent-ink)}
+.pagehead h1{font-size:1.5rem;font-weight:700;line-height:1.25}
 .pagehead p{color:var(--text-dim);font-size:.88rem}
-.card{background:var(--panel);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-.card h3{font-size:.92rem;font-weight:600;margin-bottom:12px}
-.card h3 small{color:var(--text-dim);font-weight:400;margin-inline-start:6px}
-.videohead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px;font-size:.85rem}
+.pagehead .btn{margin-inline-start:auto}
+/* counts: what was found in the video (or in the current search) */
+.objects{display:flex;gap:12px;overflow-x:auto;flex:none}
+.objcard{
+  flex:1 0 108px;max-width:230px;display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:center;
+  background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px 16px;
+}
+.objcard .ic{grid-row:1/3;width:26px;height:26px;stroke-width:1.5;color:var(--accent-ink)}
+.objcard span{font-size:.78rem;color:var(--text-dim);white-space:nowrap}
+.objcard b{font-size:1.3rem;font-weight:600;line-height:1.15}
+.objcard.threat{background:var(--danger-soft);border-color:rgba(239,68,68,.5)}
+.objcard.threat .ic,.objcard.threat b{color:var(--danger-ink)}
+.objcard.idle b{color:var(--text-faint)}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.card h2{font-size:.95rem;font-weight:600;margin-bottom:10px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card h2 small{color:var(--text-dim);font-weight:400;font-size:.76rem}
+.videohead{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px;font-size:.86rem}
 .videohead b{font-weight:500;unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.videohead .meta{color:var(--text-dim);font-size:.78rem;direction:ltr}
-.videowrap{position:relative;background:#0c0d12;border-radius:12px;overflow:hidden;aspect-ratio:16/9}
+.videohead .meta{color:var(--text-dim);font-size:.78rem;direction:ltr;white-space:nowrap}
+/* width is stated so that a short window makes the frame lower, not narrower (the picture is letter-boxed inside) */
+.videowrap{position:relative;width:100%;background:#03060d;border-radius:10px;overflow:hidden;aspect-ratio:16/9;max-height:max(230px,calc(100vh - 534px))}
 video{width:100%;height:100%;display:block}
 .dropzone{
-  position:absolute;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;
-  color:var(--text-dim);font-size:.95rem;background:var(--panel-2);border:2px dashed var(--border-2);
-  border-radius:12px;cursor:pointer;text-align:center;padding:20px;transition:.15s;
+  position:absolute;inset:0;display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;
+  color:var(--text-dim);font-size:.95rem;background:var(--panel-2);border:1.5px dashed var(--border-2);
+  border-radius:10px;cursor:pointer;text-align:center;padding:20px;transition:background .15s,border-color .15s,color .15s;
 }
-.dropzone:hover,.dropzone.drag{border-color:var(--accent);color:var(--text);background:var(--accent-soft)}
-.dropzone .big{font-size:40px}
-.dropzone code{direction:ltr;display:inline-block;margin-top:6px;background:#0c0d12;padding:6px 10px;border-radius:8px}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent-ink);color:var(--text);background:var(--accent-soft)}
+.dropzone .big .ic{width:44px;height:44px;stroke-width:1.3;color:var(--accent-ink)}
+.dropzone b{color:var(--text)}
+.dropzone code{direction:ltr;display:inline-block;margin-top:6px;background:#03060d;padding:6px 10px;border-radius:8px}
 .overlay{position:absolute;inset:0;pointer-events:none}
-.bbox{position:absolute;border:2px solid var(--danger);border-radius:5px}
+.bbox{position:absolute;border:2px solid var(--danger);border-radius:4px}
 .bbox.alt{border-color:var(--accent-2)}
-.bbox.alt label{background:var(--accent-2);color:#06121a}
+.bbox.alt label{background:var(--accent-2);color:#04121a}
 .bbox label{
-  position:absolute;top:-22px;left:-2px;background:var(--danger);color:#fff;direction:ltr;
-  font-size:.68rem;padding:2px 7px;border-radius:5px;white-space:nowrap;
+  position:absolute;top:-24px;left:-2px;background:var(--danger);color:#fff;direction:ltr;
+  font-size:.72rem;font-weight:500;padding:2px 8px;border-radius:5px;white-space:nowrap;
 }
-/* status line under the video (indexing progress, engine) */
-.status{margin-top:12px;font-size:.82rem;color:var(--text-dim);display:flex;gap:8px;align-items:center;unicode-bidi:plaintext}
+/* status line under the video (indexing progress, engine): the dot says what kind */
+.status{margin-top:10px;font-size:.82rem;color:var(--text-dim);unicode-bidi:plaintext}
+.status::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--text-faint);margin-inline-end:8px;vertical-align:1px}
 .status.ok{color:var(--ok)}
-.status.wait{color:var(--accent)}
-/* timeline */
-.timeline{position:relative;height:40px;background:var(--panel-2);border-radius:10px;cursor:pointer;overflow:hidden;margin-top:14px;direction:ltr}
+.status.ok::before{background:var(--ok)}
+.status.wait{color:var(--accent-ink)}
+.status.wait::before{background:var(--accent-ink);animation:pulse 1.2s ease-in-out infinite}
+.status.demo{color:var(--warn)}
+.status.demo::before{background:var(--warn)}
+@keyframes pulse{50%{opacity:.25}}
+/* timeline: bars = how many objects are on screen, pins = the results of the search */
+.timeline{position:relative;cursor:pointer;direction:ltr}
+#timeline{height:76px}
+#timeline::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:1px;background:var(--border-2)}
+.tl-act{position:absolute;left:0;right:0;bottom:7px;height:22px;display:flex;align-items:flex-end;gap:3px}
+.tl-act i{flex:1;min-width:0;background:rgba(98,166,255,.34);border-radius:1.5px 1.5px 0 0}
 .tl-marks{position:absolute;inset:0}
-.tl-match{position:absolute;top:10px;bottom:10px;min-width:4px;border-radius:3px;background:var(--accent)}
-.tl-match:hover{background:var(--accent-2)}
-.playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--danger)}
-.playhead::after{content:attr(data-t);position:absolute;top:2px;left:6px;font-size:.62rem;color:var(--danger);white-space:nowrap}
+/* a result: its span on the line, a stem, and the pin on top */
+#tlMarks .tl-match{position:absolute;bottom:4px;height:5px;min-width:3px;border-radius:3px;background:var(--accent-ink)}
+#tlMarks .tl-match::before{content:"";position:absolute;left:0;bottom:5px;width:2px;height:28px;background:var(--accent-ink)}
+#tlMarks .pin{
+  position:absolute;left:-11px;bottom:31px;width:24px;height:24px;border-radius:50%;
+  background:var(--accent);color:#fff;border:2px solid var(--panel);display:grid;place-items:center;transition:transform .15s;
+}
+#tlMarks .pin .ic{width:13px;height:13px;stroke-width:2}
+#tlMarks .tl-match:hover .pin{transform:scale(1.14)}
+#tlMarks .tl-match.threat,#tlMarks .tl-match.threat::before,#tlMarks .tl-match.threat .pin{background:var(--danger)}
+#tlMarks .tl-match.sel{z-index:2}
+#tlMarks .tl-match.sel,#tlMarks .tl-match.sel::before{background:#fff}
+#tlMarks .tl-match.sel .pin{transform:scale(1.2);box-shadow:0 0 0 2px #fff}
+#tlMarks.dense .pin{width:11px;height:11px;left:-4.5px;bottom:31px;border-width:1px}
+#tlMarks.dense .pin .ic{display:none}
+.playhead{position:absolute;top:18px;bottom:0;width:2px;margin-left:-1px;background:#fff;box-shadow:0 0 8px 1px rgba(98,166,255,.9);pointer-events:none;z-index:3}
+.playhead::after{
+  content:attr(data-t);position:absolute;top:-18px;left:50%;transform:translateX(-50%);
+  font-size:.68rem;font-weight:500;line-height:15px;color:var(--text);white-space:nowrap;
+  background:var(--card);border-radius:5px;padding:0 6px;
+}
 .tl-labels{display:flex;justify-content:space-between;font-size:.7rem;color:var(--text-faint);margin-top:6px;direction:ltr}
-/* objects in the video */
-.objects{display:flex;gap:10px;flex-wrap:wrap}
-.objcard{background:var(--panel-2);border-radius:12px;padding:10px 16px;min-width:88px;text-align:center}
-.objcard .ico{font-size:20px}
-.objcard b{display:block;font-size:1.1rem;margin-top:2px}
-.objcard span{font-size:.72rem;color:var(--text-dim)}
+/* the timeline of the labelling mode: a plain strip of coloured spans */
+#lblTimeline{height:40px;background:var(--panel-2);border-radius:8px;overflow:hidden;margin-top:12px}
+#lblTimeline .tl-match{position:absolute;top:10px;bottom:10px;min-width:4px;border-radius:3px}
+#lblTimeline .playhead{top:0}
+#lblTimeline .playhead::after{top:3px;left:6px;transform:none;background:none;padding:0}
 /* technical details, out of the way */
 details.tech{font-size:.78rem;color:var(--text-dim)}
 details.tech summary{cursor:pointer;width:max-content;padding:4px 0}
 details.tech summary:hover{color:var(--text)}
-details.tech .techbody{background:var(--panel);border-radius:12px;padding:12px;margin-top:8px;display:grid;gap:8px}
+details.tech .techbody{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:12px;margin-top:8px;display:grid;gap:8px}
 details.tech .row{display:flex;justify-content:space-between}
 .meter{height:5px;border-radius:4px;background:var(--panel-2);overflow:hidden}
-.meter i{display:block;height:100%;background:var(--accent)}
+.meter i{display:block;height:100%;background:var(--accent-ink)}
 .caps{display:flex;gap:5px;flex-wrap:wrap}
-.caps span{background:var(--panel-2);border-radius:6px;padding:2px 7px;font-size:.68rem;color:var(--text-faint)}
+.caps span{background:var(--panel-2);border-radius:6px;padding:2px 7px;font-size:.7rem;color:var(--text-faint)}
 .caps span.on{color:var(--ok)}
 
 /* ---------- results / alerts ---------- */
-.resultspane{background:var(--panel);border-right:1px solid var(--border);padding:18px 16px}
-.reshead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;gap:8px}
-.reshead b{font-size:.98rem;font-weight:600}
+.resultspane{background:var(--panel);border-inline-start:1px solid var(--border);padding:16px 14px;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.resview{display:flex;flex-direction:column;flex:1;min-height:0}
+.reslist{flex:1;min-height:0;overflow-y:auto;margin-inline:-6px;padding-inline:6px}
+.reshead{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px;min-height:30px}
+.reshead b{font-size:1.02rem;font-weight:600;display:flex;align-items:center;gap:8px}
 .reshead .tools{display:flex;gap:6px;align-items:center}
-.badge{background:var(--accent-soft);color:var(--accent);font-size:.72rem;padding:3px 10px;border-radius:20px;font-weight:600}
+.badge{background:var(--accent-soft);color:var(--accent-ink);font-size:.76rem;padding:1px 9px;border-radius:20px;font-weight:600}
 .badge[hidden]{display:none}
-.rescard{background:var(--panel-2);border-radius:14px;padding:10px;margin-bottom:10px;display:flex;gap:12px;cursor:pointer;transition:.15s}
+.rescard{
+  display:grid;grid-template-columns:104px minmax(0,1fr) auto;gap:12px;align-items:center;
+  background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:9px;margin-bottom:9px;
+  cursor:pointer;transition:background .15s,border-color .15s;
+}
 .rescard:hover{background:var(--card)}
-.rescard .thumb{width:84px;height:60px;border-radius:9px;background:var(--card);flex-shrink:0;overflow:hidden}
-.rescard .thumb canvas{width:100%;height:100%;object-fit:cover}
-.rescard .info{flex:1;font-size:.75rem;color:var(--text-dim);line-height:1.55;min-width:0}
-.rescard .info b{color:var(--text);font-size:.88rem;display:block;direction:ltr;text-align:right}
-.rescard .info .what{unicode-bidi:plaintext}
-.rescard .actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
-.rescard .actions button{border:none;background:var(--accent-soft);color:var(--accent);border-radius:8px;padding:4px 9px;font-size:.7rem;cursor:pointer}
-.rescard .actions button:hover{background:var(--accent);color:#fff}
+.rescard.sel{border-color:var(--accent-ink);background:var(--accent-soft)}
+.rescard.threat.sel{border-color:var(--danger);background:var(--danger-soft)}
+.rescard .thumb{position:relative;width:104px;height:70px;border-radius:8px;background:#03060d;overflow:hidden}
+.rescard .thumb canvas{width:100%;height:100%;object-fit:cover;display:block}
+.rescard .dur{position:absolute;bottom:4px;left:4px;background:rgba(3,6,13,.82);color:var(--text);font-size:.68rem;line-height:1.5;padding:0 6px;border-radius:5px;direction:ltr}
+.rescard .info{font-size:.76rem;color:var(--text-dim);line-height:1.5;min-width:0;display:flex;flex-direction:column}
+.rescard .what{color:var(--text);font-size:.92rem;font-weight:600;display:flex;align-items:center;gap:6px;min-width:0}
+.rescard .what span{unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rescard .what .ic{width:16px;height:16px;color:var(--accent-ink)}
+.rescard.threat .what .ic{color:var(--danger-ink)}
+.rescard .meta{unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rescard .when{direction:ltr;text-align:right}
+.rescard .actions{display:flex;gap:5px;margin-top:4px}
+.rescard .actions button{
+  border:1px solid var(--border-2);background:transparent;color:var(--text-dim);border-radius:7px;
+  padding:2px 8px;font-size:.72rem;cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:background .15s,color .15s;
+}
+.rescard .actions .ic{width:13px;height:13px}
+.rescard .actions button:hover{background:var(--accent);border-color:var(--accent);color:#fff}
 .rescard .actions button:disabled{opacity:.5;cursor:wait}
-.tag{display:inline-block;background:var(--card);border-radius:6px;padding:0 6px;font-size:.66rem;margin-left:4px;color:var(--text-dim);font-weight:400}
+.go{width:34px;height:34px;border-radius:50%;border:1px solid var(--border-2);background:var(--panel);color:var(--text);cursor:pointer;display:grid;place-items:center;transition:background .15s,border-color .15s}
+.go .ic{width:14px;height:14px}
+.go:hover,.rescard.sel .go{background:var(--accent);border-color:var(--accent)}
+.rescard.threat.sel .go{background:var(--danger);border-color:var(--danger)}
+.tag{display:inline-block;background:var(--card);border-radius:6px;padding:0 6px;font-size:.68rem;margin-inline-end:4px;color:var(--text-dim);font-weight:400}
 .tag.sem{color:var(--accent-2)}
-.showmore{width:100%;justify-content:center;margin:4px 0 10px}
-.summary{background:var(--panel-2);border-radius:14px;padding:12px 14px;font-size:.78rem;margin-top:8px}
-.summary .row{display:flex;justify-content:space-between;padding:3px 0;color:var(--text-dim)}
-.summary .row span:last-child{color:var(--text);unicode-bidi:plaintext}
-.empty{color:var(--text-dim);font-size:.85rem;text-align:center;padding:34px 12px;line-height:1.7}
-.empty .big{font-size:30px;display:block;margin-bottom:6px;opacity:.8}
+.showmore{width:100%;margin:2px 0 10px}
+.summary{background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:8px 12px;font-size:.76rem;margin-top:10px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:2px 16px}
+.summary[hidden]{display:none}
+.summary .row{display:flex;justify-content:space-between;gap:12px;padding:1px 0;color:var(--text-dim)}
+.summary .row span:last-child{color:var(--text);unicode-bidi:plaintext;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#exportBtn{margin-top:10px}
+.empty{color:var(--text-dim);font-size:.86rem;text-align:center;padding:34px 12px;line-height:1.7}
+.empty .big{display:block;margin-bottom:8px}
+.empty .big .ic{width:30px;height:30px;stroke-width:1.4;color:var(--text-faint)}
 
 /* ---------- modes: search (default) / live / label ---------- */
 body:not(.live) .live-only{display:none!important}
@@ -200,99 +299,162 @@ body.live .file-only{display:none!important}
 body:not(.label) .label-only{display:none!important}
 body.label .file-only,body.label .live-only{display:none!important}
 body.label .chatpane{display:none}
-body.label .app{grid-template-columns:84px 1fr 320px}
+body.label .app{grid-template-columns:minmax(0,1fr) 340px;grid-template-areas:"top top" "main res"}
 /* labelling */
-.lblbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:14px;flex-wrap:wrap}
+.lblbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-top:12px;flex-wrap:wrap}
 .lblkinds{display:flex;flex-wrap:wrap;gap:6px}
-.kind{border:1px solid var(--border-2);background:transparent;color:var(--text-dim);border-radius:20px;padding:6px 12px;font-size:.8rem;cursor:pointer;transition:.15s}
+.kind{border:1px solid var(--border-2);background:transparent;color:var(--text-dim);border-radius:20px;padding:5px 12px;font-size:.8rem;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 .kind:hover{color:var(--text);border-color:var(--c)}
-.kind.on{background:var(--c);border-color:var(--c);color:#14161f;font-weight:600}
+.kind.on{background:var(--c);border-color:var(--c);color:#060a14;font-weight:600}
 .lblbtns{display:flex;gap:6px}
+.lblbtns .ic{width:14px;height:14px}
 kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4px;padding:0 5px;color:var(--text-dim)}
-.lblev{display:flex;align-items:center;gap:10px;background:var(--panel-2);border-radius:10px;padding:8px 12px;margin-bottom:6px;font-size:.86rem}
+.lblev{display:flex;align-items:center;gap:10px;background:var(--panel-2);border:1px solid var(--border);border-radius:10px;padding:7px 12px;margin-bottom:6px;font-size:.86rem}
 .lblev .sw{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 .lblev .tm{color:var(--text-dim);direction:ltr;margin-inline-start:auto;font-size:.8rem}
-.lblev button,.lblsaved button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:.85rem;padding:0 4px}
-.lblev button:hover{color:var(--accent)}
-.lblsaved button:hover{color:var(--danger)}
-.lblnote{color:var(--text-dim);font-size:.8rem;margin:12px 0}
+.lblev button,.lblsaved button,.rpill button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;padding:2px;display:grid;place-items:center;border-radius:5px}
+.lblev button .ic,.lblsaved button .ic,.rpill button .ic{width:14px;height:14px}
+.lblev button:hover{color:var(--accent-ink)}
+.lblev button[data-del]:hover,.lblsaved button:hover,.rpill button:hover{color:var(--danger-ink)}
+.lblnote{color:var(--text-dim);font-size:.8rem;margin:12px 0;max-width:75ch}
 .lblsave{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:.8rem;color:var(--text-dim)}
 .lblsave label{display:flex;gap:6px;align-items:center;cursor:pointer}
-.lblsaved{display:flex;gap:8px;align-items:center;background:var(--panel-2);border-radius:12px;padding:9px 12px;margin-bottom:8px}
+.lblsaved{display:flex;gap:8px;align-items:center;background:var(--panel-2);border:1px solid var(--border);border-radius:12px;padding:9px 12px;margin-bottom:8px}
 .lblsaved div{flex:1;min-width:0}
 .lblsaved b{display:block;font-size:.82rem;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:right}
 .lblsaved small{color:var(--text-dim);font-size:.72rem}
-@media (max-width:1200px){ body.label .app{grid-template-columns:72px 1fr 270px} }
-.camrow{display:flex;gap:8px;align-items:center;margin-bottom:14px}
+.howto{direction:ltr;text-align:left;font-family:ui-monospace,Consolas,monospace;font-size:.72rem}
+/* live camera */
+.camrow{display:flex;gap:8px;align-items:center;margin-bottom:12px}
 .camrow select{
   flex:1;min-width:0;background:var(--panel-2);border:1px solid var(--border-2);color:var(--text);
-  border-radius:12px;padding:10px 12px;font-size:.88rem;font-family:inherit;
+  border-radius:10px;padding:9px 12px;font-size:.88rem;
 }
-.camrow select:focus{outline:none;border-color:var(--accent)}
-#liveVideo{object-fit:contain;background:#0c0d12}
+.camrow select:focus{outline:none;border-color:var(--accent-ink)}
+#liveVideo{object-fit:contain;background:#03060d}
 #liveCanvas{width:100%;height:100%}
-.videowrap.alarm{box-shadow:0 0 0 4px var(--danger),0 0 30px rgba(239,111,108,.5);animation:alarm .5s 3}
-@keyframes alarm{50%{box-shadow:0 0 0 4px transparent}}
-.livestatus{font-size:.82rem;color:var(--text-dim);display:flex;gap:8px;align-items:center;min-height:20px;margin-top:12px}
-.steps{list-style:none;display:flex;flex-direction:column;gap:12px;text-align:right;font-size:.95rem}
+.videowrap.alarm{box-shadow:0 0 0 3px var(--danger),0 0 30px rgba(239,68,68,.5);animation:alarm .5s 3}
+@keyframes alarm{50%{box-shadow:0 0 0 3px transparent}}
+.livestatus{font-size:.82rem;color:var(--text-dim);display:flex;gap:8px;align-items:center;min-height:20px;margin-top:10px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:12px;text-align:right;font-size:.95rem;color:var(--text)}
 .steps li{display:flex;align-items:center;gap:10px}
 .steps li b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:.8rem;flex-shrink:0}
-.ruleshead{font-size:.8rem;color:var(--text-dim);margin:16px 0 8px}
+.ruleshead{font-size:.8rem;color:var(--text-dim);margin:14px 0 8px}
 #rulesList{display:flex;flex-wrap:wrap;gap:8px}
 .rhint{color:var(--text-faint);font-size:.85rem}
 .rpill{
-  position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:8px;
-  background:var(--panel-2);border:1px solid var(--border-2);border-radius:22px;padding:7px 14px 7px 8px;font-size:.86rem;unicode-bidi:plaintext;
+  position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:7px;
+  background:var(--panel-2);border:1px solid var(--border-2);border-radius:22px;padding:6px 12px;font-size:.86rem;unicode-bidi:plaintext;
 }
+.rpill > .ic{width:15px;height:15px;color:var(--accent-ink)}
 .rpill i{position:absolute;right:0;bottom:0;height:3px;width:0;background:var(--accent-2);transition:width .25s}
 .rpill.hot{border-color:var(--danger)}
 .rpill.hot i{background:var(--danger)}
-.rpill button{border:none;background:transparent;color:var(--text-faint);cursor:pointer;font-size:.8rem;padding:0 3px}
-.rpill button:hover{color:var(--danger)}
-.alertcard{display:flex;gap:12px;align-items:center;background:var(--panel-2);border-radius:14px;padding:8px;margin-bottom:8px;cursor:pointer;transition:.15s;border-right:3px solid var(--danger)}
-.alertcard:hover{background:var(--card)}
-.alertcard img{width:88px;height:60px;object-fit:cover;border-radius:9px;flex-shrink:0}
-.alertcard b{display:block;font-size:.88rem;font-weight:500;unicode-bidi:plaintext}
-.alertcard small{color:var(--text-dim);font-size:.74rem}
+.rpill.hot > .ic{color:var(--danger-ink)}
+.alertcard{display:flex;gap:12px;align-items:center;background:var(--danger-soft);border:1px solid rgba(239,68,68,.45);border-radius:12px;padding:8px;margin-bottom:8px;cursor:pointer;transition:background .15s}
+.alertcard:hover{background:rgba(239,68,68,.2)}
+.alertcard img{width:96px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0}
+.alertcard b{display:block;font-size:.9rem;font-weight:600;unicode-bidi:plaintext}
+.alertcard small{color:var(--text-dim);font-size:.76rem}
 
-::-webkit-scrollbar{width:9px}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:6px}
-@media (max-width:1200px){
-  .app{grid-template-columns:72px 300px 1fr 270px}
-  .mainpane{padding:18px}
+::-webkit-scrollbar{width:9px;height:9px}
+::-webkit-scrollbar-thumb{background:rgba(110,150,255,.22);border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:rgba(110,150,255,.4)}
+@media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
+@media (max-width:1280px){
+  .app{grid-template-columns:290px minmax(0,1fr) 300px}
+  body.label .app{grid-template-columns:minmax(0,1fr) 300px}
+  .mainpane{padding:16px 18px 20px}
+  .topbar{gap:16px;padding:0 16px}
+  .logo b{font-size:1.15rem}
+  .tab{padding:0 12px}
+  .rescard{grid-template-columns:88px minmax(0,1fr) auto;gap:8px}
+  .rescard .thumb{width:88px;height:62px}
+  .rescard .actions button{padding:2px 6px}
+  .go{width:30px;height:30px}
 }
-@media (max-width:860px){
+/* a low window: the video gives up height first, then the line under the title */
+@media (max-height:780px) and (min-width:901px){
+  .pagehead p{display:none}
+  .videowrap{max-height:max(200px,calc(100vh - 516px))}
+}
+@media (max-width:900px){
   body{height:auto;overflow:auto}
   .app{display:flex;flex-direction:column;height:auto}
-  .rail{flex-direction:row;height:auto;position:sticky;top:0;z-index:5;border-left:none;border-bottom:1px solid var(--border);padding:8px}
-  .brand{margin:0 0 0 8px;width:38px;height:38px}
-  .railbtn{width:auto;flex-direction:row;padding:8px 12px}
-  .railbtn br{display:none}
-  .railfoot{margin:0;margin-inline-start:auto}
-  .chatpane,.mainpane,.resultspane{height:auto;overflow:visible}
+  .topbar{position:sticky;top:0;z-index:5;flex-wrap:wrap;padding:8px 12px;gap:8px 12px}
+  .logo img{height:38px}
+  .tabs{order:3;width:100%;overflow-x:auto}
+  .tab.active::after{display:none}
+  .chatpane,.mainpane,.resultspane,.reslist{overflow:visible}
   .mainpane{order:1}
-  .chatpane{order:2;border-left:none;border-top:1px solid var(--border)}
+  .chatpane{order:2;border:0;border-top:1px solid var(--border)}
   .messages{max-height:340px}
-  .resultspane{order:3;border-right:none;border-top:1px solid var(--border)}
+  .resultspane{order:3;border:0;border-top:1px solid var(--border)}
+  .videowrap{max-height:none}
+  .pagehead h1{font-size:1.25rem}
 }
 </style>
 </head>
 <body>
+<!-- the icons: one drawn set, referenced by <use href="#i-name"> here and by ic('name') in the script -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+<symbol id="i-camera" viewBox="0 0 24 24"><rect x="3" y="7" width="13" height="10" rx="2"/><path d="M16 11l5-3v8l-5-3"/></symbol>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M4 4h8l8 8-8 8-8-8z"/><circle cx="9" cy="9" r="1.3"/></symbol>
+<symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V5M7 10l5-5 5 5M5 19h14"/></symbol>
+<symbol id="i-download" viewBox="0 0 24 24"><path d="M12 5v11M7 11l5 5 5-5M5 19h14"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M20 12H5M11 6l-6 6 6 6"/></symbol>
+<symbol id="i-film" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 5v14M16 5v14M3 10h5M3 14h5M16 10h5M16 14h5"/></symbol>
+<symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8.5" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.6-5.9M20 4v4.5h-4.5"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5l11 7-11 7z" fill="currentColor"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor"/></symbol>
+<symbol id="i-rec" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 7h6l2 2h10v10H3z"/></symbol>
+<symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 4v5h7V4M8 20v-6h8v6"/></symbol>
+<symbol id="i-sound" viewBox="0 0 24 24"><path d="M4 10v4h3l5 4V6l-5 4zM16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></symbol>
+<symbol id="i-mute" viewBox="0 0 24 24"><path d="M4 10v4h3l5 4V6l-5 4zM16 9.5l5 5M21 9.5l-5 5"/></symbol>
+<symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 17v-6a6 6 0 0 1 12 0v6l1.5 2h-15zM10 21h4"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+<symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3zM12 10v4.5M12 17.5v.5"/></symbol>
+<symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.6-3.3 8-8 9-4.7-1-8-4.400-8-9V6z"/><path d="M8.800 12l2.300 2.300 4.200-4.400"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-5 4v-4H4z"/></symbol>
+<symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="7.500" r="3.500"/><path d="M5 20c0-3.800 3-6 7-6s7 2.200 7 6"/></symbol>
+<symbol id="i-car" viewBox="0 0 24 24"><path d="M4 17v-4.500l2-5h12l2 5V17M4 12.500h16M3 17h18"/><circle cx="7.500" cy="17" r="1.800"/><circle cx="16.500" cy="17" r="1.800"/></symbol>
+<symbol id="i-bus" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="13" rx="2"/><path d="M4 11h16M8 17v2.500M16 17v2.500M8 14h.5M15.500 14h.5"/></symbol>
+<symbol id="i-truck" viewBox="0 0 24 24"><path d="M3 6h11v10H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.500" r="1.800"/><circle cx="17" cy="17.500" r="1.800"/></symbol>
+<symbol id="i-bike" viewBox="0 0 24 24"><circle cx="6" cy="16" r="3.500"/><circle cx="18" cy="16" r="3.500"/><path d="M6 16l4-8h5l3 8M10 8l4 8M8.500 8h3"/></symbol>
+<symbol id="i-moto" viewBox="0 0 24 24"><circle cx="6" cy="16.500" r="3"/><circle cx="18" cy="16.500" r="3"/><path d="M6 16.500l3.500-5h5.500l3 5M14 8h3l1.500 3.500M8 11.500h5"/></symbol>
+<symbol id="i-paw" viewBox="0 0 24 24"><path d="M12 13c-3 0-5 2.200-5 4.200 0 1.500 1.300 2.300 2.600 2.300 1 0 1.600-.5 2.400-.5s1.400.5 2.400.5c1.300 0 2.600-.8 2.600-2.300 0-2-2-4.200-5-4.200z"/><circle cx="7" cy="10" r="1.400"/><circle cx="10.300" cy="6.500" r="1.400"/><circle cx="13.700" cy="6.500" r="1.400"/><circle cx="17" cy="10" r="1.400"/></symbol>
+<symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 9h12l1 11H5zM9 9V7a3 3 0 0 1 6 0v2"/></symbol>
+<symbol id="i-knife" viewBox="0 0 24 24"><path d="M4 20l4.200-4.200M6.500 14l3.500 3.500M8.500 15.500L19.500 4c.7 3.800-.7 7.800-3.700 10.700L11 17.500"/></symbol>
+<symbol id="i-gun" viewBox="0 0 24 24"><path d="M3 6.500h18v4h-9l-1 3H8.500L7 19.500H3.500L5 13.500v-3H3zM12 10.500V12a2 2 0 0 1-1.500 1.500"/></symbol>
+<symbol id="i-fire" viewBox="0 0 24 24"><path d="M12 3c.8 3.200 5 5.200 5 10.200a5 5 0 0 1-10 0c0-2.200 1-3.700 2-4.700.3 1.500.9 2.300 1.800 2.600C10.500 8.500 11 5.500 12 3z"/></symbol>
+<symbol id="i-smoke" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.6-7.950A5.500 5.500 0 0 1 17 9.500a4.250 4.250 0 0 1 0 8.500z"/></symbol>
+<symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 3L5 14h6l-1 7 8-11h-6z"/></symbol>
+<symbol id="i-box" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="12" cy="12" r="2"/></symbol>
+</defs></svg>
 <div class="app">
 
-  <!-- ===== RAIL: the modes. A new mode = one more button here ===== -->
-  <nav class="rail" aria-label="מצבים">
-    <div class="brand" title="Video Search Agent">🤖</div>
-    <button class="railbtn active" id="navSearch" title="חיפוש בתוך סרטון מוקלט"><span class="ri">🔍</span><span>חיפוש<br>בסרטון</span></button>
-    <button class="railbtn" id="navLive" title="מצלמה חיה והתרעות"><span class="ri">📷<span class="dot" id="liveDot"></span></span><span>מצלמה<br>חיה</span></button>
-    <button class="railbtn" id="navLabel" title="תיוג סרטונים למדידת ההתרעות"><span class="ri">🏷</span><span>תיוג<br>סרטונים</span></button>
-    <div class="railfoot"><div class="srv" id="backendState" title="השרת (Python)"><span class="dot"></span>בודק…</div></div>
-  </nav>
+  <!-- ===== TOP BAR: the logo, the modes (a new mode = one more button here), the server ===== -->
+  <header class="topbar">
+    <div class="logo"><img id="logoMark" src="data:image/webp;base64,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" width="73" height="54" alt=""><b>Security <span>AI</span></b></div>
+    <nav class="tabs" aria-label="מצבים">
+      <button class="tab active" id="navSearch" title="חיפוש בתוך סרטון מוקלט"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg><span>חיפוש בסרטון</span></button>
+      <button class="tab" id="navLive" title="מצלמה חיה והתרעות"><svg class="ic" aria-hidden="true"><use href="#i-camera"/></svg><span>מצלמה חיה</span><span class="dot" id="liveDot"></span></button>
+      <button class="tab" id="navLabel" title="תיוג סרטונים למדידת ההתרעות"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg><span>תיוג סרטונים</span></button>
+    </nav>
+    <div class="srv" id="backendState" title="השרת (Python)"><span class="dot"></span>בודק…</div>
+  </header>
 
-  <!-- ===== CHAT ===== -->
+  <!-- ===== THE ASSISTANT: upload, and the chat that takes the questions ===== -->
   <section class="chatpane">
+    <div class="sidehead file-only">
+      <button class="btn primary wide" id="uploadBtn"><svg class="ic" aria-hidden="true"><use href="#i-upload"/></svg>העלאת סרטון</button>
+      <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
+    </div>
     <header class="chathead">
-      <div class="avatar">🤖</div>
+      <div class="avatar"><svg class="ic" aria-hidden="true"><use href="#i-chat"/></svg></div>
       <div><b>העוזר</b><small id="chatSub">כתבי מה לחפש בסרטון</small></div>
     </header>
     <div class="messages" id="messages">
@@ -315,19 +477,26 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
     </div>
     <div class="inputrow">
       <input id="queryInput" placeholder="מה לחפש? למשל: איש עם חולצה אדומה">
-      <button class="send" id="sendBtn" aria-label="שליחה">➤</button>
+      <button class="send" id="sendBtn" aria-label="שליחה"><svg class="ic" aria-hidden="true"><use href="#i-send"/></svg></button>
     </div>
   </section>
 
   <!-- ===== MAIN ===== -->
   <section class="mainpane">
     <div class="pagehead file-only">
-      <div><h1>חיפוש בסרטון</h1><p>מעלים סרטון, ושואלים בצ'אט מה למצוא בו</p></div>
-      <button class="btn primary" id="uploadBtn">⬆ העלאת סרטון</button>
-      <input type="file" id="fileInput" accept="video/*,.mkv,.avi,.mov" hidden>
+      <svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>
+      <div><h1>ניתוח וידאו אבטחה</h1><p>מעלים סרטון ושואלים את העוזר מה למצוא בו: אנשים, רכבים, סכין, נשק, אש ועשן</p></div>
     </div>
     <div class="pagehead live-only">
+      <svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>
       <div><h1>מצלמה חיה</h1><p>בוחרים מצלמה, ומגדירים בצ'אט מתי להתריע</p></div>
+    </div>
+
+    <div class="objects file-only" id="objects">
+      <div class="objcard idle"><svg class="ic" aria-hidden="true"><use href="#i-film"/></svg><span>זיהויים בסרטון</span><b>—</b></div>
+      <div class="objcard idle"><svg class="ic" aria-hidden="true"><use href="#i-knife"/></svg><span>סכין</span><b>—</b></div>
+      <div class="objcard idle"><svg class="ic" aria-hidden="true"><use href="#i-gun"/></svg><span>נשק</span><b>—</b></div>
+      <div class="objcard idle"><svg class="ic" aria-hidden="true"><use href="#i-fire"/></svg><span>אש</span><b>—</b></div>
     </div>
 
     <div class="card file-only">
@@ -336,21 +505,21 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
         <video id="video" controls></video>
         <div class="overlay" id="overlay"></div>
         <div class="dropzone" id="dropzone">
-          <div class="big">🎬</div>
+          <div class="big"><svg class="ic" aria-hidden="true"><use href="#i-film"/></svg></div>
           <div><b>גררי לכאן סרטון</b> או לחצי כדי לבחור קובץ</div>
         </div>
       </div>
-      <div class="timeline" id="timeline">
-        <div class="tl-marks" id="tlMarks"></div>
-        <div class="playhead" id="playhead" data-t="00:00" style="left:0"></div>
-      </div>
-      <div class="tl-labels" id="tlLabels"><span>00:00</span><span>—</span></div>
       <div class="status" id="demoBanner">אפשר לעבוד גם בלי השרת: הזיהוי ירוץ בדפדפן (פחות מדויק).</div>
     </div>
 
     <div class="card file-only">
-      <h3>מה יש בסרטון <small id="objScope"></small></h3>
-      <div class="objects" id="objects"><div class="empty" style="padding:6px">יופיע כאן אחרי שהסרטון ייסרק</div></div>
+      <h2>ציר זמן <small>העמודות: כמה אובייקטים בפריים. הסמנים: תוצאות החיפוש</small></h2>
+      <div class="timeline" id="timeline">
+        <div class="tl-act" id="tlAct"></div>
+        <div class="tl-marks" id="tlMarks"></div>
+        <div class="playhead" id="playhead" data-t="00:00" style="left:0"></div>
+      </div>
+      <div class="tl-labels" id="tlLabels"><span>00:00</span><span>—</span></div>
     </div>
 
     <details class="tech file-only">
@@ -365,17 +534,17 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
 
     <div class="card live-only">
       <div class="camrow">
-        <select id="camSelect" aria-label="מצלמה"><option value="">לחצי 🔄 כדי למצוא מצלמות</option></select>
-        <button class="btn icon" id="camRefresh" title="חיפוש מצלמות (גם טלפון שמחובר כמצלמת רשת)">🔄</button>
-        <button class="btn primary" id="camStart">▶ התחל</button>
+        <select id="camSelect" aria-label="מצלמה"><option value="">לחצי על רענון כדי למצוא מצלמות</option></select>
+        <button class="btn icon" id="camRefresh" title="חיפוש מצלמות (גם טלפון שמחובר כמצלמת רשת)" aria-label="רענון רשימת המצלמות"><svg class="ic" aria-hidden="true"><use href="#i-refresh"/></svg></button>
+        <button class="btn primary" id="camStart"><svg class="ic" aria-hidden="true"><use href="#i-play"/></svg>התחל</button>
       </div>
       <div class="videowrap" id="liveWrap">
         <video id="liveVideo" autoplay muted playsinline></video>
         <canvas class="overlay" id="liveCanvas"></canvas>
         <div class="dropzone" id="livePlaceholder" style="cursor:default">
           <ol class="steps">
-            <li><b>1</b>בוחרים מצלמה למעלה. 🔄 מוצא גם טלפון שמחובר כמצלמה</li>
-            <li><b>2</b>לוחצים ▶ התחל</li>
+            <li><b>1</b>בוחרים מצלמה למעלה. כפתור הרענון מוצא גם טלפון שמחובר כמצלמה</li>
+            <li><b>2</b>לוחצים על התחל</li>
             <li><b>3</b>כותבים בצ'אט מתי להתריע</li>
           </ol>
         </div>
@@ -386,8 +555,9 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
     </div>
 
     <div class="pagehead label-only">
+      <svg class="ic" aria-hidden="true"><use href="#i-shield"/></svg>
       <div><h1>תיוג סרטונים</h1><p>מסמנים מתי קרה כל אירוע, כדי למדוד כמה טוב ההתרעות עובדות</p></div>
-      <button class="btn primary" id="lblOpen">📂 בחירת סרטון</button>
+      <button class="btn primary" id="lblOpen"><svg class="ic" aria-hidden="true"><use href="#i-folder"/></svg>בחירת סרטון</button>
       <input type="file" id="lblFile" accept="video/*,.mkv,.avi,.mov" hidden>
     </div>
     <div class="card label-only">
@@ -395,7 +565,7 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
       <div class="videowrap">
         <video id="lblVideo" controls></video>
         <div class="dropzone" id="lblDrop">
-          <div class="big">🏷</div>
+          <div class="big"><svg class="ic" aria-hidden="true"><use href="#i-tag"/></svg></div>
           <div><b>בחרי סרטון לתיוג</b><br>למשל סרטון שצילמת: הרמת סכין, הצתה, חטיפת תיק, או פעולות שרק נראות דומות</div>
         </div>
       </div>
@@ -403,58 +573,55 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
       <div class="lblbar">
         <div class="lblkinds" id="lblKinds"></div>
         <div class="lblbtns">
-          <button class="btn" id="lblStart">⏺ התחלה <kbd>S</kbd></button>
-          <button class="btn" id="lblEnd" disabled>⏹ סוף <kbd>E</kbd></button>
+          <button class="btn" id="lblStart"><svg class="ic" aria-hidden="true"><use href="#i-rec"/></svg>התחלה <kbd>S</kbd></button>
+          <button class="btn" id="lblEnd" disabled><svg class="ic" aria-hidden="true"><use href="#i-stop"/></svg>סוף <kbd>E</kbd></button>
         </div>
       </div>
       <div class="status" id="lblStatus">בחרי סרטון כדי להתחיל.</div>
     </div>
     <div class="card label-only">
-      <h3>האירועים בסרטון</h3>
+      <h2>האירועים בסרטון</h2>
       <div id="lblEvents"><div class="rhint">עוד לא סימנת אירועים.</div></div>
       <p class="lblnote">כל סוג אירוע שלא סימנת נחשב "לא קרה בסרטון הזה". כך המדידה סופרת גם התרעות שווא, ולכן חשוב לתייג את כל האירועים שבסרטון, לא רק חלק.</p>
       <div class="lblsave">
         <label><input type="checkbox" id="lblCopy" checked> להעתיק את הסרטון לתיקיית המדידה (backend/live/data/videos)</label>
-        <button class="btn primary" id="lblSave" disabled>💾 שמירת התיוג</button>
+        <button class="btn primary" id="lblSave" disabled><svg class="ic" aria-hidden="true"><use href="#i-save"/></svg>שמירת התיוג</button>
       </div>
     </div>
   </section>
 
   <!-- ===== RESULTS / ALERTS ===== -->
   <aside class="resultspane">
-    <div class="live-only">
-      <div class="reshead"><b>התרעות</b>
+    <div class="resview live-only">
+      <div class="reshead"><b>התרעות <span class="badge" id="alertBadge" hidden>0</span></b>
         <div class="tools">
           <button class="btn small" id="clearAlerts" hidden>ניקוי</button>
-          <button class="btn small" id="soundBtn" title="צליל התרעה">🔊</button>
-          <span class="badge" id="alertBadge" hidden>0</span>
+          <button class="btn small" id="soundBtn" title="צליל התרעה" aria-label="צליל התרעה"><svg class="ic" aria-hidden="true"><use href="#i-sound"/></svg></button>
         </div>
       </div>
-      <div id="alertsList"><div class="empty"><span class="big">🔔</span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div></div>
+      <div class="reslist" id="alertsList"><div class="empty"><span class="big"><svg class="ic" aria-hidden="true"><use href="#i-bell"/></svg></span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div></div>
     </div>
-    <div class="label-only">
-      <div class="reshead"><b>סרטונים מתויגים</b><span class="badge" id="lblBadge" hidden>0</span></div>
-      <div id="lblSaved"></div>
-      <details class="tech" style="margin-top:14px"><summary>איך מודדים?</summary>
-        <div class="techbody" style="direction:ltr;text-align:left;font-family:monospace;font-size:.72rem">
-          cd backend<br>python live/perceive.py --videos live/data/videos<br>python live/eval_alerts.py --gt live/data/labels.json
-        </div>
-      </details>
-    </div>
-    <div class="file-only">
-      <div class="reshead"><b>תוצאות</b>
-        <div class="tools">
-          <button class="btn small" id="exportBtn" hidden title="הורדת כל התוצאות: תמונות, קליפים, JSON ו-CSV">⬇ ZIP</button>
-          <span class="badge" id="matchBadge">0</span>
-        </div>
+    <div class="resview label-only">
+      <div class="reshead"><b>סרטונים מתויגים <span class="badge" id="lblBadge" hidden>0</span></b></div>
+      <div class="reslist">
+        <div id="lblSaved"></div>
+        <details class="tech" style="margin-top:14px"><summary>איך מודדים?</summary>
+          <div class="techbody howto">
+            cd backend<br>python live/perceive.py --videos live/data/videos<br>python live/eval_alerts.py --gt live/data/labels.json
+          </div>
+        </details>
       </div>
-      <div id="results"><div class="empty"><span class="big">🔎</span>עוד לא חיפשת.<br>העלי סרטון וכתבי בצ'אט מה למצוא.</div></div>
+    </div>
+    <div class="resview file-only">
+      <div class="reshead"><b>תוצאות <span class="badge" id="matchBadge">0</span></b></div>
+      <div class="reslist" id="results"><div class="empty"><span class="big"><svg class="ic" aria-hidden="true"><use href="#i-search"/></svg></span>עוד לא חיפשת.<br>העלי סרטון וכתבי לעוזר מה למצוא.</div></div>
       <div class="summary" id="summary" hidden>
         <div class="row"><span>תוצאות</span><span id="sumMatches">—</span></div>
         <div class="row"><span>טווח זמן</span><span id="sumRange">—</span></div>
         <div class="row"><span>סרטון</span><span id="sumVideo">—</span></div>
         <div class="row"><span>אורך</span><span id="sumDur">—</span></div>
       </div>
+      <button class="btn wide out" id="exportBtn" hidden title="הורדת כל התוצאות: תמונות, קליפים, JSON ו-CSV"><svg class="ic" aria-hidden="true"><use href="#i-download"/></svg>ייצוא התוצאות (ZIP)</button>
     </div>
   </aside>
 </div>
@@ -473,6 +640,8 @@ kbd{font-family:inherit;font-size:.68rem;background:var(--card);border-radius:4p
    ===================================================================== */
 
 const $ = id => document.getElementById(id);
+const ic = n => `<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;   // the icon set at the top of <body>
+$('favicon').href = $('logoMark').src;
 const video = $('video'), overlay = $('overlay');
 let state = {
   matches: [], duration: 0, videoName: null, file: null,
@@ -522,7 +691,7 @@ function loadVideo(file){
 
   video.onerror = () => {
     dz.style.display = 'flex';
-    dz.innerHTML = `<div class="big">⚠️</div>
+    dz.innerHTML = `<div class="big">${ic('warn')}</div>
       <div><b>הדפדפן לא מצליח לנגן את "${esc(file.name)}"</b><br>
       כנראה קידוד H.265 / AVI / DAV. אפשר להמיר ל-MP4 (H.264) עם ffmpeg:<br>
       <code>ffmpeg -i "${esc(file.name)}" -c:v libx264 -preset fast output.mp4</code></div>`;
@@ -533,8 +702,7 @@ function loadVideo(file){
     state.duration = video.duration;
     $('videoMeta').textContent =
       `${fmt(video.duration)} · ${(file.size/1048576).toFixed(1)} MB`;
-    $('tlLabels').innerHTML =
-      `<span>00:00</span><span>${fmt(video.duration/2)}</span><span>${fmt(video.duration)}</span>`;
+    $('tlLabels').innerHTML = [0, 1, 2, 3, 4, 5, 6].map(k => `<span>${fmt(video.duration * k / 6)}</span>`).join('');
     botSay(`הסרטון נטען (${fmt(video.duration)}). אני סורקת אותו עכשיו, ואפשר כבר לכתוב מה לחפש.`);
     startIndexing(file, id);
   };
@@ -691,7 +859,7 @@ async function startIndexing(file, id){
     try {
       const fd = new FormData();
       fd.append('file', file, file.name);
-      setBanner('⏳ מעלה את הסרטון לשרת…', 'wait');
+      setBanner('מעלה את הסרטון לשרת…', 'wait');
       const r = await fetch(API + '/index', { method:'POST', body: fd });
       if (!r.ok) throw new Error('upload failed (' + r.status + ')');
       const { video: name, cached } = await r.json();
@@ -712,7 +880,7 @@ async function startIndexing(file, id){
   $('engineName').textContent = 'COCO-SSD';
   state.indexing = browserIndex(id).catch(e => {
     if (id !== state.loadId) return;
-    setBanner('⚠ הזיהוי בדפדפן נכשל: ' + esc(e.message || e), 'demo');
+    setBanner('הזיהוי בדפדפן נכשל: ' + esc(e.message || e), 'demo');
     throw e;
   });
 }
@@ -726,14 +894,14 @@ function pollStatus(name, id){
         const { status, progress, stage } = await r.json();
         setProgress(progress || 0);
         if (status === 'ready'){
-          setBanner('✅ הסרטון מוכן לחיפוש', 'ok');
+          setBanner('הסרטון מוכן לחיפוש', 'ok');
           loadOverview();
           resolve();
         } else if (status === 'indexing'){
-          setBanner(`⏳ סורקת את הסרטון… ${Math.round((progress||0)*100)}%`, 'wait');
+          setBanner(`סורקת את הסרטון… ${Math.round((progress||0)*100)}%`, 'wait');
           setTimeout(tick, 1500);
         } else {
-          setBanner('⚠ שגיאה בסריקת הסרטון: ' + esc(status), 'demo');
+          setBanner('שגיאה בסריקת הסרטון: ' + esc(status), 'demo');
           reject(new Error(status));
         }
       } catch (e) { reject(e); }
@@ -776,7 +944,7 @@ function loadScript(src){
 
 function getDetector(){
   detectorPromise ??= (async () => {
-    setBanner('⏳ טוענת את מודל הזיהוי (רק בפעם הראשונה, כ-25MB)…', 'wait');
+    setBanner('טוענת את מודל הזיהוי (רק בפעם הראשונה, כ-25MB)…', 'wait');
     await loadScript('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js');
     // GPU (WebGL) is fastest; without it, WebAssembly is ~5-10x faster than plain JS
     if (!(await tf.setBackend('webgl').catch(() => false))){
@@ -841,12 +1009,12 @@ async function browserIndex(id){
     const p = Math.min(1, (t + step) / D);
     setProgress(p);
     const eta = (performance.now() - t0) / 1000 / p * (1 - p);
-    setBanner(`⏳ סורקת את הסרטון בדפדפן… ${Math.round(p*100)}%` +
+    setBanner(`סורקת את הסרטון בדפדפן… ${Math.round(p*100)}%` +
               (p > .03 ? ` · עוד כ-${Math.ceil(eta)} שניות` : ''), 'wait');
   }
   state.index = { rows, W, H, duration: D };
   setProgress(1);
-  setBanner(`✅ הסרטון מוכן לחיפוש (זיהוי בדפדפן, ${new Set(rows.map(r => r[2] + r[1])).size} אובייקטים). לדיוק גבוה יותר אפשר להריץ את השרת.`, 'ok');
+  setBanner(`הסרטון מוכן לחיפוש (זיהוי בדפדפן, ${new Set(rows.map(r => r[2] + r[1])).size} אובייקטים). לדיוק גבוה יותר אפשר להריץ את השרת.`, 'ok');
   loadOverview();
 }
 
@@ -1051,7 +1219,7 @@ const rangeText = r => !r ? 'כל הסרטון'
 const WORD_HE = { person:'אדם', car:'מכונית', bus:'אוטובוס', truck:'משאית', bicycle:'אופניים', motorcycle:'אופנוע',
   dog:'כלב', cat:'חתול', bag:'תיק', red:'אדום', white:'לבן', black:'שחור', gray:'אפור', blue:'כחול', green:'ירוק',
   yellow:'צהוב', orange:'כתום', purple:'סגול', pink:'ורוד', brown:'חום', running:'רץ', walking:'הולך', moving:'בתנועה',
-  parked:'עומד', entering:'נכנס', exiting:'יוצא',
+  parked:'עומד', entering:'נכנס', exiting:'יוצא', knife:'סכין', gun:'נשק', fire:'אש', smoke:'עשן',
   'going left':'שמאלה', 'going right':'ימינה', 'going up':'כלפי מעלה', 'going down':'כלפי מטה',
   'on the left':'בצד שמאל', 'on the right':'בצד ימין', 'at the top':'למעלה', 'at the bottom':'למטה',
   'in the center':'במרכז' };
@@ -1059,20 +1227,20 @@ const he = w => WORD_HE[w] || w;
 // backend labels are "<colour> <class>": show them as "<class> <colour>" in Hebrew
 const heLabel = l => { const w = String(l).split(' ').map(he); return w.length === 2 && WORD_HE[String(l).split(' ')[0]] ? w[1] + ' ' + w[0] : w.join(' '); };
 
-// what the assistant understood, as small chips ("🔎 מחפשת: אדם · אדום · רץ")
+// what the assistant understood, as small chips ("מחפשת: אדם · אדום · רץ")
 function addParsedCard(p){
   // the subject with its colour and action, then what it is near ("ליד מכונית לבנה")
   const [subj, ...others] = p.objects;
   const parts = [...(subj ? [subj] : []), ...p.colors, ...p.actions].map(he);
   for (const o of others) parts.push('ליד ' + [o, ...((p.object_colors || {})[o] || [])].map(he).join(' '));
-  if (p.timeRange) parts.push('⏱ ' + rangeText(p.timeRange));
+  if (p.timeRange) parts.push(rangeText(p.timeRange));
   if (p.minDuration) parts.push('לפחות ' + p.minDuration + ' שנ׳');
   if (p.semantic) parts.push('“' + p.semantic + '”');
   if (!parts.length) return;
   const d = document.createElement('div');
   d.className = 'understood';
-  d.innerHTML = '🔎 מחפשת: ' + parts.map(x => `<span>${esc(x)}</span>`).join('') +
-    (p.unknown && p.unknown.length ? `<span class="warn" title="מילים שלא הבנתי">❓ ${esc(p.unknown.join(', '))}</span>` : '');
+  d.innerHTML = 'מחפשת: ' + parts.map(x => `<span>${esc(x)}</span>`).join('') +
+    (p.unknown && p.unknown.length ? `<span class="warn" title="מילים שלא הבנתי">לא הבנתי: ${esc(p.unknown.join(', '))}</span>` : '');
   $('messages').appendChild(d);
   $('messages').scrollTop = 1e9;
 }
@@ -1135,18 +1303,18 @@ async function searchEvents(text, id){
   if (!out || !out.event) return false;
   const d = document.createElement('div');
   d.className = 'understood';
-  d.innerHTML = `🎬 מחפשת פעולה: <span>${esc(out.rule.label)}</span>`;
+  d.innerHTML = `מחפשת פעולה: <span>${esc(out.rule.label)}</span>`;
   $('messages').appendChild(d); $('messages').scrollTop = 1e9;
   if (out.status !== 'ready'){
     botSay('כדי למצוא פעולות אני עוברת על הסרטון עם מודל השלד. זה קורה פעם אחת לכל סרטון, ואחר כך כל פעולה נמצאת מיד.');
     while (out.status !== 'ready' && id === state.loadId){
       if (out.status === 'error'){ botSay('הניתוח נכשל: ' + (out.error || '')); return true; }
-      setBanner(`⏳ מנתחת תנועות בסרטון… ${Math.round((out.progress || 0) * 100)}%`, 'wait');
+      setBanner(`מנתחת תנועות בסרטון… ${Math.round((out.progress || 0) * 100)}%`, 'wait');
       await new Promise(r => setTimeout(r, 1500));
       try { out = await ask(); } catch { return true; }
     }
     if (id !== state.loadId) return true;
-    setBanner('✅ הסרטון מוכן לחיפוש, כולל פעולות', 'ok');
+    setBanner('הסרטון מוכן לחיפוש, כולל פעולות', 'ok');
   }
   state.matches = out.results; state.total = out.total;
   state.parsed = { objects: [], colors: [], actions: [], timeRange: null }; state.rawQuery = text;
@@ -1180,53 +1348,71 @@ $('chips').addEventListener('click', e => {
 });
 
 /* ---------- 5. RESULT VISUALIZATION ---------- */
-const ICONS = { person:['🧍','אנשים'], car:['🚗','מכוניות'], bus:['🚌','אוטובוסים'], truck:['🚚','משאיות'],
-  bicycle:['🚲','אופניים'], motorcycle:['🏍','אופנועים'], dog:['🐕','כלבים'], cat:['🐈','חתולים'], bag:['🎒','תיקים'],
-  event:['🎬','פעולות'], scene:['🎞','סצנות'] };
+// class -> [icon, Hebrew name]. THREAT: the classes drawn in red wherever they appear.
+const ICONS = { person:['person','אנשים'], car:['car','מכוניות'], bus:['bus','אוטובוסים'], truck:['truck','משאיות'],
+  bicycle:['bike','אופניים'], motorcycle:['moto','אופנועים'], dog:['paw','כלבים'], cat:['paw','חתולים'], bag:['bag','תיקים'],
+  knife:['knife','סכין'], gun:['gun','נשק'], fire:['fire','אש'], smoke:['smoke','עשן'],
+  event:['bolt','פעולות'], scene:['film','סצנות'] };
+const THREAT = new Set(['knife', 'gun', 'fire', 'smoke']);
 
-const iconOf = k => ICONS[k] || ['🔹', k.charAt(0).toUpperCase() + k.slice(1)];
+const iconOf = k => ICONS[k] || ['box', k.charAt(0).toUpperCase() + k.slice(1)];
+const IDLE_TILES = $('objects').innerHTML;       // the row before a video is scanned
+const tile = (icon, n, name, cls = '') => `<div class="objcard ${cls}">${ic(icon)}<span>${esc(name)}</span><b>${n}</b></div>`;
 
 function renderObjectCounts(segs, scope){
   const counts = {};
   segs.forEach(s => counts[s.cls] = (counts[s.cls] || 0) + 1);
   const keys = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
-  $('objScope').textContent = scope;
-  $('objects').innerHTML = keys.length
-    ? keys.map(k => `<div class="objcard"><div class="ico">${iconOf(k)[0]}</div><b>${counts[k]}</b><span>${esc(iconOf(k)[1])}</span></div>`).join('')
-    : '<div class="empty" style="padding:6px">עוד לא זוהו אובייקטים.</div>';
+  $('objects').innerHTML = tile('film', segs.length, 'זיהויים ' + scope) +
+    keys.map(k => tile(iconOf(k)[0], counts[k], iconOf(k)[1], THREAT.has(k) ? 'threat' : '')).join('');
 }
 
 // whole-video object counts once the index is ready
 async function loadOverview(){
   const { results: all } = await queryBackend({ objects: [], colors: [], actions: [], timeRange: null }, 0, 1000)
     .catch(() => ({ results: [] }));
-  if (!state.matches.length) renderObjectCounts(all, 'בכל הסרטון');
+  if (!state.matches.length) renderObjectCounts(all, 'בסרטון');
   renderTimeline(all, 'overview');
 }
 
 function clearResults(){
-  $('results').innerHTML = '<div class="empty"><span class="big">🔎</span>עוד לא חיפשת.<br>כתבי בצ\'אט מה למצוא בסרטון.</div>';
+  $('results').innerHTML = `<div class="empty"><span class="big">${ic('search')}</span>עוד לא חיפשת.<br>כתבי לעוזר מה למצוא בסרטון.</div>`;
   $('matchBadge').textContent = '0';
   $('exportBtn').hidden = true;
   state.total = 0; state.parsed = null;
   $('summary').hidden = true;
-  $('tlMarks').innerHTML = '';
-  $('objects').innerHTML = '<div class="empty" style="padding:6px">סורקת…</div>';
+  $('tlMarks').innerHTML = ''; $('tlAct').innerHTML = '';
+  $('objects').innerHTML = IDLE_TILES;
   overlay.innerHTML = '';
   setProgress(0);
 }
 
+/* The timeline. Under the line: bars that show how many tracked objects are on
+   screen along the video (from the whole-video index). On it: one pin for every
+   result of the search, red when it is a threat. */
+function renderActivity(list){
+  const N = 96, D = state.duration || 1, bins = new Array(N).fill(0);
+  for (const m of list){
+    const a = Math.max(0, Math.floor(m.t / D * N)), b = Math.min(N - 1, Math.floor((m.t + m.dur) / D * N));
+    for (let k = a; k <= b; k++) bins[k]++;
+  }
+  const top = Math.max(1, ...bins);
+  $('tlAct').innerHTML = bins.map(n => `<i style="height:${n ? Math.max(10, Math.round(n / top * 100)) : 0}%"></i>`).join('');
+}
+
 function renderTimeline(list, mode){
+  if (mode === 'overview') return renderActivity(list);
   const marks = $('tlMarks');
   marks.innerHTML = '';
+  marks.classList.toggle('dense', list.length > 14);      // many results: small pins, no icon
   list.forEach((m, i) => {
     const el = document.createElement('div');
-    el.className = 'tl-match';
+    el.className = 'tl-match' + (THREAT.has(m.cls) ? ' threat' : '');
     el.style.left = (m.t / state.duration * 100) + '%';
     el.style.width = (m.dur / state.duration * 100) + '%';
-    if (mode === 'overview') el.style.opacity = '.25';
-    el.title = `${fmt(m.t)} · ${m.label || m.cls}`;
-    el.onclick = ev => { ev.stopPropagation(); mode === 'overview' ? seekTo(m.t) : playClip(i); };
+    el.innerHTML = `<i class="pin">${ic(iconOf(m.cls)[0])}</i>`;
+    el.title = `${fmt(m.t)} · ${m.label ? heLabel(m.label) : iconOf(m.cls)[1]}`;
+    el.onclick = ev => { ev.stopPropagation(); playClip(i); };
     marks.appendChild(el);
   });
 }
@@ -1238,25 +1424,30 @@ function renderResults(parsed){
   $('matchBadge').textContent = total;
   $('exportBtn').hidden = !(state.engine === 'backend' && state.matches.length);
   if (!state.matches.length)
-    box.innerHTML = '<div class="empty"><span class="big">🤷‍♀️</span>אין תוצאות לחיפוש הזה.</div>';
+    box.innerHTML = `<div class="empty"><span class="big">${ic('search')}</span>אין תוצאות לחיפוש הזה.</div>`;
 
   const backend = state.engine === 'backend';
   state.matches.forEach((m, i) => {
     const card = document.createElement('div');
-    card.className = 'rescard';
+    card.className = 'rescard' + (THREAT.has(m.cls) ? ' threat' : '');
+    card.dataset.i = i;
     const tags = (m.score ? `<span class="tag sem" title="דמיון לתיאור (CLIP)">${(m.score*100).toFixed(0)}%</span>` : '') +
                  (m.entity != null && m.entity !== m.track ? `<span class="tag" title="אותו אובייקט כמו #${m.entity}">#${m.entity}</span>` : '');
+    const meta = [m.conf != null && !m.score ? Math.round(m.conf * 100) + '% ביטחון' : '',
+                  m.context && m.context.length ? 'ליד ' + esc([...new Set(m.context.map(c => heLabel(c.label || c.cls)))].join(', ')) : '']
+                 .filter(Boolean).join(' · ');
     card.innerHTML = `
-      <div class="thumb"><canvas data-i="${i}" width="168" height="120"></canvas></div>
+      <div class="thumb"><canvas data-i="${i}" width="168" height="120"></canvas><span class="dur">${fmt(m.dur)}</span></div>
       <div class="info">
-        <b>${fmt(m.t)}${tags}</b>
-        <span class="what">${esc(m.label ? heLabel(m.label) : 'תוצאה')}${m.context && m.context.length ? ' · ליד ' + esc([...new Set(m.context.map(c => heLabel(c.label || c.cls)))].join(', ')) : ''}</span> · ${m.dur.toFixed(0)} שנ'
+        <b class="what">${ic(iconOf(m.cls)[0])}<span>${esc(m.label ? heLabel(m.label) : 'תוצאה')}</span></b>
+        <span class="meta">${tags}${meta}</span>
+        <span class="when">${fmt(m.t)} – ${fmt(m.t + m.dur)}</span>
         <div class="actions">
-          <button class="viewclip" data-i="${i}">▶ צפייה</button>
-          <button data-dl="image" data-i="${i}" title="הורדת התמונה עם המסגרת">🖼 תמונה</button>
-          ${backend ? `<button data-dl="clip" data-i="${i}" title="הורדת הקטע (MP4, עם מסגרת עוקבת)">🎬 קליפ</button>` : ''}
+          <button data-dl="image" data-i="${i}" title="הורדת התמונה עם המסגרת">${ic('image')}תמונה</button>
+          ${backend ? `<button data-dl="clip" data-i="${i}" title="הורדת הקטע (MP4, עם מסגרת עוקבת)">${ic('film')}קליפ</button>` : ''}
         </div>
-      </div>`;
+      </div>
+      <button class="go" data-i="${i}" title="צפייה" aria-label="צפייה בתוצאה">${ic('play')}</button>`;
     box.appendChild(card);
   });
   if (state.matches.length < total){
@@ -1275,7 +1466,7 @@ function renderResults(parsed){
 
   captureThumbs();
   renderTimeline(state.matches, 'matches');
-  if (state.matches.length) renderObjectCounts(state.matches, 'בחיפוש הנוכחי');
+  if (state.matches.length) renderObjectCounts(state.matches, 'בחיפוש');
   else loadOverview();          // nothing found: show what IS in the video instead of an empty panel
 
   $('summary').hidden = false;
@@ -1309,7 +1500,7 @@ async function captureThumbs(){
     const sx = Math.max(0, Math.min(vw - sw, cx - sw/2)), sy = Math.max(0, Math.min(vh - sh, cy - sh/2));
     ctx.drawImage(hidden, sx, sy, sw, sh, 0, 0, c.width, c.height);
     const k = c.width / sw;
-    ctx.strokeStyle = '#f0564c'; ctx.lineWidth = 3;
+    ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 3;
     ctx.strokeRect((b.x/100*vw - sx)*k, (b.y/100*vh - sy)*k, b.w/100*vw*k, b.h/100*vh*k);
   }
 }
@@ -1325,11 +1516,11 @@ const stem = () => (state.videoName || 'video').replace(/\.[^.]+$/, '');
 const tstamp = t => fmt(t).replace(/:/g, '-');
 
 async function withBusy(btn, label, fn, onError){
-  const old = btn.textContent;
+  const old = btn.innerHTML;
   btn.disabled = true; btn.textContent = label;
   try { await fn(); }
   catch (e) { (onError || (m => botSay('ההורדה נכשלה: ' + m)))(e.message || e); }
-  finally { btn.disabled = false; btn.textContent = old; }
+  finally { btn.disabled = false; btn.innerHTML = old; }
 }
 
 // full-resolution frame rendered in the browser (works without the backend)
@@ -1344,12 +1535,12 @@ async function frameBlobLocal(m){
   const ctx = c.getContext('2d');
   ctx.drawImage(hidden, 0, 0);
   const b = boxAt(m, t) || m.box;
-  ctx.strokeStyle = '#f0564c'; ctx.lineWidth = Math.max(2, c.width / 400);
+  ctx.strokeStyle = '#ef4444'; ctx.lineWidth = Math.max(2, c.width / 400);
   ctx.strokeRect(b.x/100*c.width, b.y/100*c.height, b.w/100*c.width, b.h/100*c.height);
   ctx.font = `${Math.max(14, c.width / 60)}px sans-serif`;
   const label = m.label || m.cls || '';
   const tw = ctx.measureText(label).width + 10;
-  ctx.fillStyle = '#f0564c';
+  ctx.fillStyle = '#ef4444';
   ctx.fillRect(b.x/100*c.width, Math.max(0, b.y/100*c.height - 24), tw, 24);
   ctx.fillStyle = '#fff';
   ctx.fillText(label, b.x/100*c.width + 5, Math.max(18, b.y/100*c.height - 6));
@@ -1361,7 +1552,7 @@ async function downloadMatch(i, kind, btn){
   if (!m) return;
   const t = m.best_t ?? m.t;
   const name = `${stem()}_${tstamp(t)}_${(m.label || m.cls || 'match').replace(/\s+/g, '-')}`;
-  await withBusy(btn, '⏳', async () => {
+  await withBusy(btn, '…', async () => {
     if (kind === 'image'){
       let blob = null;
       if (state.engine === 'backend'){
@@ -1381,7 +1572,7 @@ async function downloadMatch(i, kind, btn){
   });
 }
 
-$('exportBtn').onclick = () => withBusy($('exportBtn'), '⏳ מכינה…', async () => {
+$('exportBtn').onclick = () => withBusy($('exportBtn'), 'מכינה…', async () => {
   const r = await fetch(API + '/export', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ video: state.videoName, matches: state.matches,
@@ -1398,7 +1589,8 @@ function playClip(i){
   const m = state.matches[i];
   video.currentTime = Math.max(0, m.t - 1);
   video.play();
-  document.querySelectorAll('.rescard').forEach((c, j) => c.style.borderColor = j === i ? 'var(--accent)' : '');
+  document.querySelectorAll('.rescard').forEach((c, j) => c.classList.toggle('sel', j === i));
+  document.querySelectorAll('#tlMarks .tl-match').forEach((c, j) => c.classList.toggle('sel', j === i));
 }
 
 // bbox at time t, interpolated along the tracked path
@@ -1539,10 +1731,10 @@ async function listCameras(ask){
     }
     const prev = sel.value;
     sel.innerHTML = cams.length
-      ? cams.map((c, i) => `<option value="${esc(c.deviceId)}">📷 ${esc(c.label || 'מצלמה ' + (i + 1))}</option>`).join('')
+      ? cams.map((c, i) => `<option value="${esc(c.deviceId)}">${esc(c.label || 'מצלמה ' + (i + 1))}</option>`).join('')
       : '<option value="">לא נמצאו מצלמות</option>';
     if (cams.some(c => c.deviceId === prev)) sel.value = prev;
-    if (ask && !cams.length) botSay('לא מצאתי מצלמות. חברי מצלמה (או את הטלפון כמצלמת רשת) ולחצי שוב 🔄');
+    if (ask && !cams.length) botSay('לא מצאתי מצלמות. חברי מצלמה (או את הטלפון כמצלמת רשת) ולחצי שוב על רענון');
   } catch (e){
     botSay('צריך לאשר לדפדפן גישה למצלמה 🙂 (' + (e.message || e) + ')');
   }
@@ -1573,7 +1765,7 @@ async function startCamera(){
   liveVideo.srcObject = live.stream;
   await liveVideo.play().catch(() => {});
   $('livePlaceholder').style.display = 'none';
-  $('camStart').textContent = '■ עצור';
+  $('camStart').innerHTML = ic('stop') + 'עצור';
   $('liveDot').classList.add('green');
   live.running = true;
   setStatus('מתחבר…');
@@ -1588,7 +1780,7 @@ function stopCamera(keepView){
   liveVideo.srcObject = null;
   live.last = null; live.tShown = 0; live.fps = 0;
   drawLive();
-  $('camStart').textContent = '▶ התחל';
+  $('camStart').innerHTML = ic('play') + 'התחל';
   $('liveDot').classList.remove('green');
   setStatus('');
   if (!keepView) $('livePlaceholder').style.display = 'flex';
@@ -1607,7 +1799,7 @@ function connectWs(){
   ws.onopen = () => { setStatus('טוען מודלים… (בפעם הראשונה זה לוקח כמה שניות)'); sendFrame(); };
   ws.onmessage = e => {
     let out; try { out = JSON.parse(e.data); } catch { out = { error: 'bad answer' }; }
-    if (out.error) setStatus('⚠ שגיאה בשרת', out.error);
+    if (out.error) setStatus('שגיאה בשרת', out.error);
     else onResult(out);
     sendFrame();
   };
@@ -1640,7 +1832,7 @@ function onResult(out){
   live.progress = out.progress || {};
   const n = out.persons.length;
   setStatus(`<span class="dot green"></span> בשידור · ${n === 0 ? 'אין אנשים' : n === 1 ? 'אדם אחד' : n + ' אנשים'}` +
-            (live.fps && live.fps < 3 ? ' · <span style="color:#f5a524">איטי</span>' : ''),
+            (live.fps && live.fps < 3 ? ' · <span style="color:var(--warn)">איטי</span>' : ''),
             `${live.fps.toFixed(1)} fps · ${out.ms} ms per frame`);
   drawLive();
   renderRuleProgress();
@@ -1683,9 +1875,9 @@ function drawLive(){
   // objects: what the alerts are about
   for (const o of out.objects){
     const [x1, y1, x2, y2] = o.box;
-    g.strokeStyle = '#f0564c'; g.lineWidth = 2.5;
+    g.strokeStyle = '#ef4444'; g.lineWidth = 2.5;
     g.strokeRect(X(x1), Y(y1), (x2 - x1) * sx, (y2 - y1) * sy);
-    tagAt(g, OBJ_HE[o.cls] || o.cls, X(x1), Y(y1), '#f0564c');
+    tagAt(g, OBJ_HE[o.cls] || o.cls, X(x1), Y(y1), '#ef4444');
   }
 }
 
@@ -1720,7 +1912,7 @@ function snapshot(a, out){
   g.drawImage(grab, 0, 0);
   if (a.box){
     const s = c.width / out.w, [x1, y1, x2, y2] = a.box;
-    g.strokeStyle = '#f0564c'; g.lineWidth = 3;
+    g.strokeStyle = '#ef4444'; g.lineWidth = 3;
     g.strokeRect(x1 * s, y1 * s, (x2 - x1) * s, (y2 - y1) * s);
   }
   return c.toDataURL('image/jpeg', 0.8);
@@ -1740,7 +1932,7 @@ function renderAlerts(){
   $('alertBadge').hidden = !n;
   $('clearAlerts').hidden = !n;
   $('alertsList').innerHTML = !n
-    ? '<div class="empty"><span class="big">🔔</span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div>'
+    ? `<div class="empty"><span class="big">${ic('bell')}</span>עוד אין התרעות.<br>כשמשהו יקרה, הוא יופיע כאן עם תמונה.</div>`
     : live.alerts.slice(0, 100).map((a, i) => `
       <div class="alertcard" data-i="${i}" title="לחיצה מורידה את התמונה">
         <img src="${a.img}" alt="">
@@ -1754,7 +1946,7 @@ $('alertsList').addEventListener('click', e => {
   link.href = a.img; link.download = `alert_${a.time.toISOString().replace(/[:.]/g, '-')}.jpg`; link.click();
 });
 $('clearAlerts').onclick = () => { live.alerts = []; renderAlerts(); };
-$('soundBtn').onclick = () => { live.sound = !live.sound; $('soundBtn').textContent = live.sound ? '🔊' : '🔇'; };
+$('soundBtn').onclick = () => { live.sound = !live.sound; $('soundBtn').innerHTML = ic(live.sound ? 'sound' : 'mute'); };
 
 /* ---------- rules from the chat ---------- */
 async function loadRules(){
@@ -1788,7 +1980,7 @@ async function addRule(text){
       return;
     }
     live.rules.push(out.rule);
-    botSay('✅ ' + out.rule.description + (live.running ? '' : he ? '\nלחצי ▶ התחל כדי שאתחיל לצפות.' : '\nPress ▶ to start watching.'));
+    botSay(out.rule.description + (live.running ? '' : he ? '\nלחצי על התחל כדי שאתחיל לצפות.' : '\nPress Start to begin watching.'));
     renderRules();
   } catch (e){
     botSay((he ? 'משהו השתבש, נסי שוב. ' : 'Something went wrong, try again. ') + '(' + (e.message || e) + ')');
@@ -1802,8 +1994,8 @@ function renderRules(){
     ? '<span class="rhint">עוד לא הגדרת התרעות. כתבי בצ\'אט מתי להתריע.</span>'
     : live.rules.map(r => `
       <span class="rpill" data-id="${esc(r.id)}" title="${esc(r.description)} · “${esc(r.text)}”">
-        🔔 ${esc(r.label || r.description)}<i></i>
-        <button title="להסיר" aria-label="להסיר" data-del="${esc(r.id)}">✕</button>
+        ${ic('bell')} ${esc(r.label || r.description)}<i></i>
+        <button title="להסיר" aria-label="להסיר" data-del="${esc(r.id)}">${ic('x')}</button>
       </span>`).join('');
   renderRuleProgress();
 }
@@ -1832,7 +2024,7 @@ $('rulesList').addEventListener('click', async e => {
    ===================================================================== */
 const lbl = { file: null, name: null, duration: 0, kind: null, pending: null, events: [], scen: {}, saved: {} };
 const lblVideo = $('lblVideo');
-const LBL_COLORS = ['#ef6f6c', '#8f86f2', '#62c7dd', '#e8b45a', '#5ccf9e', '#d77fd0', '#9aa0b4'];
+const LBL_COLORS = ['#ef4444', '#62a6ff', '#34d399', '#f5b544', '#a78bfa', '#38c6e8', '#a3aecb'];
 const scenColor = s => LBL_COLORS[Object.keys(lbl.scen).indexOf(s) % LBL_COLORS.length];
 
 async function labelOpen(){
@@ -1896,7 +2088,7 @@ function lblMarkEnd(){
   if (t <= p.start + 0.1){ lblStatus('הסוף חייב להיות אחרי ההתחלה. הריצי את הסרטון קדימה ולחצי שוב.', 'demo'); return; }
   lbl.events.push({ ...p, end: t });
   lbl.pending = null; $('lblEnd').disabled = true;
-  lblStatus(`✓ נוסף: ${esc(lbl.scen[p.scenario])} ${fmt(p.start)}–${fmt(t)}. אל תשכחי לשמור.`, 'ok');
+  lblStatus(`נוסף: ${esc(lbl.scen[p.scenario])} ${fmt(p.start)}–${fmt(t)}. אל תשכחי לשמור.`, 'ok');
   renderEvents();
 }
 $('lblStart').onclick = lblMarkStart;
@@ -1917,8 +2109,8 @@ function renderEvents(){
         <span class="sw" style="background:${scenColor(e.scenario)}"></span>
         <b>${esc(lbl.scen[e.scenario] || e.scenario)}</b>
         <span class="tm">${fmt(e.start)} – ${fmt(e.end)}</span>
-        <button data-seek="${e.start}" title="קפיצה לאירוע">▶</button>
-        <button data-del="${e.i}" title="מחיקה">✕</button>
+        <button data-seek="${e.start}" title="קפיצה לאירוע" aria-label="קפיצה לאירוע">${ic('play')}</button>
+        <button data-del="${e.i}" title="מחיקה" aria-label="מחיקה">${ic('x')}</button>
       </div>`).join('');
   $('lblMarks').innerHTML = lbl.duration ? lbl.events.map(e =>
     `<div class="tl-match" style="left:${e.start / lbl.duration * 100}%;width:${(e.end - e.start) / lbl.duration * 100}%;background:${scenColor(e.scenario)}"></div>`).join('') : '';
@@ -1938,7 +2130,7 @@ $('lblTimeline').addEventListener('click', e => {
   lblVideo.currentTime = (e.clientX - r.left) / r.width * lbl.duration;
 });
 
-$('lblSave').onclick = () => withBusy($('lblSave'), '⏳ שומרת…', async () => {
+$('lblSave').onclick = () => withBusy($('lblSave'), 'שומרת…', async () => {
   if (!lbl.name) return;
   if (lbl.pending){ lblStatus('יש אירוע שהתחלת ולא סיימת. לחצי סוף (E) או בחרי סוג אחר.', 'demo'); return; }
   if ($('lblCopy').checked && !lbl.saved[lbl.name]?.file_copied){
@@ -1950,21 +2142,21 @@ $('lblSave').onclick = () => withBusy($('lblSave'), '⏳ שומרת…', async (
     body: JSON.stringify({ video: lbl.name, duration: lbl.duration, events: lbl.events }) });
   if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || 'השמירה נכשלה');
   await labelOpen();
-  lblStatus(`✅ נשמר: ${lbl.events.length} אירועים ב-${esc(lbl.name)}`, 'ok');
-}, msg => lblStatus('⚠ ' + esc(msg), 'demo'));
+  lblStatus(`נשמר: ${lbl.events.length} אירועים ב-${esc(lbl.name)}`, 'ok');
+}, msg => lblStatus(esc(msg), 'demo'));
 
 function renderSaved(){
   const v = Object.entries(lbl.saved);
   $('lblBadge').textContent = v.length; $('lblBadge').hidden = !v.length;
   $('lblSaved').innerHTML = !v.length
-    ? '<div class="empty"><span class="big">🏷</span>עוד אין סרטונים מתויגים.</div>'
+    ? `<div class="empty"><span class="big">${ic('tag')}</span>עוד אין סרטונים מתויגים.</div>`
     : v.map(([name, x]) => {
         const n = x.queries.reduce((a, q) => a + q.expected.length, 0);
         const kinds = x.queries.filter(q => q.expected.length).map(q => lbl.scen[q.scenario] || q.scenario);
         return `<div class="lblsaved">
           <div><b>${esc(name)}</b><small>${n ? n + ' אירועים: ' + esc(kinds.join(', ')) : 'בלי אירועים (בודק התרעות שווא)'}
-          · ${fmt(x.duration || 0)}${x.file_copied ? '' : ' · ⚠ הסרטון לא הועתק'}</small></div>
-          <button data-delv="${esc(name)}" title="מחיקת התיוג">✕</button></div>`;
+          · ${fmt(x.duration || 0)}${x.file_copied ? '' : ' · הסרטון לא הועתק'}</small></div>
+          <button data-delv="${esc(name)}" title="מחיקת התיוג" aria-label="מחיקת התיוג">${ic('x')}</button></div>`;
       }).join('');
 }
 $('lblSaved').addEventListener('click', async e => {
@@ -1977,7 +2169,7 @@ $('lblSaved').addEventListener('click', async e => {
 let delArmed = null;
 function confirmDelete(v){
   if (delArmed === v){ delArmed = null; return true; }
-  delArmed = v; lblStatus(`ללחוץ שוב על ✕ כדי למחוק את התיוג של ${esc(v)}`, 'demo');
+  delArmed = v; lblStatus(`ללחוץ שוב על המחיקה כדי למחוק את התיוג של ${esc(v)}`, 'demo');
   setTimeout(() => { if (delArmed === v) delArmed = null; }, 3000);
   return false;
 }
