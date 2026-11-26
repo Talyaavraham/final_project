@@ -34,3 +34,12 @@ def test_best_threshold_and_auc():
     assert vb.auc([0.9], [0.2, 0.7, 0.1, 0.3]) == 1.0
     assert vb.auc([0.1], [0.6]) == 0.0
     assert vb.right(seg(12, 0.9), [[10, 20]]) and not vb.right(seg(40, 0.2), [[10, 20]])
+
+
+def test_merge_raw_takes_each_class_from_the_detector_named_for_it():
+    import merge_raw
+    v1 = {"a.mp4": {"1.0": {"fire": 0.8, "gun": 0.2}, "2.0": {"knife": 0.3}}, "only_v1.mp4": {}}
+    v3 = {"a.mp4": {"1.0": {"fire": 0.1, "gun": 0.6}, "3.0": {"gun": 0.4}}}
+    extra = {"a.mp4": {"1.0": {"gun": 0.5}, "3.0": {"gun": 0.7}}}
+    out = merge_raw.merge([(v1, {"fire", "smoke"}), (v3, {"gun", "knife"}), (extra, {"gun"})])
+    assert out == {"a.mp4": {"1.0": {"fire": 0.8, "gun": 0.6}, "3.0": {"gun": 0.7}}}   # v1's knife and gun are dropped

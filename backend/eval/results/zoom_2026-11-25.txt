@@ -1,0 +1,37 @@
+eval/zoom_bench.py, 2026-11-25. UCF-Crime benchmark (107 videos, 320x240), 1,345 frames: up to 8 per labelled event + 8 spread over each video.
+full = the detector on the whole frame; zoom = on the enlarged crops of the 3 biggest people (imgsz 480); full+zoom = the better of the two.
+detectors: security = security.pt (2026-11-10), security_v2 = trained with close-up knife photos (2026-11-23), coco_s = yolov8s.pt, world = yolov8s-worldv2.pt with the words knife / gun.
+
+== knife (class 'knife'): 46 events (43 with a person found), 159 frames of videos labelled without it, 211 frames outside the windows ==
+detector         variant     events@0.15  events@0.25   events@0.5    clean@0.15  clean@0.25   clean@0.5    outside@0.15  outside@0.25   outside@0.5
+coco_s           full           1 (  2%)     1 (  2%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+coco_s           zoom           1 (  2%)     1 (  2%)     0 (  0%)          0.0%        0.0%        0.0%            0.5%          0.0%          0.0%
+coco_s           full+zoom      1 (  2%)     1 (  2%)     0 (  0%)          0.0%        0.0%        0.0%            0.5%          0.0%          0.0%
+security         full           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+security         zoom           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+security         full+zoom      0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+security_v2      full           2 (  4%)     1 (  2%)     0 (  0%)          0.6%        0.6%        0.0%            2.4%          0.5%          0.0%
+security_v2      zoom           1 (  2%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            1.4%          0.5%          0.0%
+security_v2      full+zoom      3 (  7%)     1 (  2%)     0 (  0%)          0.6%        0.6%        0.0%            3.8%          0.9%          0.0%
+world            full           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+world            zoom           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+world            full+zoom      0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+
+== weapon (class 'gun'): 81 events (72 with a person found), 151 frames of videos labelled without it, 146 frames outside the windows ==
+detector         variant     events@0.15  events@0.25   events@0.5    clean@0.15  clean@0.25   clean@0.5    outside@0.15  outside@0.25   outside@0.5
+coco_s           full           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+coco_s           zoom           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+coco_s           full+zoom      0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+security         full           5 (  6%)     4 (  5%)     1 (  1%)          2.0%        0.7%        0.0%            3.4%          2.1%          0.0%
+security         zoom           2 (  2%)     2 (  2%)     1 (  1%)          4.6%        2.6%        0.0%            1.4%          1.4%          0.7%
+security         full+zoom      6 (  7%)     5 (  6%)     2 (  2%)          6.6%        3.3%        0.0%            3.4%          2.7%          0.7%
+security_v2      full           2 (  2%)     1 (  1%)     0 (  0%)          0.7%        0.0%        0.0%            0.7%          0.7%          0.0%
+security_v2      zoom           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.7%          0.0%          0.0%
+security_v2      full+zoom      2 (  2%)     1 (  1%)     0 (  0%)          0.7%        0.0%        0.0%            1.4%          0.7%          0.0%
+world            full           3 (  4%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+world            zoom           0 (  0%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+world            full+zoom      3 (  4%)     0 (  0%)     0 (  0%)          0.0%        0.0%        0.0%            0.0%          0.0%          0.0%
+
+events@X: labelled events in which the class was detected at confidence >= X in at least one sampled frame.
+clean@X: share of the frames of videos labelled as NOT containing it where it was 'detected' anyway (false alarms).
+outside@X: the same share for frames outside the windows of videos that do contain it (the object may really be visible there).

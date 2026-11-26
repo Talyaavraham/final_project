@@ -82,7 +82,7 @@ export.py        פריימים, קליפים (ffmpeg מובנה דרך imageio-
 db.py            סכמת SQLite: videos / detections / segments
 evaluate.py      precision / recall / F1 מול ground truth מתויג (eval/: benchmark UCF-Crime, כיול ספים)
 train/           תיוג אוטומטי לפי צבע + אימון YOLOv8 על מחלקות חדשות (train/README.md)
-tests/           pytest — 95 בדיקות, כולל end-to-end עם גלאי מדומה ו-CLIP מדומה
+tests/           pytest — 106 בדיקות, כולל end-to-end עם גלאי מדומה ו-CLIP מדומה
 ```
 
 - **זיהוי**: כל 80 מחלקות COCO (לא רק 9), או רשימה פתוחה עם YOLO-World

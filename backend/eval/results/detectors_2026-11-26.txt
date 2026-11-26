@@ -1,0 +1,104 @@
+Three trained security detectors against each other (2026-11-26), and what runs by default.
+
+  security.pt            2026-11-10: CCTV guns (Hugging Face) + D-Fire. In the repo.
+  security_v3.pt         2026-11-25, Maya: continues security.pt with Dangerous Items (Zenodo) + CCTV-look copies. In the repo.
+  security_roboflow.pt   2026-11-26, Talya: the 2026-11-10 recipe (train/colab_train_security.ipynb) + the Roboflow export
+                         "CCTV Weapon Detect" v16 AS DOWNLOADED (not train/security/guns_cctv.zip: Drive did not mount and
+                         the raw zip was uploaded in cell 4). 25 epochs, yolov8s, imgsz 800. Not in the repo.
+                         Its training set holds frames of 16 of the 107 benchmark videos (9 of the 34 with a weapon
+                         window), so it cannot be scored on the benchmark. The held-out videos are not in it.
+
+Decision: the default stays  security.pt=fire+smoke, security_v3.pt=gun+knife  (combination A below).
+security_roboflow.pt finds far more of the small labelled CCTV pistols, but on the only clean video test (held-out,
+14 weapon windows) it cannot be told apart from security_v3.pt, and a detector that saw benchmark videos must not be in
+the pipeline the research numbers come from. It can be added by hand:  LIVE_EXTRA / EXTRA_MODELS =
+security.pt=fire+smoke,security_v3.pt=gun+knife,security_roboflow.pt=gun  (combination B: most weapon windows found,
+most windows returned). Next: the same training on guns_cctv.zip (benchmark videos left out), which can then be measured.
+
+1. Colab validation of security_roboflow.pt (cell 7), mAP50
+                 security.pt (2026-11-10)   security_roboflow.pt, same images ("base")   with the Roboflow valid images
+   gun           0.69                       0.699                                        0.708
+   knife         0.35                       0.284                                        0.284
+   fire          0.73                       0.722                                        0.722
+   smoke         0.84                       0.829                                        0.829
+   The 350 added validation images / 207 gun boxes / 148 images without a gun are exactly the "valid" folder of the raw
+   export (guns_cctv.zip has 174 / 147): that is how the wrong zip was noticed.
+
+2. Human-labelled pistols in the valid + test images of the Roboflow export (742 images, 535 pistol boxes, 345 of them
+   under 32 px; 124 boxes are in UCF-Crime frames), imgsz 640, found = a gun box with IoU >= 0.3
+                          conf 0.15            conf 0.25            conf 0.5             on UCF frames (0.25)   wrong boxes (0.25)
+   security.pt            65 (12%)             50 (9%)              25 (5%)              1 / 124                9
+   security_v3.pt         63 (12%)             53 (10%)             21 (4%)              3 / 124                21
+   security_roboflow.pt   373 (70%)            347 (65%)            254 (47%)            59 / 124               35
+   Flattering for security_roboflow.pt: "valid" chose its best epoch, and frames of the same videos as "valid" and
+   "test" are in its training set (the export splits by frame, not by video). Clean for the other two.
+
+3. Held-out videos (54 videos of UCF-Crime part 1, none in any training set; 31 fire windows, 14 weapon windows), detector
+   alone, 1 fps, imgsz 800, smoke counted as fire. Cells: precision / recall / F1 (windows found / returned / expected).
+   Combinations are built from the raw files with eval/merge_raw.py.
+   python eval/detector_bench.py eval/ground_truth_heldout.json FOLDER --model MODEL --classes gun=weapon,fire=fire,smoke=fire
+
+security.pt alone:
+ thr |                   fire                 weapon
+ 0.2 | P0.12 R0.48 F1 0.20 (15/122/31) P0.07 R0.14 F1 0.10 (2/28/14)
+0.25 | P0.15 R0.48 F1 0.23 (15/99/31) P0.08 R0.14 F1 0.10 (2/26/14)
+ 0.3 | P0.22 R0.48 F1 0.30 (15/69/31) P0.08 R0.14 F1 0.11 (2/24/14)
+ 0.4 | P0.29 R0.45 F1 0.35 (14/49/31) P0.08 R0.07 F1 0.08 (1/12/14)
+ 0.5 | P0.43 R0.39 F1 0.41 (12/28/31) P0.00 R0.00 F1 0.00 (0/6/14)
+ 0.6 | P0.50 R0.32 F1 0.39 (10/20/31) P0.00 R0.00 F1 0.00 (0/3/14)
+
+security_v3.pt alone:
+ thr |                   fire                 weapon
+ 0.2 | P0.47 R0.26 F1 0.33 (8/17/31) P0.04 R0.43 F1 0.08 (6/139/14)
+0.25 | P0.57 R0.26 F1 0.36 (8/14/31) P0.04 R0.29 F1 0.07 (4/98/14)
+ 0.3 | P0.64 R0.23 F1 0.33 (7/11/31) P0.05 R0.29 F1 0.09 (4/79/14)
+ 0.4 | P0.57 R0.13 F1 0.21 (4/7/31) P0.07 R0.21 F1 0.11 (3/41/14)
+ 0.5 | P0.50 R0.10 F1 0.16 (3/6/31) P0.10 R0.14 F1 0.11 (2/21/14)
+ 0.6 | P0.50 R0.10 F1 0.16 (3/6/31) P0.12 R0.07 F1 0.09 (1/8/14)
+
+security_roboflow.pt alone:
+ thr |                   fire                 weapon
+ 0.2 | P0.26 R0.39 F1 0.31 (12/46/31) P0.05 R0.50 F1 0.09 (7/140/14)
+0.25 | P0.24 R0.35 F1 0.29 (11/45/31) P0.07 R0.50 F1 0.12 (7/104/14)
+ 0.3 | P0.24 R0.32 F1 0.28 (10/41/31) P0.07 R0.43 F1 0.12 (6/87/14)
+ 0.4 | P0.31 R0.32 F1 0.32 (10/32/31) P0.05 R0.21 F1 0.08 (3/66/14)
+ 0.5 | P0.32 R0.23 F1 0.26 (7/22/31) P0.07 R0.21 F1 0.11 (3/43/14)
+ 0.6 | P0.38 R0.16 F1 0.23 (5/13/31) P0.05 R0.07 F1 0.06 (1/21/14)
+
+A = security.pt fire+smoke, security_v3.pt gun+knife (the default):
+ thr |                   fire                 weapon
+ 0.2 | P0.12 R0.48 F1 0.20 (15/122/31) P0.04 R0.43 F1 0.08 (6/139/14)
+0.25 | P0.15 R0.48 F1 0.23 (15/99/31) P0.04 R0.29 F1 0.07 (4/98/14)
+ 0.3 | P0.22 R0.48 F1 0.30 (15/69/31) P0.05 R0.29 F1 0.09 (4/79/14)
+ 0.4 | P0.29 R0.45 F1 0.35 (14/49/31) P0.07 R0.21 F1 0.11 (3/41/14)
+ 0.5 | P0.43 R0.39 F1 0.41 (12/28/31) P0.10 R0.14 F1 0.11 (2/21/14)
+ 0.6 | P0.50 R0.32 F1 0.39 (10/20/31) P0.12 R0.07 F1 0.09 (1/8/14)
+
+B = A + security_roboflow.pt gun:
+ thr |                   fire                 weapon
+ 0.2 | P0.12 R0.48 F1 0.20 (15/122/31) P0.04 R0.64 F1 0.08 (9/210/14)
+0.25 | P0.15 R0.48 F1 0.23 (15/99/31) P0.05 R0.64 F1 0.10 (9/165/14)
+ 0.3 | P0.22 R0.48 F1 0.30 (15/69/31) P0.06 R0.57 F1 0.11 (8/137/14)
+ 0.4 | P0.29 R0.45 F1 0.35 (14/49/31) P0.04 R0.29 F1 0.07 (4/94/14)
+ 0.5 | P0.43 R0.39 F1 0.41 (12/28/31) P0.07 R0.29 F1 0.11 (4/60/14)
+ 0.6 | P0.50 R0.32 F1 0.39 (10/20/31) P0.04 R0.07 F1 0.05 (1/26/14)
+
+C = security.pt fire+smoke, security_roboflow.pt gun (instead of security_v3.pt):
+ thr |                   fire                 weapon
+ 0.2 | P0.12 R0.48 F1 0.20 (15/122/31) P0.05 R0.50 F1 0.09 (7/140/14)
+0.25 | P0.15 R0.48 F1 0.23 (15/99/31) P0.07 R0.50 F1 0.12 (7/104/14)
+ 0.3 | P0.22 R0.48 F1 0.30 (15/69/31) P0.07 R0.43 F1 0.12 (6/87/14)
+ 0.4 | P0.29 R0.45 F1 0.35 (14/49/31) P0.05 R0.21 F1 0.08 (3/66/14)
+ 0.5 | P0.43 R0.39 F1 0.41 (12/28/31) P0.07 R0.21 F1 0.11 (3/43/14)
+ 0.6 | P0.50 R0.32 F1 0.39 (10/20/31) P0.05 R0.07 F1 0.06 (1/21/14)
+
+   Weapon, at a similar number of returned windows:
+     ~100 returned:  security_v3.pt 4 found (98 returned)   security_roboflow.pt 7 found (104)
+     ~80-90:         security_v3.pt 4 (79)                  security_roboflow.pt 6 (87)
+     ~40:            security_v3.pt 3 (41)                  security_roboflow.pt 3 (43)
+     ~21:            security_v3.pt 2 (21)                  security_roboflow.pt 1 (21)
+   Differences of 1-3 windows out of 14: not a result. Precision is 4-12% for every detector and combination.
+   Fire: security.pt finds the most windows (15 of 31); the other two find 8 and 12 with fewer false ones.
+
+Not measured: security_roboflow.pt on the 107 benchmark videos (it saw 16 of them); the three-detector combination in the
+live engine or the indexer (only its simulation from the raw files, above).

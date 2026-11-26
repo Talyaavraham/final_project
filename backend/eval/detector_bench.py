@@ -108,7 +108,7 @@ def main():
         for s in scenarios:
             p, r, f = prf(*agg[s])
             cells.append(f"P{p:.2f} R{r:.2f} F1 {f:.2f} ({agg[s][0]}/{agg[s][0]+agg[s][1]}/{agg[s][0]+agg[s][2]})")
-        print(f"{thr:>4.1f} | " + " ".join(f"{c:>22}" for c in cells))
+        print(f"{thr:>4.2g} | " + " ".join(f"{c:>22}" for c in cells))
     print("cells: precision / recall / F1 (windows found / windows returned / windows expected), hit scoring")
 
 
