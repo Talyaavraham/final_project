@@ -24,6 +24,24 @@ sys.path.insert(0, os.path.join(BACKEND, "eval"))
 import uca_ground_truth as u          # noqa: E402
 
 TEST = os.path.join(BACKEND, "eval", "ground_truth_uca.json")
+# the UCA annotations (eval/data/ is not in git): the same source as eval/colab_benchmark.ipynb
+UCA_BASE = "https://raw.githubusercontent.com/Xuange923/Surveillance-Video-Understanding/main/UCF%20Annotation/json/"
+
+
+def load_uca():
+    """eval/data/uca_all.json, downloaded and merged from the three UCA splits the first time."""
+    if not os.path.isfile(u.ALL):
+        import urllib.request
+        uca = {}
+        for split in ("Train", "Val", "Test"):
+            print(f"downloading UCA {split} ...", flush=True)
+            with urllib.request.urlopen(UCA_BASE + f"UCFCrime_{split}.json", timeout=120) as r:
+                uca.update(json.load(r))
+        os.makedirs(os.path.dirname(u.ALL), exist_ok=True)
+        with open(u.ALL, "w", encoding="utf-8") as f:
+            json.dump(uca, f)
+    with open(u.ALL, encoding="utf-8") as f:
+        return json.load(f)
 
 
 def build(uca, test_names, scenarios, negative_minutes, max_minutes=None):
@@ -66,7 +84,7 @@ def main():
     ap.add_argument("--out", default=os.path.join(BACKEND, "eval", "ground_truth_train.json"))
     args = ap.parse_args()
     scenarios = [s.strip() for s in args.scenarios.split(",") if s.strip()]
-    uca = json.load(open(u.ALL, encoding="utf-8"))
+    uca = load_uca()
     with open(TEST, encoding="utf-8") as f:
         test_names = {os.path.splitext(v)[0] for v in json.load(f)["videos"]}
     videos, pos, neg = build(uca, test_names, scenarios, args.negative_minutes, args.max_minutes)

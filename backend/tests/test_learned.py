@@ -84,8 +84,12 @@ def test_merge_takes_each_class_from_its_detector(tmp_path):
 
 
 def test_train_set_never_uses_a_test_video():
+    import pytest
     import train_set
-    uca = json.load(open(os.path.join(BACKEND, "eval", "data", "uca_all.json"), encoding="utf-8"))
+    path = os.path.join(BACKEND, "eval", "data", "uca_all.json")
+    if not os.path.isfile(path):
+        pytest.skip("eval/data/uca_all.json is not here (it is not in git; live/train_set.py downloads it)")
+    uca = json.load(open(path, encoding="utf-8"))
     test = {os.path.splitext(v)[0] for v in json.load(open(train_set.TEST, encoding="utf-8"))["videos"]}
     videos, pos, neg = train_set.build(uca, test, ["weapon", "fire"], 60, 300)
     assert videos and not {os.path.splitext(v)[0] for v in videos} & test
